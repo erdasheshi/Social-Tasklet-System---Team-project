@@ -1,0 +1,9 @@
+{
+  "Type": "Accounting",
+  "Buyer": "ID_1",
+  "Seller": "ID_2",
+  "Computation": 50,
+  "Coins": 100,
+  "Status": "Confirmed",
+  "Tasklet_ID": "123"
+}
