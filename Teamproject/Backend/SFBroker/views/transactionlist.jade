@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1.
+        Transaction List    
+  ul
+        each transaction, i in transactionlist
+            li #{transaction.Status}
