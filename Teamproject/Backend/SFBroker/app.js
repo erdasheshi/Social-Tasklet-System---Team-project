@@ -10,6 +10,8 @@ var bodyParser = require('body-parser');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var Accountings = require("./models/Accountings");
+var Friendships = require("./models/Friendships");
+mongoose.Promise = global.Promise;
 mongoose.connect('localhost:27017/SFBroker');
 
 var db = mongoose.connection;
@@ -21,6 +23,8 @@ db.once("open", function(callback){
 
 var Accounting = mongoose.model("Accounting", Accountings.accountingSchema); //This creates the Accounting model.
 module.exports.Accounting = Accounting; /* Export the Accounting model so index.js can access it. */
+var Friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
+module.exports.Friendship = Friendship;
 
 var index = require('./routes/index');
 var users = require('./routes/users');

@@ -1,0 +1,6 @@
+xcopy /y "config.json" "Broker\config.json"
+xcopy /y "config.json" "Buyer\config.json"
+xcopy /y "config.json" "SFBroker\config.json"
+xcopy /y "config.json" "SFBroker_DirectAccess\config.json"
+xcopy /y "config.json" "Seller\config.json"
+xcopy /y "config.json" "SFBroker_DirectAccess\config.json"

@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1.
+        Accounting  Transaction List
+  ul
+        each transactionAcc, i in transactionlistAcc
+            li Buyer: #{transactionAcc.Buyer}, Seller: #{transactionAcc.Seller}, Computation: #{transactionAcc.Computation}, Coins: #{transactionAcc.Computation}, Status: #{transactionAcc.Status}, Tasklet_ID: #{transactionAcc.Tasklet_ID}

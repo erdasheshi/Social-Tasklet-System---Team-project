@@ -6,7 +6,7 @@ var express = require('express')
 
 // Webserver
 // auf den Port x schalten
-server.listen(conf.port);
+server.listen(conf.ports.broker);
 
 	// statische Dateien ausliefern
 app.use(express.static(__dirname + '/public'));
@@ -17,7 +17,7 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
 
-// Websocket
+// Websocketnpm inst
 io.sockets.on('connection', function (socket) {
 
 	// If user sends request to Broker
@@ -26,7 +26,13 @@ io.sockets.on('connection', function (socket) {
 		// Request received and sent to all users
 		io.sockets.emit('event', { zeit: new Date(), name: data.name || 'Anonym', cost: data.cost, privacy: data.privacy });
 	});
+
+    // If user sends request to Broker
+    socket.on('TaskletSendBroker', function (data) {
+        // Request received and sent to all users
+        io.sockets.emit('event', { zeit: new Date(), name: data.tasklet_id || 'Anonym', cost: data.cost, privacy: data.privacy });
+    });
 });
 
 
-console.log('Der Server läuft nun unter http://127.0.0.1:' + conf.port + '/');
+console.log('Der Server läuft nun unter http://127.0.0.1:' + conf.ports.broker + '/');
