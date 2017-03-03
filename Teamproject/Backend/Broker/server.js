@@ -42,7 +42,6 @@ io.sockets.on('connection', function (socket) {
 		//Step 4: Finding most suitable seller
 		var seller = scheduling(data.potentialseller);
 		// Step 5: Sending seller and buyer information to SFBroker
-		console.log(seller);
         io.sockets.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
 	 });
 });
