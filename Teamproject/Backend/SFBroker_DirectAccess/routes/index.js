@@ -22,6 +22,7 @@ router.get('/transactionlistAcc', function(req, res) {
 
     socket.on('SFRead_Acc', function (docs) {
         // socket connected
+        console.log(docs);
         res.render('transactionlistAcc', {
             "transactionlistAcc" : docs
         });
@@ -35,7 +36,6 @@ router.get('/transactionlistFriend', function(req, res) {
 
     socket.on('SFRead_Friend', function (docs) {
         // socket connected
-        console.log(docs);
         res.render('transactionlistFriend', {
             "transactionlistFriend" : docs
         });
