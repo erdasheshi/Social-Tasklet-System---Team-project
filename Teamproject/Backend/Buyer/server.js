@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket) {
 
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', cost: data.cost, privacy: data.privacy });
 
-		/*
+		
         // Tasklet can be calculated
         io.sockets.emit('TaskletCalc', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
 
@@ -51,10 +51,10 @@ io.sockets.on('connection', function (socket) {
 
         // Tasklet can be calculated
         io.sockets.emit('TaskletReceived', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', buyer: 'User ID'});
-        */
+        
 
 	});
 });
 
 
-console.log('Der Server läuft nun unter http://127.0.0.1:' + conf.ports.buyer + '/');
+console.log('Buyer/Seller runs on http://127.0.0.1:' + conf.ports.buyer + '/');

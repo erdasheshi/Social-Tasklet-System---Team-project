@@ -13,12 +13,12 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Tasklet '),
+                $('<b>').text('Buyer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
-                $('<b>').text(' send - '),
+                $('<b>').text(' request sent - '),
                 // Text
-                $('<span>').text('QoC Cost:' + data.cost + ' ' + 'QoC Privacy:' + data.privacy ))
+                $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
         );
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -37,12 +37,12 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Tasklet '),
+                $('<b>').text('Buyer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
                 $('<b>').text(' ready for calculation - '),
                 // Text
-                $('<span>').text('Seller:' + data.seller + ' ' )),
+                $('<span>').text('Seller: ' + data.seller + ' ' )),
                 $('<input/>').attr({
                     type: "button",
                     id: button_id,
@@ -69,10 +69,10 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Tasklet '),
+                $('<b>').text('Buyer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
-                $('<b>').text(' calculated by '),
+                $('<b>').text(' result received from '),
                 // Text
                 $('<span>').text('Seller:' + data.seller + ' ' )),
             $('<input/>').attr({
@@ -102,10 +102,10 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Tasklet '),
+                $('<b>').text('Seller: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
-                $('<b>').text(' received - '),
+                $('<b>').text(' calculated - '),
                 // Text
                 $('<span>').text('Buyer:' + data.buyer + ' ' )),
                 $('<input/>').attr({
@@ -127,11 +127,11 @@ $(document).ready(function(){
     // Sending a message
     function send(){
         // Reading the input fields
-        var tasklet_id = $('#tasklet_id').val();
+        var name = $('#name').val();
         var cost = $('#cost').val();
 		var privacy = $('#privacy').val();
         // Sending socket
-        socket.emit('TaskletSend', {tasklet_id: tasklet_id, cost: cost, privacy: privacy});
+        socket.emit('TaskletSend', {name: name, cost: cost, privacy: privacy});
         // Empty input fields
         $('#cost').val('');
 		$('#privacy').val('');

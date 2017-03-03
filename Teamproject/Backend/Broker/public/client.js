@@ -22,19 +22,5 @@ $(document).ready(function(){
         $('body').scrollTop($('body')[0].scrollHeight);
     });
     
-    // Sending a message
-    function senden(){
-        // Reading the input fields
-        var name = $('#name').val();
-        var cost = $('#cost').val();
-		var privacy = $('#privacy').val();
-        // Sending socket
-        socket.emit('event', {name: name, cost: cost, privacy: privacy});
-        // Empty input fields
-        $('#cost').val('');
-		$('#privacy').val('');
-    }
-    // Trigger function when clicking
-    $('#senden').click(senden);
    
 });

@@ -1,0 +1,13 @@
+{
+	"ports": {
+		"sfbroker": 8001,
+		"sfbroker_socket": 8002,
+		"broker": 8003,
+		"broker_socket": 8004,
+		"buyer": 8005,
+		"buyer_socket": 8006,
+		"seller": 8007,
+		"seller_socket": 8008,
+		"direct_access": 8009
+	}
+}

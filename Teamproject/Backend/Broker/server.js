@@ -22,7 +22,7 @@ io.sockets.on('connection', function (socket) {
 
 	// If user sends request to Broker
 	socket.on('event', function (data) {
-		console.log('Bei Server angekommen');
+		console.log('New Seller/Buyer online');
 		// Request received and sent to all users
 		io.sockets.emit('event', { zeit: new Date(), name: data.name || 'Anonym', cost: data.cost, privacy: data.privacy });
 	});
@@ -30,9 +30,9 @@ io.sockets.on('connection', function (socket) {
     // If user sends request to Broker
     socket.on('TaskletSendBroker', function (data) {
         // Request received and sent to all users
-        io.sockets.emit('event', { zeit: new Date(), name: data.tasklet_id || 'Anonym', cost: data.cost, privacy: data.privacy });
+        io.sockets.emit('event', { zeit: new Date(), name: data.name || 'Anonym', cost: data.cost, privacy: data.privacy });
     });
 });
 
 
-console.log('Der Server läuft nun unter http://127.0.0.1:' + conf.ports.broker + '/');
+console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
