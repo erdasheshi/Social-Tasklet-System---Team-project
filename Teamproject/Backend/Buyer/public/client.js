@@ -2,7 +2,8 @@ $(document).ready(function(){
     // WebSocket
     var socket = io.connect();
 	
-	socket.on('TaskletSend', function (data) {
+	//Step 1: Sending Tasklet request
+	socket.on('TaskletRequest', function (data) {
         var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(
@@ -13,11 +14,9 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Buyer: Tasklet '),
-                // ID
-                $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
-                $('<b>').text(' request sent - '),
-                // Text
+                $('<b>').text('Buyer: '),
+				$('<span>').text('You (' + data.name + ') have sent a Tasklet request - '),
+                //QoC text
                 $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
         );
         // scroll down
@@ -131,7 +130,7 @@ $(document).ready(function(){
         var cost = $('#cost').val();
 		var privacy = $('#privacy').val();
         // Sending socket
-        socket.emit('TaskletSend', {name: name, cost: cost, privacy: privacy});
+        socket.emit('TaskletRequest', {name: name, cost: cost, privacy: privacy});
         // Empty input fields
         $('#cost').val('');
 		$('#privacy').val('');

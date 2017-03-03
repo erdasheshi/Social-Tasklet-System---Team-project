@@ -4,6 +4,7 @@ var express = require('express')
 ,   io = require('socket.io').listen(server)
 ,   conf = require('./config.json');
 
+// Processing the stated port number
 if (process.argv.length <= 2) {
     console.log("Port number needed");
     process.exit(-1);
@@ -12,8 +13,7 @@ if (process.argv.length <= 2) {
 var port = process.argv[2];
 console.log('Port: ' + port);
 
-// Webserver - Client
-// auf den Port x schalten
+// Webserver
 server.listen(port);
 
 // Connect to broker
@@ -31,24 +31,24 @@ socket_c.on('connection', function () {
 
 socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
 
-	// statische Dateien ausliefern
+// static files
 app.use(express.static(__dirname + '/public'));
 
-// wenn der Pfad / aufgerufen wird
+// if path / is called
 app.get('/', function (req, res) {
-	// so wird die Datei index.html ausgegeben
+	// index.html showing
 	res.sendfile(__dirname + '/public/index.html');
 });
 
-// Websocketnpm inst
+// Websocket
 io.sockets.on('connection', function (socket) {
 
 	// If user sends request to Broker
-	socket.on('TaskletSend', function (data) {
-		// Request received and sent to all users
-		io.sockets.emit('TaskletSend', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', cost: data.cost, privacy: data.privacy });
-
-		socket_c.emit('TaskletSendBroker', {zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', cost: data.cost, privacy: data.privacy });
+	socket.on('TaskletRequest', function (data) {
+		// Step 1: Request sent for illustrating on Website
+		io.sockets.emit('TaskletRequest', { zeit: new Date(), name: data.name, cost: data.cost, privacy: data.privacy });
+		// Step 1: Request sent to Broker
+		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: data.name, cost: data.cost, privacy: data.privacy });
 
 		
         // Tasklet can be calculated

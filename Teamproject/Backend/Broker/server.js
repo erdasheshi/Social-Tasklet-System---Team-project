@@ -2,35 +2,35 @@ var express = require('express')
 ,   app = express()
 ,   server = require('http').createServer(app)
 ,   io = require('socket.io').listen(server)
-,   conf = require('./config.json');
+,   conf = require('./config.json')
+,	uuidV1 = require('uuid/v1');
 
 // Webserver
-// auf den Port x schalten
 server.listen(conf.ports.broker);
 
-	// statische Dateien ausliefern
+// static files
 app.use(express.static(__dirname + '/public'));
 
-// wenn der Pfad / aufgerufen wird
+// if path / is called
 app.get('/', function (req, res) {
-	// so wird die Datei index.html ausgegeben
+	// index.html showing
 	res.sendfile(__dirname + '/public/index.html');
 });
 
-// Websocketnpm inst
+// Websocket
 io.sockets.on('connection', function (socket) {
 
-	// If user sends request to Broker
+	//Connecting new Seller/Buyer with Broker
 	socket.on('event', function (data) {
-		console.log('New Seller/Buyer online');
-		// Request received and sent to all users
-		io.sockets.emit('event', { zeit: new Date(), name: data.name || 'Anonym', cost: data.cost, privacy: data.privacy });
+		console.log('New Seller/Buyer online');	
 	});
 
-    // If user sends request to Broker
+    // Step 1: Handle Tasklet request
     socket.on('TaskletSendBroker', function (data) {
-        // Request received and sent to all users
-        io.sockets.emit('event', { zeit: new Date(), name: data.name || 'Anonym', cost: data.cost, privacy: data.privacy });
+        // Creating Tasklet ID
+		var taskletid = uuidV1();
+		// Request sent for illustrating on Website
+        io.sockets.emit('show', { zeit: new Date(), name: data.name || 'Anonym', taskletid: taskletid, cost: data.cost, privacy: data.privacy });
     });
 });
 
