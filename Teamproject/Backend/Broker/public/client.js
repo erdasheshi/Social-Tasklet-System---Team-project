@@ -3,7 +3,7 @@ $(document).ready(function(){
     var socket = io.connect();
 	
 	// Step 1: Illustrating the Tasklet request
-	socket.on('show', function (data) {
+	socket.on('showrequest', function (data) {
         var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(
@@ -19,6 +19,27 @@ $(document).ready(function(){
 				$('<span>').text('TaskletID: ' + data.taskletid + ' '),
                 // Requirements
                 $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
+        );
+        // scroll down
+        $('body').scrollTop($('body')[0].scrollHeight);
+    });
+	
+	// Step 3: Illustrating potential sellers
+	socket.on('showsellerinformation', function (data) {
+        var zeit = new Date(data.zeit);
+        $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+                // Name
+				$('<b>').text('Potential sellers for TaskletID ' + data.taskletid + ' from ' + data.name + ': ' ),
+                // Potential sellers
+                $('<span>').text(data.potentialseller))
         );
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);

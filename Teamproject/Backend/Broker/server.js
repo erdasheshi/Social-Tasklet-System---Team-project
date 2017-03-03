@@ -30,9 +30,29 @@ io.sockets.on('connection', function (socket) {
         // Creating Tasklet ID
 		var taskletid = uuidV1();
 		// Request sent for illustrating on Website
-        io.sockets.emit('show', { zeit: new Date(), name: data.name || 'Anonym', taskletid: taskletid, cost: data.cost, privacy: data.privacy });
+        io.sockets.emit('showrequest', { zeit: new Date(), name: data.name || 'Anonym', taskletid: taskletid, cost: data.cost, privacy: data.privacy });
+		
+		// Step 2: Information request to SFBroker
+		socket.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy }); 
     });
+	
+	// Step 3: Receiving potential seller information from SFBroker
+	socket.on('SFInformation', function (data) {
+		io.sockets.emit('showsellerinformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialseller: data.potentialseller });
+		//Step 4: Finding most suitable seller
+		var seller = scheduling(data.potentialseller);
+		// Step 5: Sending seller and buyer information to SFBroker
+		socket.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
+	// }
 });
 
+// Step 4: Scheduler chooses first element in array
+function scheduling(potentialseller, callback){
+
+var seller = alert(potentialseller[0]);
+
+callback(seller);
+
+}
 
 console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
