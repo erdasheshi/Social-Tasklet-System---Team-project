@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var conf = require('../config.json');
+var constants = require('../constants');
 
 var socket = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
 
@@ -51,8 +52,6 @@ router.get('/newtransaction', function(req, res) {
 router.post('/addtransaction_Acc', function(req, res) {
 
     // Get our form values. These rely on the "name" attributes
-    //var transactionType = req.body.type;
-
     var transactionBuyer = req.body.buyer;
     var transactionSeller = req.body.seller;
     var transactionComputation = req.body.computation;
@@ -60,7 +59,7 @@ router.post('/addtransaction_Acc', function(req, res) {
     var transactionStatus = req.body.status;
     var transactionTaskletID = req.body.tasklet_id;
 
-    socket.emit('SFWrite_Acc', { buyer: transactionBuyer, seller: transactionSeller, computation: transactionComputation, coins: transactionCoins, status: transactionStatus, tasklet_id: transactionTaskletID });
+    socket.emit('SFWrite_Acc', {type: constants.Accounting, buyer: transactionBuyer, seller: transactionSeller, computation: transactionComputation, coins: transactionCoins, status: transactionStatus, tasklet_id: transactionTaskletID });
     res.redirect("transactionlistAcc");
 });
 
@@ -71,7 +70,7 @@ router.post('/addtransaction_Friend', function(req, res) {
     var transactionUser_2 = req.body.user_2;
     var transactionStatus = req.body.status;
 
-    socket.emit('SFWrite_Friend', { user_1: transactionUser_1, user_2: transactionUser_2, status: transactionStatus });
+    socket.emit('SFWrite_Friend', {type: constants.Friendship, user_1: transactionUser_1, user_2: transactionUser_2, status: transactionStatus });
     res.redirect("transactionlistFriend");
 });
 

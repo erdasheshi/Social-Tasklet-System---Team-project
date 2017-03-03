@@ -9,7 +9,7 @@ var server = require('http').createServer(app)
 var mongoose = require('mongoose');
 var Accountings = require("../models/Accountings");
 var Friendships = require("../models/Friendships");
-var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
+var dbAccess = require('./dbAccess')
 
 server.listen(conf.ports.sfbroker_socket);
 
@@ -29,32 +29,12 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('SFWrite_Acc', function (data) {
 
-        // Get our form values. These rely on the "name" attributes
-        var transactionBuyer = data.buyer;
-        var transactionSeller = data.seller;
-        var transactionComputation = data.computation;
-        var transactionCoins = data.coins;
-        var transactionStatus = data.status;
-        var transactionTaskletID = data.tasklet_id;
-
-        var transaction = new Models.Accounting({ //You're entering a new transaction here
-            Buyer: transactionBuyer,
-            Seller: transactionSeller,
-            Computation: transactionComputation,
-            Coins: transactionCoins,
-            Status: transactionStatus,
-            Tasklet_ID: transactionTaskletID
-        });
-
-        transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-            if (error) {
-                console.error(error);
-            }
-        });
+        dbAccess.save(data);
     });
 
     socket.on('SFRead_Acc', function (data) {
 
+        console.log('SFRead_Acc');
         var accounting = mongoose.model("Accounting", Accountings.accountingSchema);
 
         accounting.find({},{},function(e,docs){
@@ -63,24 +43,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('SFWrite_Friend', function (data) {
-
-        // Get our form values. These rely on the "name" attributes
-        var transactionUser_1 = data.user_1;
-        var transactionUser_2 = data.user_2;
-        var transactionStatus = data.status;
-
-
-        var transaction = new Models.Friendship({ //You're entering a new transaction here
-            User_1: transactionUser_1,
-            User_2: transactionUser_2,
-            Status: transactionStatus
-        });
-
-        transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-            if (error) {
-                console.error(error);
-            }
-        });
+        dbAccess.save(data);
     });
 
     socket.on('SFRead_Friend', function (data) {
@@ -91,4 +54,20 @@ io.sockets.on('connection', function (socket) {
             socket.emit('SFRead_Friend', docs);
         });
     });
+});
+
+//Data exchange Broker/ SFBroker
+
+// Connect to broker
+var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
+
+// Add a connect listener
+socket_c.on('event', function(socket) {
+    console.log('Connected to Broker!');
+});
+
+socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
+
+socket_c.on("SFSelected", function(data){
+
 });
