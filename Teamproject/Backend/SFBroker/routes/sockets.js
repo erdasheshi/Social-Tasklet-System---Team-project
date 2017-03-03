@@ -47,5 +47,12 @@ socket_c.on('event', function(socket) {
 });
 
 socket_c.on("SFInformation", function(data){
+    socket_c.emit('SFInformation', {potentialseller: ['User_1', 'User_2', 'User_3'] });
+});
+
+socket_c.on("SFSelected", function(data){
+
+    
+
     socket_c.emit('SFSelected', {potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
