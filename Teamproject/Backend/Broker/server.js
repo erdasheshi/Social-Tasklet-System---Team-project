@@ -42,17 +42,16 @@ io.sockets.on('connection', function (socket) {
 		//Step 4: Finding most suitable seller
 		var seller = scheduling(data.potentialseller);
 		// Step 5: Sending seller and buyer information to SFBroker
+		console.log(seller);
         io.sockets.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
 	 });
 });
 
 // Step 4: Scheduler chooses first element in array
-function scheduling(potentialseller, callback){
+function scheduling(potentialseller) {
+	
+return potentialseller[0];
 
-var seller = alert(potentialseller[0]);
-
-callback(seller);
-
-}
+};
 
 console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
