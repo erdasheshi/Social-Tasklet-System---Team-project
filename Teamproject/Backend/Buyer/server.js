@@ -4,9 +4,17 @@ var express = require('express')
 ,   io = require('socket.io').listen(server)
 ,   conf = require('./config.json');
 
+if (process.argv.length <= 2) {
+    console.log("Port number needed");
+    process.exit(-1);
+}
+ 
+var port = process.argv[2];
+console.log('Port: ' + port);
+
 // Webserver - Client
 // auf den Port x schalten
-server.listen(conf.ports.buyer);
+server.listen(port);
 
 // Connect to broker
 var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
@@ -57,4 +65,4 @@ io.sockets.on('connection', function (socket) {
 });
 
 
-console.log('Buyer/Seller runs on http://127.0.0.1:' + conf.ports.buyer + '/');
+console.log('Buyer/Seller runs on http://127.0.0.1:' + port + '/');

@@ -20,4 +20,4 @@ start node SFBroker/app.js
 echo Start Broker
 start node Broker/server.js
 echo Start Buyer
-start node Buyer/server.js
+start node Buyer/server.js 8080
