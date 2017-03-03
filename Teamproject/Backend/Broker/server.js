@@ -43,7 +43,7 @@ io.sockets.on('connection', function (socket) {
 		var seller = scheduling(data.potentialseller);
 		// Step 5: Sending seller and buyer information to SFBroker
 		socket.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
-	// }
+	 });
 });
 
 // Step 4: Scheduler chooses first element in array
