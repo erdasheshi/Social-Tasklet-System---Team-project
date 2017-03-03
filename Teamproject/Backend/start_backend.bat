@@ -1,6 +1,6 @@
 @echo off
 
-cd 
+cd Broker
 echo Prepare Broker
 call npm install
 
