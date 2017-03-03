@@ -25,7 +25,7 @@ function saveAccounting(data){
 
     transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
         if (error) {
-            console.error(error);
+             callback(error, data);
         }
     });
 }
@@ -45,7 +45,7 @@ function saveFriendship(data){
 
     transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
         if (error) {
-            console.error(error);
+            callback(error,data);
         }
     });
 }
@@ -59,7 +59,7 @@ function findAccounting(data){
 function findFriendship(data){
     var friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
     var result = friendship.find({}, {});
-    return result;
+    return result
 }
 
 module.exports = {

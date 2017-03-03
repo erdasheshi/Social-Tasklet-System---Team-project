@@ -34,6 +34,10 @@ io.sockets.on('connection', function (socket) {
             socket.emit('SFRead_Friend', data);
         })
     });
+
+    socket.on('TaskletCalculated', function (data){
+
+    })
 });
 
 //Data exchange Broker/ SFBroker
@@ -49,13 +53,17 @@ socket_c.on('event', function(socket) {
 });
 
 socket_c.on('SFInformation', function(data){
-    console.log('SFInformation received');
-    socket_c.emit('SFInformation', {potentialseller: ['User_1', 'User_2', 'User_3'] });
+
+    // further Logic for QoC needed! --> logic.js
+
+    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
 
-socket_c.on('SFSelected', function(data){
+socket_c.on('SellerBuyer', function(data){
 
-    dbAccess.save()
+    dbAccess.save({type: constants.Accounting, buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: costants.AccountingStatusBlocked, tasklet_id: data.taskletid }, function(err, data){
+        socket_c.emit('SellerBuyer', { success: false, buyer: data.buyer, seller: data.seller, status: costants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+    })
 
-    socket_c.emit('SFSelected', {potentialseller: ['User_1', 'User_2', 'User_3'] });
+    socket_c.emit('SellerBuyer', { success: true, buyer: data.buyer, seller: data.seller, status: costants.AccountingStatusBlocked, tasklet_id: data.taskletid});
 });
