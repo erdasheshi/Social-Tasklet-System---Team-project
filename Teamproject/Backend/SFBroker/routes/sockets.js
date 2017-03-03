@@ -61,7 +61,7 @@ socket_c.on('SFInformation', function(data){
 
 socket_c.on('SellerBuyer', function(data){
 
-    dbAccess.save({type: constants.Accounting, buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: costants.AccountingStatusBlocked, tasklet_id: data.taskletid }, function(err, data){
+    dbAccess.save({type: constants.Accounting, buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid }, function(err, data){
         socket_c.emit('SellerBuyer', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
     })
 

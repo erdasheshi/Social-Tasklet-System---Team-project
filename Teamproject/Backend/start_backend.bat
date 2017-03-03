@@ -12,6 +12,10 @@ cd ../SFBroker
 echo Prepare SFBroker
 call npm install
 
+cd ../SFBroker_DirectAccess
+echo Prepare SFBroker_DirectAccess
+call npm install
+
 cd ..
 echo Start MongoDB
 start MongoDB/Server/3.4/bin/mongod --dbpath SFBroker/data
