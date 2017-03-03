@@ -52,13 +52,13 @@ io.sockets.on('connection', function (socket) {
 
 		
         // Tasklet can be calculated
-        io.sockets.emit('TaskletCalc', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
+        //io.sockets.emit('TaskletCalc', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
 
         // Tasklet can be calculated
-        io.sockets.emit('TaskletFinished', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
+        //io.sockets.emit('TaskletFinished', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
 
         // Tasklet can be calculated
-        io.sockets.emit('TaskletReceived', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', buyer: 'User ID'});
+        //io.sockets.emit('TaskletReceived', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', buyer: 'User ID'});
         
 
 	});

@@ -31,9 +31,9 @@ io.sockets.on('connection', function (socket) {
 		var taskletid = uuidV1();
 		// Request sent for illustrating on Website
         io.sockets.emit('showrequest', { zeit: new Date(), name: data.name || 'Anonym', taskletid: taskletid, cost: data.cost, privacy: data.privacy });
-		
+
 		// Step 2: Information request to SFBroker
-		socket.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy }); 
+		io.sockets.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy });
     });
 	
 	// Step 3: Receiving potential seller information from SFBroker
@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket) {
 		//Step 4: Finding most suitable seller
 		var seller = scheduling(data.potentialseller);
 		// Step 5: Sending seller and buyer information to SFBroker
-		socket.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
+        io.sockets.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
 	 });
 });
 

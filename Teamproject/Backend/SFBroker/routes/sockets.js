@@ -41,18 +41,21 @@ io.sockets.on('connection', function (socket) {
 // Connect to broker
 var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
 
+socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
+
 // Add a connect listener
 socket_c.on('event', function(socket) {
     console.log('Connected to Broker!');
 });
 
-socket_c.on("SFInformation", function(data){
+socket_c.on('SFInformation', function(data){
+    console.log('SFInformation received');
     socket_c.emit('SFInformation', {potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
 
-socket_c.on("SFSelected", function(data){
+socket_c.on('SFSelected', function(data){
 
-    
+    dbAccess.save()
 
     socket_c.emit('SFSelected', {potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
