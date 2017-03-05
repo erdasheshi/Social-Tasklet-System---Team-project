@@ -25,7 +25,7 @@ function saveAccounting(data){
 
     transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
         if (error) {
-             callback(error, data);
+            return next(error);
         }
     });
 }
@@ -45,7 +45,7 @@ function saveFriendship(data){
 
     transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
         if (error) {
-            callback(error,data);
+            return next(error);
         }
     });
 }

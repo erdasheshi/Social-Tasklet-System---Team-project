@@ -44,6 +44,8 @@ io.sockets.on('connection', function (socket) {
 		// Step 5: Sending seller and buyer information to SFBroker
         io.sockets.emit('SellerBuyer', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
 	 });
+
+	// Step
 });
 
 // Step 4: Scheduler chooses first element in array
