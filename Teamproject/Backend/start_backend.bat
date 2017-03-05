@@ -25,9 +25,14 @@ echo Start Broker
 start node Broker/server.js
 echo Start Buyer
 start node Buyer/server.js 8080
+echo Start Seller
+start node Buyer/server.js 8081
 
 echo Open Buyer URL
 start http://127.0.0.1:8080/
+
+echo Open Buyer URL
+start http://127.0.0.1:8081/
 
 echo Open Broker URL
 start http://127.0.0.1:8003/
