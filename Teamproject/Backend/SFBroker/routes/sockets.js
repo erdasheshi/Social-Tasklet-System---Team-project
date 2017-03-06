@@ -6,7 +6,9 @@ var server = require('http').createServer(app)
     ,   io = require('socket.io').listen(server)
     ,   conf = require('../config.json');
 
-var dbAccess = require('./dbAccess')
+var dbAccess = require('./dbAccess');
+var accountingTransaction = require('../classes/AccountingTransaction');
+var friendshipTransaction = require('../classes/FriendshipTransaction');
 var constants = require('../constants');
 
 server.listen(conf.ports.sfbroker_socket);
@@ -16,17 +18,19 @@ io.sockets.on('connection', function (socket) {
     socket.emit('SFConnection', { zeit: new Date(), text: 'Connected!' });
 
     socket.on('SFWrite_Acc', function (data) {
-        dbAccess.save(data);
+        var accTransaction = new accountingTransaction(data);
+        accTransaction.save();
     });
 
     socket.on('SFRead_Acc', function (data) {
-        dbAccess.find({ type: constants.Accounting }).exec(function(e, data){
+        dbAccess.find({ type: constants.Accounting }).exec(function(e, data) {
             socket.emit('SFRead_Acc', data);
         })
     });
 
     socket.on('SFWrite_Friend', function (data) {
-        dbAccess.save(data);
+        var friendTransaction= new friendshipTransaction(data);
+        friendTransaction.save();
     });
 
     socket.on('SFRead_Friend', function (data) {
@@ -60,6 +64,7 @@ socket_c.on('SFInformation', function(data){
     socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
 
+<<<<<<< HEAD
 // Step 5: Receiving Seller and Buyer informations from Broker
 socket_c.on('SellerBuyerInformation', function(data){
 
@@ -67,6 +72,13 @@ socket_c.on('SellerBuyerInformation', function(data){
         // Step 7: Send notification of blocked money to Broker
 		if(err){
             socket_c.emit('SellerBuyerInformation', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
+=======
+socket_c.on('SellerBuyer', function(data){
+    var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+    accTransaction.save( function(err, data){
+        if(err){
+            socket_c.emit('SellerBuyer', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+>>>>>>> origin/master
         }
         else{
             socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
