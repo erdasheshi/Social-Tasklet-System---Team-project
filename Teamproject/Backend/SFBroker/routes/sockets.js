@@ -24,12 +24,13 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('SFRead_Acc', function (data) {
         dbAccess.find({ type: constants.Accounting }).exec(function(e, data) {
+            console.log(data);
             socket.emit('SFRead_Acc', data);
         })
     });
 
     socket.on('SFWrite_Friend', function (data) {
-        var friendTransaction= new friendshipTransaction(data);
+        var friendTransaction = new friendshipTransaction(data);
         friendTransaction.save();
     });
 
@@ -42,6 +43,17 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletCalculated', function (data){
 
     })
+    // Step 11: Tasklet finished + Tasklet cycles known
+    socket.on('TaskletCycles', function(data){
+        dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, data) {
+            var accTransaction = new accountingTransaction(data);
+            accTransaction.computation = data.computation;
+            accTransaction.coins = data.computation*2;
+            accTransaction.status = constants.AccountingStatusComputed;
+            accTransaction.update();
+            socket.emit('TaskletCyclesMoneyBlocked', { success: true, buyer: accTransaction.buyer, seller: accTransaction.seller, status: accTransaction.status, taskletid: data.taskletid});
+        })
+    });
 });
 
 //Data exchange Broker/ SFBroker
@@ -62,7 +74,8 @@ socket_c.on('SFInformation', function(data){
 
 // Step 5: Receiving Seller and Buyer informations from Broker
 socket_c.on('SellerBuyerInformation', function(data){
-    var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+    var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
     accTransaction.save();
     socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
 });
+

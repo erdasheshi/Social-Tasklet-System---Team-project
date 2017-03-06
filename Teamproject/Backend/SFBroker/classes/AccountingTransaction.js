@@ -12,22 +12,34 @@ function AccountingTransaction(data) {
     this.computation = data.computation;
     this.coins = data.coins;
     this.status = data.status;
-    this.taskletID = data.tasklet_id;
+    this.taskletid = data.taskletid;
 }
 
 AccountingTransaction.prototype.save =  function(){
     var transaction = new Models.Accounting({ //You're entering a new transaction here
-        Buyer: this.buyer,
-        Seller: this.seller,
-        Computation: this.computation,
-        Coins: this.coins,
-        Status: this.status,
-        Tasklet_ID: this.taskletID
+        buyer: this.buyer,
+        seller: this.seller,
+        computation: this.computation,
+        coins: this.coins,
+        status: this.status,
+        taskletid: this.taskletid
         });
 
-    transaction.save(function(error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-        if (error) {
-            return next(error);
-           }
-        });
-    }
+    console.log(this.buyer);
+    transaction.save({}, function (error, data) {
+        if(error){
+            console.error(error.stack || error.message);
+            return;
+        }
+    });
+}
+
+AccountingTransaction.prototype.update =  function(){
+    var transaction = new Models.Accounting();
+    transaction.update({taskletid: this.taskletid}, { buyer: this.buyer, seller: this.seller, computation: this.computation, coins: this.coins, status: this.status}, function (error, data) {
+        if(error){
+            console.error(error.stack || error.message);
+            return;
+        }
+    });
+}
