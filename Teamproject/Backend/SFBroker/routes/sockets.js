@@ -64,5 +64,5 @@ socket_c.on('SFInformation', function(data){
 socket_c.on('SellerBuyerInformation', function(data){
     var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
     accTransaction.save();
-    socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+    socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
 });

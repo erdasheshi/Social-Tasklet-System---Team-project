@@ -20,10 +20,24 @@ server.listen(port);
 // Connect to broker
 var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
 
-// Add a connect listener
-socket_c.on('event', function(socket) {
-    console.log('Connected to Broker!');
+
+//Step 8: Receiving the coins block status
+socket_c.on('CoinsBlock', function(data){
+	if(port == data.buyer || port == data.seller){
+	// Step 8: Status sent for illustrating on website
+		io.sockets.emit('ShowCoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller, status: data.status, taskletid: data.taskletid});
+	}
+	
+	if(port == data.buyer){
+	
+		io.sockets.emit('ShowTaskletCalc', {zeit: new Date(), seller: data.seller, buyer: data.buyer, taskletid: data.taskletid});
+	
+	}
+	
+		
 });
+
+socket_c.emit('event', {connection : 'I want to connect'});
 
 // static files
 app.use(express.static(__dirname + '/public'));
@@ -45,10 +59,6 @@ io.sockets.on('connection', function (socket) {
 		// Step 1: Request sent to Broker
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
 
-		
-        // Tasklet can be calculated
-        //io.sockets.emit('TaskletCalc', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', seller: 'User ID'});
-
         // Tasklet can be calculated
         //io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', seller: 'User ID'});
 
@@ -58,15 +68,17 @@ io.sockets.on('connection', function (socket) {
 
 	});
 	
-	//Step 8: Receiving the coins block status
-	socket.on('CoinsBlock', function(data){
-		if(port == data.buyer || port == data.seller){
-		// Step 8: Status sent for illustrating on website
-		io.sockets.emit('ShowCoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller,
-										status: data.status, taskletid: data.taskletid});
-		}
-		
+	socket.on('SendTaskletToSeller', function (data){
+		console.log('Bei Buyer Server'+ data.seller);
+		var socket_s = require('socket.io-client')('http://localhost:' + data.seller)
+		socket_s.emit('SendingTaskletToSeller', {taskletid: data.taskletid, seller: data.seller, buyer: data.buyer});
 	});
+	
+	socket.on('SendingTaskletToSeller', function (data) {
+	io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), buyer: data.buyer, taskletid: data.taskletid});
+	});
+	
+	
 });
 
 

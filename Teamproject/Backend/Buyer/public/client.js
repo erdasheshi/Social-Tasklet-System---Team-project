@@ -27,7 +27,7 @@ $(document).ready(function(){
 	socket.on('ShowCoinsBlock', function (data) {
         var zeit = new Date(data.zeit);
 		// Coins block was successful
-		if(data.success){
+		if(data.success == true){
 		 $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
@@ -45,7 +45,7 @@ $(document).ready(function(){
 		}
 		
 		// Coins block was not successful
-		if(!data.success){
+		else {
         $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
@@ -64,7 +64,7 @@ $(document).ready(function(){
 		}
     });
 
-    socket.on('TaskletCalc', function (data) {
+    socket.on('ShowTaskletCalc', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_send";
             //noinspection JSAnnotator,JSAnnotator
@@ -89,7 +89,7 @@ $(document).ready(function(){
                     value: "Send Tasklet to Seller"
                 })
         );
-        $('#' + buttonid).click({id: data.taskletid}, sendTaskletToSeller);
+        $('#' + buttonid).click({id: data.taskletid, seller: data.seller, buyer: data.buyer}, sendTaskletToSeller);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -128,7 +128,7 @@ $(document).ready(function(){
 
     });
 
-    socket.on('TaskletReceived', function (data) {
+    socket.on('ShowTaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_received";
         var cycles = data.taskletid +"_computation";
@@ -154,10 +154,10 @@ $(document).ready(function(){
                 value: "Send Confirmation to SFBroker"
                 }),
                 $('<input/>').attr({
-                id: cycles, placeholder: "computation_cylces"
+                id: computation, placeholder: "Computation_Cylces"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid, computation: computation}, sendConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -191,37 +191,17 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Tasklet '),
+                $('<span>').text('TaskletID '),
                 // ID
-                $('<b>').text(tasklet.data.id),
+                $('<span>').text(tasklet.data.id),
 
-                $('<b>').text(' send to Seller')
+                $('<span>').text(' send to ' + tasklet.data.seller)
             )
         )
+		socket.emit('SendTaskletToSeller', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer});
     };
 
-    // Trigger send to Seller
-    function sendConfirmationToSFBroker(tasklet){
-        var zeit = new Date();
-        $(this).prop("disabled",true);
-        $('#content').append(
-            $('<li></li>').append(
-                // Uhrzeit
-                $('<span>').text('[' +
-                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
-                    + ':' +
-                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
-                    + '] '
-                ),
-                $('<b>').text('Tasklet '),
-                // ID
-                $('<b>').text(tasklet.data.id),
-
-                $('<b>').text(' confirmed')
-            )
-        )
-    };
-
+   
     // Trigger send computation cycles to SFBroker
     function sendConfirmationToSFBroker(tasklet){
         var zeit = new Date();
@@ -236,13 +216,14 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Computation cycles of tasklet '),
+                $('<span>').text('Computation cycles' + tasklet.data.computation +' of Tasklet '),
                 // ID
-                $('<b>').text(tasklet.data.id),
+                $('<span>').text(tasklet.data.id),
 
-                $('<b>').text(' send')
+                $('<span>').text(' send')
             )
         )
+		socket.emit('TaskletCycles', {computation: tasklet.data.computation, taskletid: tasklet.data.id});
     };
 
 });

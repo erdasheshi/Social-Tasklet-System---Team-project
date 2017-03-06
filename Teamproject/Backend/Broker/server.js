@@ -49,9 +49,7 @@ io.sockets.on('connection', function (socket) {
 	 // Step 7: Receiving potential seller information from SFBroker
 	socket.on('SellerBuyerInformation', function (data) {
 		// Step 8: Informing buyer and seller about the coins blocking
-		io.sockets.emit('CoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller,
-										status: data.status, taskletid: data.taskletid});
-	
+		io.sockets.emit('CoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller, status: data.status, taskletid: data.taskletid});
 	});
 	
 });
