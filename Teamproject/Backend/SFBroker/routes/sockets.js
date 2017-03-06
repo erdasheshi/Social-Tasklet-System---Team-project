@@ -52,6 +52,7 @@ socket_c.on('event', function(socket) {
     console.log('Connected to Broker!');
 });
 
+// Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function(data){
 
     // further Logic for QoC needed! --> logic.js
@@ -59,14 +60,16 @@ socket_c.on('SFInformation', function(data){
     socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
 
-socket_c.on('SellerBuyer', function(data){
+// Step 5: Receiving Seller and Buyer informations from Broker
+socket_c.on('SellerBuyerInformation', function(data){
 
     dbAccess.save({type: constants.Accounting, buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid }, function(err, data){
-        if(err){
-            socket_c.emit('SellerBuyer', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+        // Step 7: Send notification of blocked money to Broker
+		if(err){
+            socket_c.emit('SellerBuyerInformation', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
         }
         else{
-            socket_c.emit('SellerBuyer', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
+            socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
         }
     })
 });

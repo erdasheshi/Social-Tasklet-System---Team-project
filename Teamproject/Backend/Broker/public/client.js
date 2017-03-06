@@ -1,9 +1,9 @@
 $(document).ready(function(){
     // WebSocket
     var socket = io.connect();
-	
+
 	// Step 1: Illustrating the Tasklet request
-	socket.on('showrequest', function (data) {
+	socket.on('ShowTaskletRequest', function (data) {
         var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(
@@ -25,7 +25,7 @@ $(document).ready(function(){
     });
 	
 	// Step 3: Illustrating potential sellers
-	socket.on('showsellerinformation', function (data) {
+	socket.on('ShowSellerInformation', function (data) {
         var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(

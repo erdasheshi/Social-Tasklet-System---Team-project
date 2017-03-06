@@ -2,8 +2,8 @@ $(document).ready(function(){
     // WebSocket
     var socket = io.connect();
 	
-	//Step 1: Sending Tasklet request
-	socket.on('TaskletRequest', function (data) {
+	//Step 1: Showing Tasklet request
+	socket.on('ShowTaskletRequest', function (data) {
         var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(
@@ -22,10 +22,51 @@ $(document).ready(function(){
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
     });
+	
+	// Step 8: Showing coins block status
+	socket.on('ShowCoinsBlock', function (data) {
+        var zeit = new Date(data.zeit);
+		// Coins block was successful
+		if(data.success){
+		 $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+				$('<span>').text('Coins from ' + data.buyer + ' were successfully blocked for ' + data.seller + ' regarding TaskletID ' + data.taskletid))
+				);
+        
+		// scroll down
+        $('body').scrollTop($('body')[0].scrollHeight);
+		}
+		
+		// Coins block was not successful
+		if(!data.success)
+        $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+				$('<span>').text('Alert! Coins from ' + data.buyer + ' were not successfully blocked for ' + data.seller + ' regarding TaskletID ' + data.taskletid +
+				' - Transaction was cancelled.'))
+				);
+        
+		// scroll down
+        $('body').scrollTop($('body')[0].scrollHeight);
+
+    });
 
     socket.on('TaskletCalc', function (data) {
         var zeit = new Date(data.zeit);
-        var button_id = data.tasklet_id +"_send";
+        var buttonid = data.taskletid +"_send";
             //noinspection JSAnnotator,JSAnnotator
             $('#content').append(
             $('<li></li>').append(
@@ -38,17 +79,17 @@ $(document).ready(function(){
                 ),
                 $('<b>').text('Buyer: Tasklet '),
                 // ID
-                $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
+                $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' ready for calculation - '),
                 // Text
                 $('<span>').text('Seller: ' + data.seller + ' ' )),
                 $('<input/>').attr({
                     type: "button",
-                    id: button_id,
+                    id: buttonid,
                     value: "Send Tasklet to Seller"
                 })
         );
-        $('#' + button_id).click({id: data.tasklet_id}, sendTaskletToSeller);
+        $('#' + buttonid).click({id: data.taskletid}, sendTaskletToSeller);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -57,7 +98,7 @@ $(document).ready(function(){
 
     socket.on('TaskletFinished', function (data) {
         var zeit = new Date(data.zeit);
-        var button_id = data.tasklet_id +"_finished";
+        var buttonid = data.taskletid +"_finished";
         //noinspection JSAnnotator,JSAnnotator
         $('#content').append(
             $('<li></li>').append(
@@ -70,17 +111,17 @@ $(document).ready(function(){
                 ),
                 $('<b>').text('Buyer: Tasklet '),
                 // ID
-                $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
+                $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' result received from '),
                 // Text
                 $('<span>').text('Seller:' + data.seller + ' ' )),
             $('<input/>').attr({
                 type: "button",
-                id: button_id,
+                id: buttonid,
                 value: "Send Confirmation to SFBroker"
             })
         );
-        $('#' + button_id).click({id: data.tasklet_id}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -89,8 +130,8 @@ $(document).ready(function(){
 
     socket.on('TaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
-        var button_id = data.tasklet_id +"_received";
-        var cycles = data.tasklet_id +"_computation";
+        var buttonid = data.taskletid +"_received";
+        var cycles = data.taskletid +"_computation";
         //noinspection JSAnnotator,JSAnnotator
         $('#content').append(
             $('<li></li>').append(
@@ -103,20 +144,20 @@ $(document).ready(function(){
                 ),
                 $('<b>').text('Seller: Tasklet '),
                 // ID
-                $('<b>').text(typeof(data.tasklet_id) != 'undefined' ? data.tasklet_id : ''),
+                $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' calculated - '),
                 // Text
                 $('<span>').text('Buyer:' + data.buyer + ' ' )),
                 $('<input/>').attr({
                 type: "button",
-                id: button_id,
+                id: buttonid,
                 value: "Send Confirmation to SFBroker"
                 }),
                 $('<input/>').attr({
                 id: cycles, placeholder: "computation_cylces"
             })
         );
-        $('#' + button_id).click({id: data.tasklet_id}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -126,11 +167,10 @@ $(document).ready(function(){
     // Sending a message
     function send(){
         // Reading the input fields
-        var name = $('#name').val();
         var cost = $('#cost').val();
 		var privacy = $('#privacy').val();
         // Sending socket
-        socket.emit('TaskletRequest', {name: name, cost: cost, privacy: privacy});
+        socket.emit('TaskletRequest', {cost: cost, privacy: privacy});
         // Empty input fields
         $('#cost').val('');
 		$('#privacy').val('');

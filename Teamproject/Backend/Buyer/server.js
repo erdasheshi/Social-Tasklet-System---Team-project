@@ -2,7 +2,8 @@ var express = require('express')
 ,   app = express()
 ,   server = require('http').createServer(app)
 ,   io = require('socket.io').listen(server)
-,   conf = require('./config.json');
+,   conf = require('./config.json')
+, 	constants = require('./constants');
 
 // Processing the stated port number
 if (process.argv.length <= 2) {
@@ -26,7 +27,7 @@ socket_c.on('event', function(socket) {
 
 socket_c.on('connection', function () {
     // socket connected
-    console.log('Connected to Broker via connecton!');
+    console.log('Connected to Broker via connection!');
 });
 
 socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
@@ -45,22 +46,33 @@ io.sockets.on('connection', function (socket) {
 
 	// If user sends request to Broker
 	socket.on('TaskletRequest', function (data) {
-		// Step 1: Request sent for illustrating on Website
-		io.sockets.emit('TaskletRequest', { zeit: new Date(), name: data.name, cost: data.cost, privacy: data.privacy });
+		var name = port;
+		// Step 1: Request sent for illustrating on website
+		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
 		// Step 1: Request sent to Broker
-		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: data.name, cost: data.cost, privacy: data.privacy });
+		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
 
 		
         // Tasklet can be calculated
-        //io.sockets.emit('TaskletCalc', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
+        //io.sockets.emit('TaskletCalc', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', seller: 'User ID'});
 
         // Tasklet can be calculated
-        //io.sockets.emit('TaskletFinished', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', seller: 'User ID'});
+        //io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', seller: 'User ID'});
 
         // Tasklet can be calculated
-        //io.sockets.emit('TaskletReceived', { zeit: new Date(), tasklet_id: data.tasklet_id || 'Anonym', buyer: 'User ID'});
+        //io.sockets.emit('TaskletReceived', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', buyer: 'User ID'});
         
 
+	});
+	
+	//Step 8: Receiving the coins block status
+	socket.on('CoinsBlock', function(data){
+		if(port == data.buyer){
+		// Step 8: Status sent for illustrating on website
+		io.sockets.emit('ShowCoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller,
+										status: data.status, taskletid: data.taskletid});
+		}
+		
 	});
 });
 
