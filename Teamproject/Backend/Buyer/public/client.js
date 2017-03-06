@@ -131,7 +131,6 @@ $(document).ready(function(){
     socket.on('ShowTaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_received";
-        var cycles = data.taskletid +"_computation";
         //noinspection JSAnnotator,JSAnnotator
         $('#content').append(
             $('<li></li>').append(
@@ -147,17 +146,17 @@ $(document).ready(function(){
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' calculated - '),
                 // Text
-                $('<span>').text('Buyer:' + data.buyer + ' ' )),
+                $('<span>').text('Buyer: ' + data.buyer + ' ' )),
                 $('<input/>').attr({
                 type: "button",
                 id: buttonid,
                 value: "Send Confirmation to SFBroker"
                 }),
                 $('<input/>').attr({
-                id: computation, placeholder: "Computation_Cylces"
+                id: 'computation', placeholder: "Computation_Cylces"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid, computation: computation}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -191,7 +190,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<span>').text('TaskletID '),
+                $('<span>').text('Tasklet '),
                 // ID
                 $('<span>').text(tasklet.data.id),
 
@@ -205,8 +204,8 @@ $(document).ready(function(){
     // Trigger send computation cycles to SFBroker
     function sendConfirmationToSFBroker(tasklet){
         var zeit = new Date();
+		var computation = $('#computation').val();
         $(this).prop("disabled",true);
-        $('#' + tasklet.data.id + "_computation")
         $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
@@ -216,14 +215,15 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<span>').text('Computation cycles' + tasklet.data.computation +' of Tasklet '),
+                $('<span>').text('Computation cycles ' + computation +' of Tasklet '),
                 // ID
                 $('<span>').text(tasklet.data.id),
 
                 $('<span>').text(' send')
             )
         )
-		socket.emit('TaskletCycles', {computation: tasklet.data.computation, taskletid: tasklet.data.id});
+		
+		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id});
     };
 
 });
