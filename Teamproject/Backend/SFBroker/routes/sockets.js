@@ -68,12 +68,6 @@ socket_c.on('SFInformation', function(data){
 // Step 5: Receiving Seller and Buyer informations from Broker
 socket_c.on('SellerBuyerInformation', function(data){
     var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
-    accTransaction.save( function(err, data){
-        if(err){
-            socket_c.emit('SellerBuyerInformation', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
-        }
-        else{
-            socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
-        }
-    })
+    accTransaction.save();
+    socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
 });
