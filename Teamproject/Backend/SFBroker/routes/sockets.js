@@ -64,21 +64,13 @@ socket_c.on('SFInformation', function(data){
     socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['User_1', 'User_2', 'User_3'] });
 });
 
-<<<<<<< HEAD
+
 // Step 5: Receiving Seller and Buyer informations from Broker
 socket_c.on('SellerBuyerInformation', function(data){
-
-    dbAccess.save({type: constants.Accounting, buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid }, function(err, data){
-        // Step 7: Send notification of blocked money to Broker
-		if(err){
-            socket_c.emit('SellerBuyerInformation', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
-=======
-socket_c.on('SellerBuyer', function(data){
     var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
     accTransaction.save( function(err, data){
         if(err){
-            socket_c.emit('SellerBuyer', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
->>>>>>> origin/master
+            socket_c.emit('SellerBuyerInformation', { success: false, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, tasklet_id: data.taskletid});
         }
         else{
             socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
