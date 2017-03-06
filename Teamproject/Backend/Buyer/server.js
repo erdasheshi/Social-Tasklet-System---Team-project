@@ -25,13 +25,6 @@ socket_c.on('event', function(socket) {
     console.log('Connected to Broker!');
 });
 
-socket_c.on('connection', function () {
-    // socket connected
-    console.log('Connected to Broker via connection!');
-});
-
-socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
-
 // static files
 app.use(express.static(__dirname + '/public'));
 
@@ -67,7 +60,7 @@ io.sockets.on('connection', function (socket) {
 	
 	//Step 8: Receiving the coins block status
 	socket.on('CoinsBlock', function(data){
-		if(port == data.buyer){
+		if(port == data.buyer || port == data.seller){
 		// Step 8: Status sent for illustrating on website
 		io.sockets.emit('ShowCoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller,
 										status: data.status, taskletid: data.taskletid});

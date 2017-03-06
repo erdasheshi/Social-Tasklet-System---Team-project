@@ -45,7 +45,7 @@ $(document).ready(function(){
 		}
 		
 		// Coins block was not successful
-		if(!data.success)
+		if(!data.success){
         $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
@@ -61,7 +61,7 @@ $(document).ready(function(){
         
 		// scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
-
+		}
     });
 
     socket.on('TaskletCalc', function (data) {
