@@ -51,17 +51,12 @@ var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.brok
 
 socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
 
-// Add a connect listener
-socket_c.on('event', function(socket) {
-    console.log('Connected to Broker!');
-});
-
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function(data){
 
     // further Logic for QoC needed! --> logic.js
 
-    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['User_1', 'User_2', 'User_3'] });
+    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['8081', '8082', '8083'] });
 });
 
 
