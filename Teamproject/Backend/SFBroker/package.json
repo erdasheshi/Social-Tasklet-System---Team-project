@@ -17,7 +17,8 @@
     "mongoose": "~4.8.4",
     "mpromise": "~0.5.5",
 	"socket.io": "*",
-    "socket.io-client": "*"
-
+    "socket.io-client": "*",
+    "lodash": "4.17.*",
+    "json-serialize": "1.1.3"
   }
 }
