@@ -22,7 +22,6 @@ router.get('/transactionlistAcc', function(req, res) {
 
     socket.on('SFRead_Acc', function (docs) {
         // socket connected
-        console.log(docs);
         res.render('transactionlistAcc', {
             "transactionlistAcc" : docs
         });

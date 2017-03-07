@@ -1,4 +1,5 @@
 var express = require('express');
+var _ = require('lodash');
 var app = express();
 
 // websocket
@@ -24,7 +25,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('SFRead_Acc', function (data) {
         dbAccess.find({ type: constants.Accounting }).exec(function(e, data) {
-            console.log(data);
             socket.emit('SFRead_Acc', data);
         })
     });
@@ -45,13 +45,21 @@ io.sockets.on('connection', function (socket) {
     })
     // Step 11: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function(data){
-        dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, data) {
-            var accTransaction = new accountingTransaction(data);
-            accTransaction.computation = data.computation;
-            accTransaction.coins = data.computation*2;
-            accTransaction.status = constants.AccountingStatusComputed;
+        var computation = data.computation;
+        dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, res) {
+            var accTransaction = new accountingTransaction({buyer: res.buyer, seller: res.seller, computation: computation, coins: computation, status: constants.AccountingStatusComputed, taskletid: res.taskletid});
             accTransaction.update();
-            socket.emit('TaskletCyclesMoneyBlocked', { success: true, buyer: accTransaction.buyer, seller: accTransaction.seller, status: accTransaction.status, taskletid: data.taskletid});
+            socket.emit('TaskletCyclesMoneyBlocked', res);
+        })
+    });
+
+
+    socket.on('TaskletResultConfirm', function(data){
+        var computation = data.computation;
+        dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, res) {
+            var accTransaction = new accountingTransaction({buyer: res.buyer, seller: res.seller, computation: res.computation, coins: res.coins, status: constants.AccountingStatusConfirmed, taskletid: res.taskletid});
+            accTransaction.update();
+            console.log('Tasklet ' + res.taskletid + ' confirmed!');
         })
     });
 });

@@ -10,7 +10,7 @@ function findAccounting(data){
     if(typeof data.taskletid == 'undefined'){
         var result = accounting.find({}, {});
     }else{
-        var result = accounting.findOne({ Tasklet_ID : data.taskletid });
+        var result = accounting.findOne({ 'taskletid' : data.taskletid });
     }
     return result
 }

@@ -19,7 +19,7 @@ server.listen(port);
 
 // Connect to broker
 var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
-
+var socket_sf = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket)
 
 //Step 8: Receiving the coins block status
 socket_c.on('CoinsBlock', function(data){
@@ -59,12 +59,9 @@ io.sockets.on('connection', function (socket) {
 		// Step 1: Request sent to Broker
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
 
-        // Tasklet can be calculated
-        //io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', seller: 'User ID'});
 
         // Tasklet can be calculated
         //io.sockets.emit('TaskletReceived', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', buyer: 'User ID'});
-        
 
 	});
 	
@@ -77,8 +74,38 @@ io.sockets.on('connection', function (socket) {
 	socket.on('SendingTaskletToSeller', function (data) {
 	io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), buyer: data.buyer, taskletid: data.taskletid});
 	});
-	
-	
+
+    socket.on('TaskletCycles', function (data) {
+        socket_sf.emit('TaskletCycles', data);
+    });
+
+    socket.on('ReturnTaskletToBuyer', function (data){
+        var socket_b = require('socket.io-client')('http://localhost:' + data.buyer)
+        socket_b.emit('SendTaskletResultToBuyer', {taskletid: data.taskletid, seller: data.seller, buyer: data.buyer});
+    });
+
+    socket.on('SendTaskletResultToBuyer', function (data){
+        console.log('Tasklet result received from '+ data.seller);
+        io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid, seller: data.seller, buyer: data.buyer });
+    });
+
+    socket.on('TaskletResultConfirm', function (data){
+        console.log('Confirm Tasklet to SF Broker!');
+        socket_sf.emit('TaskletResultConfirm', data);
+    });
+
+});
+
+socket_sf.on('TaskletCyclesMoneyBlocked', function(data){
+	console.log('Money for Cycles Blocked!');
+    if(port == data.seller) {
+        io.sockets.emit('TaskletCyclesMoneyBlocked', {
+            zeit: new Date(),
+            seller: data.seller,
+            buyer: data.buyer,
+            taskletid: data.taskletid
+        });
+    }
 });
 
 

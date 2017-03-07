@@ -2,7 +2,7 @@ var constants = require('../constants');
 var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
 
 var mongoose = require('mongoose');
-//var Accountings = require("../models/Accountings");
+var Accountings = require("../models/Accountings");
 
 module.exports = AccountingTransaction
 
@@ -35,11 +35,20 @@ AccountingTransaction.prototype.save =  function(){
 }
 
 AccountingTransaction.prototype.update =  function(){
-    var transaction = new Models.Accounting();
-    transaction.update({taskletid: this.taskletid}, { buyer: this.buyer, seller: this.seller, computation: this.computation, coins: this.coins, status: this.status}, function (error, data) {
-        if(error){
-            console.error(error.stack || error.message);
-            return;
-        }
+    var transaction = this;
+    var accounting = mongoose.model("Accounting", Accountings.accountingSchema);
+    accounting.findOne({ 'taskletid' : this.taskletid }, function (err, doc) {
+        doc.buyer = transaction.buyer;
+        doc.seller = transaction.seller;
+        doc.computation = transaction.computation;
+        doc.coins = transaction.computation;
+        doc.status = transaction.status;
+        doc.save({}, function (error, data) {
+            if (error) {
+                console.error(error.stack || error.message);
+                return;
+            }
+        });
     });
+
 }

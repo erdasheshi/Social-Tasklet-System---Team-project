@@ -67,8 +67,8 @@ $(document).ready(function(){
     socket.on('ShowTaskletCalc', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_send";
-            //noinspection JSAnnotator,JSAnnotator
-            $('#content').append(
+        //noinspection JSAnnotator,JSAnnotator
+        $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
                 $('<span>').text('[' +
@@ -83,13 +83,45 @@ $(document).ready(function(){
                 $('<b>').text(' ready for calculation - '),
                 // Text
                 $('<span>').text('Seller: ' + data.seller + ' ' )),
-                $('<input/>').attr({
-                    type: "button",
-                    id: buttonid,
-                    value: "Send Tasklet to Seller"
-                })
+            $('<input/>').attr({
+                type: "button",
+                id: buttonid,
+                value: "Send Tasklet to Seller"
+            })
         );
         $('#' + buttonid).click({id: data.taskletid, seller: data.seller, buyer: data.buyer}, sendTaskletToSeller);
+
+        // scroll down
+        $('body').scrollTop($('body')[0].scrollHeight);
+
+    });
+
+    socket.on('TaskletCyclesMoneyBlocked', function (data) {
+        var zeit = new Date(data.zeit);
+        var buttonid = data.taskletid +"_return";
+        //noinspection JSAnnotator,JSAnnotator
+        $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+                $('<b>').text('Seller: Tasklet '),
+                // ID
+                $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
+                $('<b>').text(' money for calculation reserved - '),
+                // Text
+                $('<span>').text('Seller: ' + data.seller + ' ' )),
+            $('<input/>').attr({
+                type: "button",
+                id: buttonid,
+                value: "Return Tasklet Result to Buyer"
+            })
+        );
+        $('#' + buttonid).click({id: data.taskletid, seller: data.seller, buyer: data.buyer}, returnTaskletToBuyer);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -121,7 +153,7 @@ $(document).ready(function(){
                 value: "Send Confirmation to SFBroker"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid}, sendResultConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -131,6 +163,7 @@ $(document).ready(function(){
     socket.on('ShowTaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_received";
+        var inputComputation = data.taskletid +"Computation";
         //noinspection JSAnnotator,JSAnnotator
         $('#content').append(
             $('<li></li>').append(
@@ -153,7 +186,7 @@ $(document).ready(function(){
                 value: "Send Confirmation to SFBroker"
                 }),
                 $('<input/>').attr({
-                id: 'computation', placeholder: "Computation_Cylces"
+                id: inputComputation, placeholder: "Computation_Cylces"
             })
         );
         $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
@@ -204,7 +237,7 @@ $(document).ready(function(){
     // Trigger send computation cycles to SFBroker
     function sendConfirmationToSFBroker(tasklet){
         var zeit = new Date();
-		var computation = $('#computation').val();
+		var computation = $('#' + tasklet.data.id +"Computation").val();
         $(this).prop("disabled",true);
         $('#content').append(
             $('<li></li>').append(
@@ -224,6 +257,53 @@ $(document).ready(function(){
         )
 		
 		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id});
+    };
+
+    // Trigger send to Buyer
+    function returnTaskletToBuyer(tasklet){
+        var zeit = new Date();
+        $(this).prop("disabled",true);
+        $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+                $('<span>').text('Return Tasklet result'),
+                // ID
+                $('<span>').text(tasklet.data.id),
+
+                $('<span>').text(' to ' + tasklet.data.buyer)
+            )
+        )
+        socket.emit('ReturnTaskletToBuyer', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer});
+    };
+
+    // Trigger send computation cycles to SFBroker
+    function sendResultConfirmationToSFBroker(tasklet){
+        var zeit = new Date();
+        $(this).prop("disabled",true);
+        $('#content').append(
+            $('<li></li>').append(
+                // Uhrzeit
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
+                $('<span>').text('Result of '),
+                // ID
+                $('<span>').text(tasklet.data.id),
+
+                $('<span>').text(' confirmed')
+            )
+        )
+
+        socket.emit('TaskletResultConfirm', {taskletid: tasklet.data.id});
     };
 
 });
