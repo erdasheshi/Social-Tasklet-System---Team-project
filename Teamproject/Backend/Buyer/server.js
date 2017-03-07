@@ -31,10 +31,8 @@ socket_c.on('CoinsBlock', function(data){
 	if(port == data.buyer){
 	
 		io.sockets.emit('ShowTaskletCalc', {zeit: new Date(), seller: data.seller, buyer: data.buyer, taskletid: data.taskletid});
-	
 	}
-	
-		
+			
 });
 
 socket_c.emit('event', {connection : 'I want to connect'});
@@ -58,21 +56,18 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
 		// Step 1: Request sent to Broker
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
-
-
-        // Tasklet can be calculated
-        //io.sockets.emit('TaskletReceived', { zeit: new Date(), taskletid: data.taskletid || 'Anonym', buyer: 'User ID'});
-
 	});
 	
+	// Step 9: Buyer sends Tasklet to Seller
 	socket.on('SendTaskletToSeller', function (data){
-		console.log('Bei Buyer Server'+ data.seller);
 		var socket_s = require('socket.io-client')('http://localhost:' + data.seller)
 		socket_s.emit('SendingTaskletToSeller', {taskletid: data.taskletid, seller: data.seller, buyer: data.buyer});
 	});
 	
+	// Step 9: Seller receives Tasklet
 	socket.on('SendingTaskletToSeller', function (data) {
-	io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), buyer: data.buyer, taskletid: data.taskletid});
+		// Sent for illustrating on website
+		io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), buyer: data.buyer, taskletid: data.taskletid});
 	});
 
     socket.on('TaskletCycles', function (data) {
@@ -81,12 +76,12 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('ReturnTaskletToBuyer', function (data){
         var socket_b = require('socket.io-client')('http://localhost:' + data.buyer)
-        socket_b.emit('SendTaskletResultToBuyer', {taskletid: data.taskletid, seller: data.seller, buyer: data.buyer});
+        socket_b.emit('SendTaskletResultToBuyer', {taskletid: data.taskletid, seller: data.seller, buyer: data.buyer, result: data.result});
     });
 
     socket.on('SendTaskletResultToBuyer', function (data){
         console.log('Tasklet result received from '+ data.seller);
-        io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid, seller: data.seller, buyer: data.buyer });
+        io.sockets.emit('TaskletFinished', { zeit: new Date(), taskletid: data.taskletid, seller: data.seller, buyer: data.buyer, result: data.result});
     });
 
     socket.on('TaskletResultConfirm', function (data){
@@ -99,12 +94,7 @@ io.sockets.on('connection', function (socket) {
 socket_sf.on('TaskletCyclesMoneyBlocked', function(data){
 	console.log('Money for Cycles Blocked!');
     if(port == data.seller) {
-        io.sockets.emit('TaskletCyclesMoneyBlocked', {
-            zeit: new Date(),
-            seller: data.seller,
-            buyer: data.buyer,
-            taskletid: data.taskletid
-        });
+        io.sockets.emit('TaskletCyclesMoneyBlocked', {zeit: new Date(), seller: data.seller, buyer: data.buyer, taskletid: data.taskletid});
     }
 });
 

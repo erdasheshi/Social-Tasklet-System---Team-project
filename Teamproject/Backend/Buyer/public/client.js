@@ -37,7 +37,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-				$('<span>').text('Coins from ' + data.buyer + ' were successfully blocked for ' + data.seller + ' regarding TaskletID ' + data.taskletid))
+				$('<span>').text('Coins from ' + data.buyer + ' were successfully blocked for ' + data.seller + ' regarding Tasklet ' + data.taskletid))
 				);
         
 		// scroll down
@@ -114,7 +114,7 @@ $(document).ready(function(){
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' money for calculation reserved - '),
                 // Text
-                $('<span>').text('Seller: ' + data.seller + ' ' )),
+                $('<span>').text('Buyer: ' + data.buyer + ' ' )),
             $('<input/>').attr({
                 type: "button",
                 id: buttonid,
@@ -144,9 +144,9 @@ $(document).ready(function(){
                 $('<b>').text('Buyer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(' result received from '),
+                $('<b>').text(' result ' + data.result + ' received - '),
                 // Text
-                $('<span>').text('Seller:' + data.seller + ' ' )),
+                $('<span>').text('Seller: ' + data.seller + ' ' )),
             $('<input/>').attr({
                 type: "button",
                 id: buttonid,
@@ -227,7 +227,7 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(tasklet.data.id),
 
-                $('<span>').text(' send to ' + tasklet.data.seller)
+                $('<span>').text(' sent to ' + tasklet.data.seller)
             )
         )
 		socket.emit('SendTaskletToSeller', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer});
@@ -252,7 +252,7 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(tasklet.data.id),
 
-                $('<span>').text(' send')
+                $('<span>').text(' sent')
             )
         )
 		
@@ -262,6 +262,7 @@ $(document).ready(function(){
     // Trigger send to Buyer
     function returnTaskletToBuyer(tasklet){
         var zeit = new Date();
+		var result = ['3', '7', '11']
         $(this).prop("disabled",true);
         $('#content').append(
             $('<li></li>').append(
@@ -272,14 +273,14 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<span>').text('Return Tasklet result'),
+                $('<span>').text('Tasklet result '),
                 // ID
-                $('<span>').text(tasklet.data.id),
+                $('<span>').text(result),
 
-                $('<span>').text(' to ' + tasklet.data.buyer)
+                $('<span>').text(' returned to ' + tasklet.data.buyer)
             )
         )
-        socket.emit('ReturnTaskletToBuyer', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer});
+        socket.emit('ReturnTaskletToBuyer', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer, result: result});
     };
 
     // Trigger send computation cycles to SFBroker
@@ -295,7 +296,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<span>').text('Result of '),
+                $('<span>').text('Result of Tasklet '),
                 // ID
                 $('<span>').text(tasklet.data.id),
 
