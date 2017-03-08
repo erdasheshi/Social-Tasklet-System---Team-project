@@ -41,6 +41,18 @@ router.get('/transactionlistFriend', function(req, res) {
     });
 });
 
+/* GET Transactionlist page. */
+router.get('/transactionlistUser', function(req, res) {
+    socket.emit('SFRead_User', {});
+
+    socket.on('SFRead_User', function (docs) {
+        // socket connected
+        res.render('transactionlistUser', {
+            "transactionlistUser" : docs
+        });
+    });
+});
+
 
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
@@ -71,6 +83,28 @@ router.post('/addtransaction_Friend', function(req, res) {
 
     socket.emit('SFWrite_Friend', {type: constants.Friendship, user_1: transactionUser_1, user_2: transactionUser_2, status: transactionStatus });
     res.redirect("transactionlistFriend");
+});
+
+/* POST to Add Transaction Service */
+router.post('/addUser', function(req, res) {
+
+    var transactionUserid = req.body.userid;
+    var transactionPassword = req.body.password;
+    var transactionPrice = req.body.price;
+    var transactionEmail = req.body.email;
+    var transactionFirstname = req.body.firstname;
+    var transactionLastname = req.body.lastname;
+
+    socket.emit('SFWrite_User', {
+        type: constants.User,
+        userid: transactionUserid,
+        password: transactionPassword,
+        price: transactionPrice,
+        email: transactionEmail,
+        firstname: transactionFirstname,
+        lastname: transactionLastname,
+    });
+    res.redirect("transactionlistUser");
 });
 
 module.exports = router;

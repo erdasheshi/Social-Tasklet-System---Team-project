@@ -25,7 +25,6 @@ AccountingTransaction.prototype.save =  function(){
         taskletid: this.taskletid
         });
 
-    console.log(this.buyer);
     transaction.save({}, function (error, data) {
         if(error){
             console.error(error.stack || error.message);

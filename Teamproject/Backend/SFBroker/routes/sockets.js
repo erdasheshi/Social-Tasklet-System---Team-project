@@ -10,6 +10,8 @@ var server = require('http').createServer(app)
 var dbAccess = require('./dbAccess');
 var accountingTransaction = require('../classes/AccountingTransaction');
 var friendshipTransaction = require('../classes/FriendshipTransaction');
+var user = require('../classes/User');
+
 var constants = require('../constants');
 
 server.listen(conf.ports.sfbroker_socket);
@@ -30,19 +32,31 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('SFWrite_Friend', function (data) {
+        console.log(data);
         var friendTransaction = new friendshipTransaction(data);
         friendTransaction.save();
     });
 
     socket.on('SFRead_Friend', function (data) {
         dbAccess.find({ type: constants.Friendship }).exec(function(e, data) {
+            console.log(data);
             socket.emit('SFRead_Friend', data);
         })
     });
 
-    socket.on('TaskletCalculated', function (data){
+    socket.on('SFWrite_User', function (data) {
+        console.log(data);
+        var userSave = new user(data);
+        userSave.save();
+    });
 
-    })
+    socket.on('SFRead_User', function (data) {
+        dbAccess.find({ type: constants.User }).exec(function(e, data) {
+            console.log(data);
+            socket.emit('SFRead_User', data);
+        })
+    });
+
     // Step 11: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function(data){
         var computation = data.computation;
