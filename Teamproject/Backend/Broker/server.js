@@ -57,7 +57,7 @@ io.sockets.on('connection', function (socket) {
 // Step 4: Scheduler chooses first element in array
 function scheduling(potentialseller) {
 	
-return potentialseller[0];
+return potentialseller[0].userid;
 
 };
 
