@@ -76,7 +76,7 @@ socket_c.on('SFInformation', function(data){
 
     // further Logic for QoC needed! --> logic.js
 
-    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: ['8081', '8082', '8083'] });
+    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: [{ userid: '8081', price: '1'}, { userid: '8082', price: '2'}, { userid: '8083', price: '3'}, { userid: '8084', price: '4'}]});
 });
 
 

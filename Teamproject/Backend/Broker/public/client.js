@@ -27,6 +27,12 @@ $(document).ready(function(){
 	// Step 3: Illustrating potential sellers
 	socket.on('ShowSellerInformation', function (data) {
         var zeit = new Date(data.zeit);
+        var seller = data.potentialseller;
+        var sellerinformation = '';
+        $.each(seller, function( i, val ) {
+            sellerinformation += 'User: ' + val.userid + ' - Price: ' + val.price + ' '
+        })
+
         $('#content').append(
             $('<li></li>').append(
                 // Uhrzeit
@@ -39,8 +45,8 @@ $(document).ready(function(){
                 // Name
 				$('<b>').text('Potential sellers for TaskletID ' + data.taskletid + ' from ' + data.name + ': ' ),
                 // Potential sellers
-                $('<span>').text(data.potentialseller))
-        );
+                $('<b>').text(sellerinformation)
+        ));
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
     });
