@@ -24,13 +24,13 @@ $(document).ready(function(){
         $('body').scrollTop($('body')[0].scrollHeight);
     });
 	
-	// Step 3: Illustrating potential sellers
-	socket.on('ShowSellerInformation', function (data) {
+	// Step 3: Illustrating potential provider
+	socket.on('ShowProviderInformation', function (data) {
         var zeit = new Date(data.zeit);
-        var seller = data.potentialseller;
-        var sellerinformation = '';
-        $.each(seller, function( i, val ) {
-            sellerinformation += 'User: ' + val.userid + ' - Price: ' + val.price + ' '
+        var provider = data.potentialprovider;
+        var providerinformation = '';
+        $.each(provider, function( i, val ) {
+            providerinformation += 'User: ' + val.userid + ' - Price: ' + val.price + ' '
         })
 
         $('#content').append(
@@ -43,9 +43,9 @@ $(document).ready(function(){
                     + '] '
                 ),
                 // Name
-				$('<b>').text('Potential sellers for TaskletID ' + data.taskletid + ' from ' + data.name + ': ' ),
-                // Potential sellers
-                $('<b>').text(sellerinformation)
+				$('<b>').text('Potential provider for Tasklet ' + data.taskletid + ' from ' + data.name + ': ' ),
+                // Potential provider
+                $('<b>').text(providerinformation)
         ));
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);

@@ -61,17 +61,18 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletCycles', function(data){
         var computation = data.computation;
         dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, res) {
-            var accTransaction = new accountingTransaction({buyer: res.buyer, seller: res.seller, computation: computation, coins: computation, status: constants.AccountingStatusComputed, taskletid: res.taskletid});
+            var accTransaction = new accountingTransaction({consumer: res.consumer, provider: res.provider, computation: computation, coins: computation, status: constants.AccountingStatusComputed, taskletid: res.taskletid});
             accTransaction.update();
-            socket.emit('TaskletCyclesMoneyBlocked', res);
+            socket.emit('TaskletCyclesCoinsBlocked', res);
         })
     });
 
-
+	// Step 14: Receiving the Tasklet result confirmation
     socket.on('TaskletResultConfirm', function(data){
         var computation = data.computation;
+		// Step 15: Releasing the blocked coins
         dbAccess.find({ type: constants.Accounting, taskletid: data.taskletid }).exec(function(e, res) {
-            var accTransaction = new accountingTransaction({buyer: res.buyer, seller: res.seller, computation: res.computation, coins: res.coins, status: constants.AccountingStatusConfirmed, taskletid: res.taskletid});
+            var accTransaction = new accountingTransaction({consumer: res.consumer, provider: res.provider, computation: res.computation, coins: res.coins, status: constants.AccountingStatusConfirmed, taskletid: res.taskletid});
             accTransaction.update();
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
         })
@@ -83,21 +84,21 @@ io.sockets.on('connection', function (socket) {
 // Connect to broker
 var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
 
-socket_c.emit('event', { name: 'ads', privacy: 'ase', cost: '123' });
+socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function(data){
 
     // further Logic for QoC needed! --> logic.js
 
-    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialseller: [{ userid: '8081', price: '1'}, { userid: '8082', price: '2'}, { userid: '8083', price: '3'}, { userid: '8084', price: '4'}]});
+    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialprovider: [{ userid: '8081', price: '1'}, { userid: '8082', price: '2'}, { userid: '8083', price: '3'}, { userid: '8084', price: '4'}]});
 });
 
 
-// Step 5: Receiving Seller and Buyer informations from Broker
-socket_c.on('SellerBuyerInformation', function(data){
-    var accTransaction = new accountingTransaction({buyer: data.buyer, seller: data.seller, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
+// Step 5: Receiving provider and consumer informations from Broker
+socket_c.on('ProviderConsumerInformation', function(data){
+    var accTransaction = new accountingTransaction({consumer: data.consumer, provider: data.provider, computation: '100', coins: '200', status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
     accTransaction.save();
-    socket_c.emit('SellerBuyerInformation', { success: true, buyer: data.buyer, seller: data.seller, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
+    socket_c.emit('ProviderConsumerInformation', { success: true, consumer: data.consumer, provider: data.provider, status: constants.AccountingStatusBlocked, taskletid: data.taskletid});
 });
 

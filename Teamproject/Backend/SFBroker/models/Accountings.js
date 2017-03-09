@@ -2,8 +2,8 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
  
 var accountingSchema = new Schema({ //This is where accountingSchema is defined.
-     buyer: String,
-     seller: String,
+     consumer: String,
+     provider: String,
      computation: Number,
      coins: Number,
      status: String,

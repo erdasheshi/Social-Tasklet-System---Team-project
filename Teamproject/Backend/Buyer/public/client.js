@@ -14,7 +14,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Buyer: '),
+                $('<b>').text('Consumer: '),
 				$('<span>').text('You (' + data.name + ') have sent a Tasklet request - '),
                 //QoC text
                 $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
@@ -37,7 +37,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-				$('<span>').text('Coins from ' + data.buyer + ' were successfully blocked for ' + data.seller + ' regarding Tasklet ' + data.taskletid))
+				$('<span>').text('Coins from ' + data.consumer + ' were successfully blocked for ' + data.provider + ' regarding Tasklet ' + data.taskletid))
 				);
         
 		// scroll down
@@ -55,7 +55,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-				$('<span>').text('Alert! Coins from ' + data.buyer + ' were not successfully blocked for ' + data.seller + ' regarding TaskletID ' + data.taskletid +
+				$('<span>').text('Alert! Coins from ' + data.consumer + ' were not successfully blocked for ' + data.provider + ' regarding TaskletID ' + data.taskletid +
 				' - Transaction was cancelled.'))
 				);
         
@@ -64,6 +64,7 @@ $(document).ready(function(){
 		}
     });
 
+	// Step 9: Sending Tasklet to provider
     socket.on('ShowTaskletCalc', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_send";
@@ -77,26 +78,27 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Buyer: Tasklet '),
+                $('<b>').text('Consumer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' ready for calculation - '),
                 // Text
-                $('<span>').text('Seller: ' + data.seller + ' ' )),
+                $('<span>').text('Provider: ' + data.provider + ' ' )),
             $('<input/>').attr({
                 type: "button",
                 id: buttonid,
-                value: "Send Tasklet to Seller"
+                value: "Send Tasklet to Provider"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid, seller: data.seller, buyer: data.buyer}, sendTaskletToSeller);
+        $('#' + buttonid).click({id: data.taskletid, provider: data.provider, consumer: data.consumer}, sendTaskletToProvider);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
 
     });
 
-    socket.on('TaskletCyclesMoneyBlocked', function (data) {
+	// Step 12: Coins were blocked for provider
+    socket.on('ShowTaskletCyclesCoinsBlocked', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_return";
         //noinspection JSAnnotator,JSAnnotator
@@ -109,26 +111,27 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Seller: Tasklet '),
+                $('<b>').text('Provider: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(' money for calculation reserved - '),
+                $('<b>').text(' coins for calculation reserved - '),
                 // Text
-                $('<span>').text('Buyer: ' + data.buyer + ' ' )),
+                $('<span>').text('Consumer: ' + data.consumer + ' ' )),
             $('<input/>').attr({
                 type: "button",
                 id: buttonid,
-                value: "Return Tasklet Result to Buyer"
+                value: "Return Tasklet Result to Consumer"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid, seller: data.seller, buyer: data.buyer}, returnTaskletToBuyer);
+        $('#' + buttonid).click({id: data.taskletid, provider: data.provider, consumer: data.consumer}, returnTaskletToConsumer);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
 
     });
 
-    socket.on('TaskletFinished', function (data) {
+	// Step 13: Consumer received Tasklet result
+    socket.on('ShowTaskletFinished', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_finished";
         //noinspection JSAnnotator,JSAnnotator
@@ -141,12 +144,12 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Buyer: Tasklet '),
+                $('<b>').text('Consumer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' result ' + data.result + ' received - '),
                 // Text
-                $('<span>').text('Seller: ' + data.seller + ' ' )),
+                $('<span>').text('Provider: ' + data.provider + ' ' )),
             $('<input/>').attr({
                 type: "button",
                 id: buttonid,
@@ -160,6 +163,7 @@ $(document).ready(function(){
 
     });
 
+	// Step 9: Provider received Tasklet
     socket.on('ShowTaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_received";
@@ -174,12 +178,12 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-                $('<b>').text('Seller: Tasklet '),
+                $('<b>').text('Provider: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
                 $('<b>').text(' calculated - '),
                 // Text
-                $('<span>').text('Buyer: ' + data.buyer + ' ' )),
+                $('<span>').text('Consumer: ' + data.consumer + ' ' )),
                 $('<input/>').attr({
                 type: "button",
                 id: buttonid,
@@ -210,8 +214,8 @@ $(document).ready(function(){
     // Trigger function when clicking
     $('#send').click(send);
 
-    // Trigger send to Seller
-    function sendTaskletToSeller(tasklet){
+    //Step 9: Trigger send to Provider
+    function sendTaskletToProvider(tasklet){
         var zeit = new Date();
         $(this).prop("disabled",true);
         $('#content').append(
@@ -227,14 +231,14 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(tasklet.data.id),
 
-                $('<span>').text(' sent to ' + tasklet.data.seller)
+                $('<span>').text(' sent to ' + tasklet.data.provider)
             )
         )
-		socket.emit('SendTaskletToSeller', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer});
+		socket.emit('SendTaskletToProvider', {taskletid: tasklet.data.id, provider: tasklet.data.provider, consumer: tasklet.data.consumer});
     };
 
    
-    // Trigger send computation cycles to SFBroker
+    // Step 11: Trigger send computation cycles to SFBroker
     function sendConfirmationToSFBroker(tasklet){
         var zeit = new Date();
 		var computation = $('#' + tasklet.data.id +"Computation").val();
@@ -259,9 +263,10 @@ $(document).ready(function(){
 		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id});
     };
 
-    // Trigger send to Buyer
-    function returnTaskletToBuyer(tasklet){
+    // Step 13: Trigger send result to consumer
+    function returnTaskletToConsumer(tasklet){
         var zeit = new Date();
+		// generate default result
 		var result = ['3', '7', '11']
         $(this).prop("disabled",true);
         $('#content').append(
@@ -277,13 +282,13 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(result),
 
-                $('<span>').text(' returned to ' + tasklet.data.buyer)
+                $('<span>').text(' returned to ' + tasklet.data.consumer)
             )
         )
-        socket.emit('ReturnTaskletToBuyer', {taskletid: tasklet.data.id, seller: tasklet.data.seller, buyer: tasklet.data.buyer, result: result});
+        socket.emit('ReturnTaskletToConsumer', {taskletid: tasklet.data.id, provider: tasklet.data.provider, consumer: tasklet.data.consumer, result: result});
     };
 
-    // Trigger send computation cycles to SFBroker
+    // Step 14: Trigger confirmation of Tasklet result
     function sendResultConfirmationToSFBroker(tasklet){
         var zeit = new Date();
         $(this).prop("disabled",true);

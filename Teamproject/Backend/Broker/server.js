@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 // Websocket
 io.sockets.on('connection', function (socket) {
 
-	//Connecting new Seller/Buyer with Broker
+	//Connecting new Consumer/Provider with Broker
 	socket.on('event', function (data) {
 		console.log('New Entity online');	
 	});
@@ -31,33 +31,33 @@ io.sockets.on('connection', function (socket) {
         // Creating Tasklet ID
 		var taskletid = uuidV1();
 		// Request sent for illustrating on Website
-        io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: data.name || 'Anonym', taskletid: taskletid, cost: data.cost, privacy: data.privacy });
+        io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy });
 
 		// Step 2: Information request to SFBroker
 		io.sockets.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy });
     });
 	
-	// Step 3: Receiving potential seller information from SFBroker
+	// Step 3: Receiving potential provider information from SFBroker
 	socket.on('SFInformation', function (data) {
-		io.sockets.emit('ShowSellerInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialseller: data.potentialseller });
-		//Step 4: Finding most suitable seller
-		var seller = scheduling(data.potentialseller);
-		// Step 5: Sending seller and buyer information to SFBroker
-        io.sockets.emit('SellerBuyerInformation', {zeit: new Date(), buyer: data.name, taskletid: data.taskletid, seller: seller });
+		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
+		//Step 4: Finding most suitable provider
+		var provider = scheduling(data.potentialprovider);
+		// Step 5: Sending provider and consumer information to SFBroker
+        io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider });
 	 });
 	 
-	 // Step 7: Receiving potential seller information from SFBroker
-	socket.on('SellerBuyerInformation', function (data) {
-		// Step 8: Informing buyer and seller about the coins blocking
-		io.sockets.emit('CoinsBlock', {zeit: new Date(), success: data.success, buyer: data.buyer, seller: data.seller, status: data.status, taskletid: data.taskletid});
+	 // Step 7: Receiving potential provider information from SFBroker
+	socket.on('ProviderConsumerInformation', function (data) {
+		// Step 8: Informing consumer and provider about the coins blocking
+		io.sockets.emit('CoinsBlock', {zeit: new Date(), success: data.success, consumer: data.consumer, provider: data.provider, status: data.status, taskletid: data.taskletid});
 	});
 	
 });
 
 // Step 4: Scheduler chooses first element in array
-function scheduling(potentialseller) {
+function scheduling(potentialprovider) {
 	
-return potentialseller[0].userid;
+return potentialprovider[0].userid;
 
 };
 
