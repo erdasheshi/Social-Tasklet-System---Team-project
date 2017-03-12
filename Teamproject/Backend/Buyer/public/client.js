@@ -205,11 +205,15 @@ $(document).ready(function(){
         // Reading the input fields
         var cost = $('#cost').val();
 		var privacy = $('#privacy').val();
+		var speed = $('#speed').val();
+		var reliability = $('#reliability').val();
         // Sending socket
-        socket.emit('TaskletRequest', {cost: cost, privacy: privacy});
+        socket.emit('TaskletRequest', {cost: cost, privacy: privacy, speed: speed, reliability: reliability});
         // Empty input fields
         $('#cost').val('');
 		$('#privacy').val('');
+		$('#speed').val('');
+		$('#reliability').val('');
     }
     // Trigger function when clicking
     $('#send').click(send);
