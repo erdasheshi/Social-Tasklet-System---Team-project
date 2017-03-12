@@ -17,7 +17,7 @@ $(document).ready(function(){
                 $('<b>').text('Consumer: '),
 				$('<span>').text('You (' + data.name + ') have sent a Tasklet request - '),
                 //QoC text
-                $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
+                $('<span>').text('QoC Cost: ' + data.cost + '  ' + 'QoC Privacy: ' + data.privacy + '  ' + 'QoC Speed: ' + data.speed + '  ' + 'QoC Reliability: ' + data.reliability ))
         );
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);

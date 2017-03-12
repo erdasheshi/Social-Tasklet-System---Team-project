@@ -18,8 +18,11 @@ $(document).ready(function(){
                 $('<b>').text(typeof(data.name) != 'undefined' ? data.name + ': ' : ''),
 				$('<span>').text('TaskletID: ' + data.taskletid + ' '),
                 // Requirements
-                $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy ))
+				// do the same for the other broker an dfor th ebuer/seller
+			
+                $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy +' ' +'QoC Speed: ' + data.speed + ' ' + 'QoC Reliability: ' + data.reliability ))
         );
+		
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
     });

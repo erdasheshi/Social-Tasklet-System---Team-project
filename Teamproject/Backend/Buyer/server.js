@@ -53,9 +53,9 @@ io.sockets.on('connection', function (socket) {
 	socket.on('TaskletRequest', function (data) {
 		var name = port;
 		// Step 1: Request sent for illustrating on website
-		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
+		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 		// Step 1: Request sent to Broker
-		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy });
+		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 	});
 	
 	// Step 9: Consumer sends Tasklet to Provider
@@ -102,6 +102,5 @@ socket_sf.on('TaskletCyclesCoinsBlocked', function(data){
         io.sockets.emit('ShowTaskletCyclesCoinsBlocked', {zeit: new Date(), provider: data.provider, consumer: data.consumer, taskletid: data.taskletid});
     }
 });
-
 
 console.log('Consumer/Provider runs on http://127.0.0.1:' + port + '/');

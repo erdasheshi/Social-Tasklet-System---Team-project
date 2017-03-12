@@ -31,11 +31,15 @@ io.sockets.on('connection', function (socket) {
         // Creating Tasklet ID
 		var taskletid = uuidV1();
 		// Request sent for illustrating on Website
-        io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy });
+		//************************
+		//************************
+		//************************  check what does the shwo tasklet readyStatequest and where is it stored
+        io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability});
 
 		// Step 2: Information request to SFBroker
-		io.sockets.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy });
+		io.sockets.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability});
     });
+	
 	
 	// Step 3: Receiving potential provider information from SFBroker
 	socket.on('SFInformation', function (data) {
