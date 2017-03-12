@@ -3,11 +3,39 @@ var express = require('express')
 ,   server = require('http').createServer(app)
 ,   io = require('socket.io').listen(server)
 ,   conf = require('./config.json')
-,	uuidV1 = require('uuid/v1')
 , 	constants = require('./constants');
 
+// Processing the stated port number
+if (process.argv.length <= 2) {
+    console.log("Port number needed");
+    process.exit(-1);
+}
+ 
+var port = process.argv[2];
+console.log('Port: ' + port);
+
 // Webserver
-server.listen(conf.ports.broker);
+server.listen(port);
+
+// Connect to broker
+var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
+var socket_sf = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket)
+
+//Step 8: Receiving the coins block status
+socket_c.on('CoinsBlock', function(data){
+	if(port == data.consumer || port == data.provider){
+	// Step 8: Status sent for illustrating on website
+		io.sockets.emit('ShowCoinsBlock', {zeit: new Date(), success: data.success, consumer: data.consumer, provider: data.provider, status: data.status, taskletid: data.taskletid});
+	}
+	
+	if(port == data.consumer){
+	
+		io.sockets.emit('ShowTaskletCalc', {zeit: new Date(), provider: data.provider, consumer: data.consumer, taskletid: data.taskletid});
+	}
+			
+});
+
+socket_c.emit('event', {connection : 'I want to connect'});
 
 // static files
 app.use(express.static(__dirname + '/public'));
@@ -21,46 +49,58 @@ app.get('/', function (req, res) {
 // Websocket
 io.sockets.on('connection', function (socket) {
 
-	//Connecting new Consumer/Provider with Broker
-	socket.on('event', function (data) {
-		console.log('New Entity online');	
+	// If user sends request to Broker
+	socket.on('TaskletRequest', function (data) {
+		var name = port;
+		// Step 1: Request sent for illustrating on website
+		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
+		// Step 1: Request sent to Broker
+		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
+	});
+	
+	// Step 9: Consumer sends Tasklet to Provider
+	socket.on('SendTaskletToProvider', function (data){
+		var socket_s = require('socket.io-client')('http://localhost:' + data.provider)
+		socket_s.emit('SendingTaskletToProvider', {taskletid: data.taskletid, provider: data.provider, consumer: data.consumer});
+	});
+	
+	// Step 9: Provider receives Tasklet
+	socket.on('SendingTaskletToProvider', function (data) {
+		// Sent for illustrating on website
+		io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), consumer: data.consumer, taskletid: data.taskletid});
 	});
 
-    // Step 1: Handle Tasklet request
-    socket.on('TaskletSendBroker', function (data) {
-        // Creating Tasklet ID
-		var taskletid = uuidV1();
-		// Request sent for illustrating on Website
-
-        io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability});
-
-		// Step 2: Information request to SFBroker
-		io.sockets.emit('SFInformation', {zeit: new Date(), name: data.name, taskletid : taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability});
+	// Step 11: Sending Tasklet cycles to SF Broker
+    socket.on('TaskletCycles', function (data) {
+        socket_sf.emit('TaskletCycles', data);
     });
-	
-	
-	// Step 3: Receiving potential provider information from SFBroker
-	socket.on('SFInformation', function (data) {
-		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
-		//Step 4: Finding most suitable provider
-		var provider = scheduling(data.potentialprovider);
-		// Step 5: Sending provider and consumer information to SFBroker
-        io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider });
-	 });
-	 
-	 // Step 7: Receiving potential provider information from SFBroker
-	socket.on('ProviderConsumerInformation', function (data) {
-		// Step 8: Informing consumer and provider about the coins blocking
-		io.sockets.emit('CoinsBlock', {zeit: new Date(), success: data.success, consumer: data.consumer, provider: data.provider, status: data.status, taskletid: data.taskletid});
-	});
-	
+
+	// Step 13: Sending Tasklet result to consumer
+    socket.on('ReturnTaskletToConsumer', function (data){
+        var socket_b = require('socket.io-client')('http://localhost:' + data.consumer)
+        socket_b.emit('SendTaskletResultToConsumer', {taskletid: data.taskletid, provider: data.provider, consumer: data.consumer, result: data.result});
+    });
+
+	// Step 13: Receiving the Tasklet result from provider
+    socket.on('SendTaskletResultToConsumer', function (data){
+        console.log('Tasklet result received from '+ data.provider);
+        io.sockets.emit('ShowTaskletFinished', { zeit: new Date(), taskletid: data.taskletid, provider: data.provider, consumer: data.consumer, result: data.result});
+    });
+
+	// Step 14: Sending confirmation to the SF Broker of the received result
+    socket.on('TaskletResultConfirm', function (data){
+        console.log('Confirm Tasklet to SF Broker!');
+        socket_sf.emit('TaskletResultConfirm', data);
+    });
+
 });
 
-// Step 4: Scheduler chooses first element in array
-function scheduling(potentialprovider) {
-	
-return potentialprovider[0].userid;
+// Step 12: SF Broker blocked coins for the Provider
+socket_sf.on('TaskletCyclesCoinsBlocked', function(data){
+    if(port == data.provider) {
+		console.log('Coins for Cycles Blocked!');
+        io.sockets.emit('ShowTaskletCyclesCoinsBlocked', {zeit: new Date(), provider: data.provider, consumer: data.consumer, taskletid: data.taskletid});
+    }
+});
 
-};
-
-console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
+console.log('Consumer/Provider runs on http://127.0.0.1:' + port + '/');
