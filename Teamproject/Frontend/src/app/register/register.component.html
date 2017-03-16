@@ -1,25 +1,14 @@
-<h1>Register</h1>
-
-<div class="container">
-  <label><b>First Name</b></label>
-  <input type="text" placeholder="Enter First Name" name="Fname" required>
-
-  <label><b>Last Name</b></label>
-  <input type="text" placeholder="Enter Last Name" name="Lname" required>
-
-  <label><b>Email Address</b></label>
-  <input type="text" placeholder="Enter Email Address" name="mail" required>
-
-  <label><b>Password</b></label>
-  <input type="password" placeholder="Enter Password" name="psw" required>
-
-  <label><b>Repeat Password</b></label>
-  <input type="password" placeholder="Enter Password again" name="psw" required>
-
-  <button type="submit">Login</button>
-
-  <br/>
-  <br/>
-
-  <span class="log">Already have an account? <a href="#/">Login here!</a></span>
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__col grid__col--2-of-2">
+      <form class="searchform">
+        Name
+        <input type="text" name="search" placeholder="Name"><br>
+        Email
+        <input type="text" name="search" placeholder="Email"><br>
+        <button (click)="onClickMe()" type="button" id="register">Register</button>
+        {{clickMessage}}
+      </form>
+    </div>
+  </div>
 </div>
