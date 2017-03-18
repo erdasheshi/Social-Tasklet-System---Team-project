@@ -43,10 +43,13 @@ router.get('/transactionlistFriend', function(req, res) {
 
 /* GET Transactionlist page. */
 router.get('/transactionlistUser', function(req, res) {
-    socket.emit('SFRead_User', {});
+    socket.emit('SFRead_User'
+        , { userid: '8080' }
+        );
 
     socket.on('SFRead_User', function (docs) {
         // socket connected
+        console.log(docs);
         res.render('transactionlistUser', {
             "transactionlistUser" : docs
         });

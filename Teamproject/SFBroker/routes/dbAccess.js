@@ -24,7 +24,11 @@ function findFriendship(data){
 
 function findUser(data){
     var user = mongoose.model("User", Users.userSchema);
-    var result = user.find({}, {});
+    if(typeof data.userid == 'undefined'){
+        var result = user.find({}, {});
+    }else{
+        var result = user.findOne({ 'userid' : data.userid });
+    }
     return result
 }
 

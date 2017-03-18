@@ -51,10 +51,19 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('SFRead_User', function (data) {
-        dbAccess.find({ type: constants.User }).exec(function(e, data) {
-            console.log(data);
-            socket.emit('SFRead_User', data);
-        })
+        try{
+            dbAccess.find({ type: constants.User, userid: data.userid }).exec(function(e, data) {
+                var result = JSON.parse('[' + JSON.stringify(data) + ']');
+                socket.emit('SFRead_User', result);
+            })
+        }
+        catch(e){
+            if(e instanceof TypeError){
+                dbAccess.find({ type: constants.User }).exec(function(e, data) {
+                    socket.emit('SFRead_User', data);
+                })
+            }
+        }
     });
 
     // Step 11: Tasklet finished + Tasklet cycles known
