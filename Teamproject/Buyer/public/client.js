@@ -203,17 +203,39 @@ $(document).ready(function(){
     // Sending a message
     function send(){
         // Reading the input fields
-        var cost = $('#cost').val();
-		var privacy = $('#privacy').val();
-		var speed = $('#speed').val();
-		var reliability = $('#reliability').val();
+		  if($('#cost').prop("checked") == true){
+                var cost = "low";
+            }
+            else if($('#cost').prop("checked") == false){
+                var cost = "high";
+            }
+          if($('#privacy').prop("checked") == true){
+                var privacy = "high";
+            }
+            else if($('#privacy').prop("checked") == false){
+                var privacy = "low";
+            }
+		  if($('#speed').prop("checked") == true){
+                var speed = "high";
+            }
+            else if($('#speed').prop("checked") == false){
+                var speed = "low";
+            }
+		  if($('#reliability').prop("checked") == true){
+                var reliability = "high";
+            }
+            else if($('#reliability').prop("checked") == false){
+                var reliability = "low";
+            }
+		
         // Sending socket
         socket.emit('TaskletRequest', {cost: cost, privacy: privacy, speed: speed, reliability: reliability});
         // Empty input fields
-        $('#cost').val('');
-		$('#privacy').val('');
-		$('#speed').val('');
-		$('#reliability').val('');
+        $('#cost').prop('checked', false);
+		$('#privacy').prop('checked', false);
+		$('#speed').prop('checked', false);
+		$('#reliability').prop('checked', false);
+	
     }
     // Trigger function when clicking
     $('#send').click(send);
