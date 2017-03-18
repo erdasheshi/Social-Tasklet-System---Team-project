@@ -11,6 +11,7 @@ var dbAccess = require('./dbAccess');
 var accountingTransaction = require('../classes/AccountingTransaction');
 var friendshipTransaction = require('../classes/FriendshipTransaction');
 var user = require('../classes/User');
+var logic = require('./logic');
 
 var constants = require('../constants');
 
@@ -39,7 +40,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('SFRead_Friend', function (data) {
         dbAccess.find({ type: constants.Friendship }).exec(function(e, data) {
-            console.log(data);
             socket.emit('SFRead_Friend', data);
         })
     });
@@ -97,11 +97,14 @@ socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function(data){
+    var userid = data.name;
+    var taskletid = data.taskletid;
+    logic.findPotentialProvider(data, function(res){
+        var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"potentialprovider\": ' + res + '}';
+        socket_c.emit('SFInformation', JSON.parse(response.toString()));
+    })
 
-    // further Logic for QoC needed! --> logic.js
-
-    socket_c.emit('SFInformation', {name: data.name, taskletid: data.taskletid, potentialprovider: [{ userid: '8081', price: '1'}, { userid: '8082', price: '2'}, { userid: '8083', price: '3'}, { userid: '8084', price: '4'}]});
-});
+});;
 
 
 // Step 5: Receiving provider and consumer informations from Broker
