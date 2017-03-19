@@ -40,14 +40,15 @@ io.sockets.on('connection', function (socket) {
 	
 	
 	// Step 3: Receiving potential provider information from SFBroker
-
-	// !!! need more data !!!
 	socket.on('SFInformation', function (data) {
 		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
-		// Including the speed and reliability informations?
-	
+		
+		// Including the speed and reliability informations
+		var potentialprovider = addInformations(data.potentialprovider);
+		
 		//Step 4: Finding most suitable provider
-		var provider = scheduling(data.potentialprovider);
+		var provider = scheduling(potentialprovider, data.cost, data.reliability, data.speed);
+		
 		// Step 5: Sending provider and consumer information to SFBroker
         io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider });
 	 });
@@ -60,10 +61,21 @@ io.sockets.on('connection', function (socket) {
 	
 });
 
+function addInformations(potentialprovider){
+	for(var i= 0; i < potentialprovider.length; i++){
+		var actual = ["actualreliability: " + randomNumber() + "actualspeed: " + randomNumber()];
+		potentialprovider[i].concat(actual);
+	}
+}
+
+// Returns random number for reliability and speed, 1-10
+function randomNumber(){
+	return Math.floor((Math.random() * 10) + 1)
+}
 
 // Step 4: Scheduler chooses based on QoC the most suitable provider
 // Assuming price range is 1-10
-function scheduling(potentialprovider){
+function scheduling(potentialprovider, cost, reliability, speed){
 	
 	//Converting QoC high and low to 3 and 1
 	if (cost == high){

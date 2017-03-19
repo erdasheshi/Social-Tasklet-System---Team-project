@@ -100,7 +100,7 @@ socket_c.on('SFInformation', function(data){
     var userid = data.name;
     var taskletid = data.taskletid;
     logic.findPotentialProvider(data, function(res){
-        var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"potentialprovider\": ' + res + '}';
+        var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     })
 
