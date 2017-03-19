@@ -40,8 +40,12 @@ io.sockets.on('connection', function (socket) {
 	
 	
 	// Step 3: Receiving potential provider information from SFBroker
+
+	// !!! need more data !!!
 	socket.on('SFInformation', function (data) {
 		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
+		// Including the speed and reliability informations?
+	
 		//Step 4: Finding most suitable provider
 		var provider = scheduling(data.potentialprovider);
 		// Step 5: Sending provider and consumer information to SFBroker
@@ -56,11 +60,55 @@ io.sockets.on('connection', function (socket) {
 	
 });
 
-// Step 4: Scheduler chooses first element in array
-function scheduling(potentialprovider) {
-	
-return potentialprovider[0].userid;
 
-};
+// Step 4: Scheduler chooses based on QoC the most suitable provider
+// Assuming price range is 1-10
+function scheduling(potentialprovider){
+	
+	//Converting QoC high and low to 3 and 1
+	if (cost == high){
+	cost = 3;
+	}
+	else {
+	cost = 1;
+	}
+	
+	if (reliability == high){
+	reliability = 3;
+	}
+	else {
+	reliability = 1;
+	}
+	
+	if (speed == high){
+	speed = 3;
+	}
+	else {
+	speed = 1;
+	}
+	
+	// Calculating the weights based on QoC high (3) and low (1)
+	var total = cost + reliability + speed;
+	
+	var weightcost = cost / total;
+	var weightreliability = reliability / total;
+	var weightspeed = speed / total;
+	
+	var provider = '';
+	var score = 0;
+	
+	// Calculating the utility for every potential provider
+	for(var i= 0; i < potentialprovider.length; i++){
+		
+		var newscore = (weightcost * potentialprovider[i].price) + (weightreliability * potentialprovider[i].actualreliability) + (weightspeed * potentialprovider[i].actualspeed);
+		
+		if(newscore > score){
+			score = newscore;
+			provider = potentialprovider[i].userid;
+		}
+	}
+	
+	return provider;
+}
 
 console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
