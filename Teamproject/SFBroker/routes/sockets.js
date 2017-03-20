@@ -99,6 +99,9 @@ socket_c.emit('event', {connection: 'I want to connect'});
 socket_c.on('SFInformation', function(data){
     var userid = data.name;
     var taskletid = data.taskletid;
+	var cost = data.cost;
+	var reliability = data.reliability;
+	var speed = data.speed;
     logic.findPotentialProvider(data, function(res){
         var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
