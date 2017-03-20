@@ -1,9 +1,0 @@
-{
-	"ports": {
-		"sfbroker": 8001,
-		"sfbroker_socket": 8002,
-		"broker": 8003,
-		"broker_socket": 8004,
-		"direct_access": 8009
-	}
-}

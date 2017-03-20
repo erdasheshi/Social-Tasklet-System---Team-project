@@ -1,8 +1,0 @@
-extends layout
-
-block content
-  h1.
-        User List
-  ul
-        each transactionUser, i in transactionlistUser
-            li Userid: #{transactionUser.userid}, User_2: #{transactionUser.password}, Price: #{transactionUser.price}, E-Mail: #{transactionUser.email}, Firstname: #{transactionUser.firstname}, Lastname: #{transactionUser.lastname}
