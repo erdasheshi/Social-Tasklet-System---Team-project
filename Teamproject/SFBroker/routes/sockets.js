@@ -86,6 +86,20 @@ io.sockets.on('connection', function (socket) {
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
         })
     });
+	
+	
+	
+	//**********	
+	
+socket.on('SFB_User_ID_Info', function(data){
+        var computation = data.computation;
+		var userid = data.userid;
+		socket.emit('SFB_User_ID_Info', {userid: '8080', friends: [{user: '8081', status: constants.FriendshipStatusConfirmed},{user: '8082', status: constants.FriendshipStatusRequested}]} );
+        
+    });	
+	
+	//***********
+
 });
 
 //Data exchange Broker/ SFBroker

@@ -21,7 +21,11 @@ function findFriendship(data){
     var result = friendship.find({}, {});
     if (typeof data.userid == 'undefined') {
         var result = friendship.find({}, {});
-    } else {
+    } else if(data.requested){
+        var result = friendship.find().or([{'user_1': data.userid}, {'user_2': data.userid}]);
+    }
+	
+	else {
         var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': data.userid}, {'user_2': data.userid}]);
     }
     return result
