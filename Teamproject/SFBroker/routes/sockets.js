@@ -92,14 +92,19 @@ io.sockets.on('connection', function (socket) {
 	//**********	
 	
 socket.on('SFB_User_ID_Info', function(data){
-        var computation = data.computation;
-		var userid = data.userid;
-		socket.emit('SFB_User_ID_Info', {userid: '8080', friends: [{user: '8081', status: constants.FriendshipStatusConfirmed},{user: '8082', status: constants.FriendshipStatusRequested}]} );
         
+		var userid = data.userid;
+		
+		logic.findFriends(data, function(res){
+			
+        var response = '{ \"userid\": \"' + userid +   '\", \"Conections\": ' + res + '}';
+	   socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
     });	
 	
 	//***********
 
+	
+	
 });
 
 //Data exchange Broker/ SFBroker
@@ -117,10 +122,10 @@ socket_c.on('SFInformation', function(data){
 	var reliability = data.reliability;
 	var speed = data.speed;
     logic.findPotentialProvider(data, function(res){
+		//keep this in mind... Its needed whent to emit the result given by the function call in the database
         var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     })
-
 });;
 
 

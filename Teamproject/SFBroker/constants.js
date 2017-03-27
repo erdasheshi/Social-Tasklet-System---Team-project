@@ -14,6 +14,11 @@ module.exports = {
     Friendship: Friendship,
     User: User,
 
+	//*****
+	PotentialProvider: PotentialProvider,
+	Friends: Friends,
+	
+	
     AccountingStatusComputed: AccountingStatusComputed,
     AccountingStatusBlocked: AccountingStatusBlocked,
     AccountingStatusConfirmed: AccountingStatusConfirmed,

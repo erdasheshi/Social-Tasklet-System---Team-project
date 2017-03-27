@@ -16,13 +16,15 @@ function findAccounting(data){
     return result
 }
 
+
+//*****
 function findFriendship(data){
     var friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
     var result = friendship.find({}, {});
     if (typeof data.userid == 'undefined') {
         var result = friendship.find({}, {});
-    } else if(data.requested){
-        var result = friendship.find().or([{'user_1': data.userid}, {'user_2': data.userid}]);
+    } else if(data.FriendshipStatus == 'Requested'){
+        var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or('status', constants.FriendshipStatusRequested).or([{'user_1': data.userid}, {'user_2': data.userid}]);
     }
 	
 	else {
@@ -30,6 +32,8 @@ function findFriendship(data){
     }
     return result
 }
+//*****
+
 
 function findUser(data){
     var user = mongoose.model("User", Users.userSchema);
