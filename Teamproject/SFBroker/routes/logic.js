@@ -31,20 +31,21 @@ function findPotentialProvider(consumer, callback) {
 
 
 //*****
-function findFriends(friend, callback) {
+function findFriends(user, callback) {
 	var F_List = '[';
-    var friend = friend.name;
+    var user = user.name;
+    var friend;
     var Fr_status = 'Requested';
     var userProcessed = 0;
-    dbAccess.find({type: constants.Friendship, userid: consumer, FriendshipStatus: Fr_status}).exec(function (e, res) {
+    dbAccess.find({type: constants.Friendship, userid: user, FriendshipStatus: Fr_status}).exec(function (e, res) {
         res.forEach(function (data, index, array) {
-            if (data.user_1 == consumer) {
-                provider = data.user_2;
-          } else if (data.user_2 == consumer) {
-                provider = data.user_1;
+            if (data.user_1 == user) {
+                friend = data.user_2;
+          } else if (data.user_2 == friend) {
+                friend = data.user_1;
             }
-            dbAccess.find({type: constants.User, userid: provider}).exec(function (e, res) {
-                F_List = F_List.concat('{ \"userid\": \"' + res.userid + '}');
+            dbAccess.find({type: constants.User, userid: friend}).exec(function (e, res) {
+                F_List = F_List.concat('{ \"userid\": \"' + res.userid + '\", \"Friendship_Status\": ' + res.status + '}');
                 userProcessed += 1;
             if (userProcessed == array.length) {
                 F_List = F_List.concat(']');
@@ -58,7 +59,6 @@ function findFriends(friend, callback) {
 //*****
 
 // *****
-//Not sure if it makes sense to change the file constants.js with the new entries
 module.exports = {
 	find: function (data, callback) {
         if (data.type == constants.PotentialProvider) {

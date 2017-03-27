@@ -90,10 +90,11 @@ io.sockets.on('connection', function (socket) {
 	
 	
 	//**********	
+	//Sending the list of friends and potential friends to the forntend
 	
 socket.on('SFB_User_ID_Info', function(data){
         
-		var userid = data.userid;
+		var userid = data.name;
 		
 		logic.findFriends(data, function(res){
 			
@@ -101,9 +102,7 @@ socket.on('SFB_User_ID_Info', function(data){
 	   socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
     });	
 	
-	//***********
-
-	
+	//***********	
 	
 });
 
