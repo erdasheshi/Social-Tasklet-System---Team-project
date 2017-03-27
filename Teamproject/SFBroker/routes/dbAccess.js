@@ -23,7 +23,7 @@ function findFriendship(data){
     var result = friendship.find({}, {});
     if (typeof data.userid == 'undefined') {
         var result = friendship.find({}, {});
-    } else if(data.FriendshipStatus == 'Requested'){
+    } else if(data.FriendshipStatus == 'Network'){
         var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or('status', constants.FriendshipStatusRequested).or([{'user_1': data.userid}, {'user_2': data.userid}]);
     }
 	

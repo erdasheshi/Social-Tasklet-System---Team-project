@@ -31,21 +31,25 @@ function findPotentialProvider(consumer, callback) {
 
 
 //*****
+
 function findFriends(user, callback) {
 	var F_List = '[';
-    var user = user.name;
+    var user = user.userid;
     var friend;
-    var Fr_status = 'Requested';
+    var key = 'Network';
+	var F_status;
     var userProcessed = 0;
-    dbAccess.find({type: constants.Friendship, userid: user, FriendshipStatus: Fr_status}).exec(function (e, res) {
+    dbAccess.find({type: constants.Friendship, userid: user, FriendshipStatus: key}).exec(function (e, res) {
         res.forEach(function (data, index, array) {
             if (data.user_1 == user) {
                 friend = data.user_2;
-          } else if (data.user_2 == friend) {
+          } else if (data.user_2 == user) {
                 friend = data.user_1;
             }
+			F_status = res.status
+			
             dbAccess.find({type: constants.User, userid: friend}).exec(function (e, res) {
-                F_List = F_List.concat('{ \"userid\": \"' + res.userid + '\", \"Friendship_Status\": ' + res.status + '}');
+                F_List = F_List.concat('{ \"userid\": \"' + res.userid + '\", \"Friendship_Status\": ' + F_status + '}');
                 userProcessed += 1;
             if (userProcessed == array.length) {
                 F_List = F_List.concat(']');
@@ -56,6 +60,7 @@ function findFriends(user, callback) {
         })
     });
 }
+
 //*****
 
 // *****

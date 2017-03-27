@@ -94,10 +94,9 @@ io.sockets.on('connection', function (socket) {
 	
 socket.on('SFB_User_ID_Info', function(data){
         
-		var userid = data.name;
+		var userid = data.userid;
 		
-		logic.findFriends(data, function(res){
-			
+		logic.findFriends(data, function(res){			
         var response = '{ \"userid\": \"' + userid +   '\", \"Conections\": ' + res + '}';
 	   socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
     });	
