@@ -57,6 +57,17 @@ router.get('/transactionlistUser', function(req, res) {
 });
 
 
+router.get('/transactionlistNetwork', function(req, res) {
+    socket.emit('SFB_User_ID_Info', {userid: '8080'});
+
+    socket.on('SFB_User_ID_Info', function (docs) {
+        // socket connected
+        console.log(docs);
+
+    });
+});
+
+
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
     res.render('newtransaction', { title: 'Add New Transaction' });

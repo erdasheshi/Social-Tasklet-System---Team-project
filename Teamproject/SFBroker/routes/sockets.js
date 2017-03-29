@@ -96,15 +96,15 @@ socket.on('SFB_User_ID_Info', function(data){
         
 		var userid = data.userid;
 		
-		logic.findFriends(data, function(res){			
+		logic.find({type: constants.Friends, userid: userid }, function(res){
         var response = '{ \"userid\": \"' + userid +   '\", \"Conections\": ' + res + '}';
 	   socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
     });	
 	
 	//***********	
-	
-});
 
+});
+});
 //Data exchange Broker/ SFBroker
 
 // Connect to broker
@@ -119,11 +119,15 @@ socket_c.on('SFInformation', function(data){
 	var cost = data.cost;
 	var reliability = data.reliability;
 	var speed = data.speed;
-    logic.findPotentialProvider(data, function(res){
+	var qoc_privacy = data.privacy;
+	
+    logic.find({type: constants.PotentialProvider, userid: userid, privacy: qoc_privacy}, function(res){
 		//keep this in mind... Its needed whent to emit the result given by the function call in the database
         var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
-        socket_c.emit('SFInformation', JSON.parse(response.toString()));
-    })
+       console.log(response);
+	   socket_c.emit('SFInformation', JSON.parse(response.toString()));
+    });
+
 });;
 
 
