@@ -79,6 +79,11 @@ router.get('/transactionlistAccounting', function(req, res) {
 });
 
 
+router.get('/coin_request', function(req, res) {
+    socket.emit('Requested_Coins');
+});
+
+
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
     res.render('newtransaction', { title: 'Add New Transaction' });
