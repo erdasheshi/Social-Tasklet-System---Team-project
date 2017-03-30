@@ -45,7 +45,7 @@ io.sockets.on('connection', function (socket) {
 		
 		// Including the speed and reliability informations
 		addInformations(data.potentialprovider);
-		
+
 		//Step 4: Finding most suitable provider
 		var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
 		
@@ -64,22 +64,22 @@ io.sockets.on('connection', function (socket) {
 function addInformations(potentialprovider){
 	
 	for(var i= 0; i < potentialprovider.length; i++){
-		potentialprovider.splice(i, 1, {userid: potentialprovider[i].userid, price: potentialprovider[i].price, actualreliability: randomNumber(), actualspeed: randomNumber()});
+		potentialprovider.splice(i, 1, {userid: potentialprovider[i].userid, price: potentialprovider[i].price, actualreliability: 5, actualspeed: 5});
 	}
 	return potentialprovider;
 	
 }
 
-// Returns random number for reliability and speed, 1-10
+// Currently not used; returns random number for reliability and speed, 1-10
 function randomNumber(){
 	return Math.floor((Math.random() * 10) + 1)
 }
 
 // Step 4: Scheduler chooses based on QoC the most suitable provider
-// Assuming price range is 1-10
+// Assuming price range is 1-10 and for reliability and speed 1 is best, 10 is worst
 function scheduling(potentialprovider, cost, reliability, speed){
 	
-	//Converting QoC high and low to 3 and 1
+	//Converting QoC high and low to 9 and 1
 	if(cost == 'low'){
 		cost = 9;
 	}
@@ -102,7 +102,7 @@ function scheduling(potentialprovider, cost, reliability, speed){
 	}
 	
 	
-	// Calculating the weights based on QoC high (3) and low (1)
+	// Calculating the weights based on QoC high and low
 	var total = cost + reliability + speed;
 	
 	var weightcost = cost / total;
@@ -110,9 +110,9 @@ function scheduling(potentialprovider, cost, reliability, speed){
 	var weightspeed = speed / total;
 	
 	var provider = '';
-	var score = 0;
+	var score = 11;
 	
-	// Calculating the provider score for every potential provider
+	// Calculating the score (1-10) for every potential provider
 	for(var i= 0; i < potentialprovider.length; i++){
 		
 		var newscore = (weightcost * potentialprovider[i].price) + (weightreliability * potentialprovider[i].actualreliability) + (weightspeed * potentialprovider[i].actualspeed);
@@ -124,6 +124,7 @@ function scheduling(potentialprovider, cost, reliability, speed){
 	}
 	
 	return provider;
+
 }
 
 console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
