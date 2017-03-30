@@ -8,9 +8,11 @@ var Users = require("../models/Users");
 
 function findAccounting(data){
     var accounting = mongoose.model("Accounting", Accountings.accountingSchema);
-    if(typeof data.taskletid == 'undefined'){
+    if(data.hasOwnProperty('userid')){
+        var result = accounting.find().or([{'consumer': data.userid}, {'provider': data.userid}]);
+    } else if(typeof data.taskletid == 'undefined'){
         var result = accounting.find({}, {});
-    }else{
+    } else{
         var result = accounting.findOne({ 'taskletid' : data.taskletid });
     }
     return result

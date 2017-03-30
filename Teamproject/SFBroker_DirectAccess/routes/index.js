@@ -22,6 +22,7 @@ router.get('/transactionlistAcc', function(req, res) {
 
     socket.on('SFRead_Acc', function (docs) {
         // socket connected
+        console.log(docs);
         res.render('transactionlistAcc', {
             "transactionlistAcc" : docs
         });
@@ -67,6 +68,16 @@ router.get('/transactionlistNetwork', function(req, res) {
     });
 });
 
+router.get('/transactionlistAccounting', function(req, res) {
+    socket.emit('SFBUserTransactions', {userid: '8080'});
+
+    socket.on('SFBUserTransactions', function (docs) {
+        // socket connected
+        console.log(docs);
+
+    });
+});
+
 
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
@@ -83,8 +94,7 @@ router.post('/addtransaction_Acc', function(req, res) {
     var transactionCoins = req.body.coins;
     var transactionStatus = req.body.status;
     var transactionTaskletID = req.body.tasklet_id;
-
-    socket.emit('SFWrite_Acc', {type: constants.Accounting, buyer: transactionBuyer, seller: transactionSeller, computation: transactionComputation, coins: transactionCoins, status: transactionStatus, tasklet_id: transactionTaskletID });
+    socket.emit('SFWrite_Acc', {type: constants.Accounting, consumer: transactionBuyer, provider: transactionSeller, computation: transactionComputation, coins: transactionCoins, status: transactionStatus, taskletid: transactionTaskletID });
     res.redirect("transactionlistAcc");
 });
 
