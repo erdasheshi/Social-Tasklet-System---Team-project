@@ -80,22 +80,22 @@ function randomNumber(){
 function scheduling(potentialprovider, cost, reliability, speed){
 	
 	//Converting QoC high and low to 3 and 1
-	if(cost == 'high'){
-		cost = 3;
+	if(cost == 'low'){
+		cost = 9;
 	}
 	else{
 		cost= 1;
 	}
 	
 	if(reliability == 'high'){
-		reliability = 3;
+		reliability = 9;
 	}
 	else {
 		reliability = 1;
 	}
 	
 	if (speed == 'high'){
-		speed = 3;
+		speed = 9;
 	}
 	else {
 		speed = 1;
@@ -112,12 +112,12 @@ function scheduling(potentialprovider, cost, reliability, speed){
 	var provider = '';
 	var score = 0;
 	
-	// Calculating the utility for every potential provider
+	// Calculating the provider score for every potential provider
 	for(var i= 0; i < potentialprovider.length; i++){
 		
 		var newscore = (weightcost * potentialprovider[i].price) + (weightreliability * potentialprovider[i].actualreliability) + (weightspeed * potentialprovider[i].actualspeed);
 		
-		if(newscore > score){
+		if(newscore < score){
 			score = newscore;
 			provider = potentialprovider[i].userid;
 		}
