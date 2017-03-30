@@ -127,6 +127,33 @@ io.sockets.on('connection', function (socket) {
         });
         //***********
     });
+
+
+     //////////
+    // ***********
+    // getting the userid from the front end (the purpose is to get the coin requests and to store it in the database)
+
+   /* socket.on('Coin_request', function (data) {
+        var userid = data.userid;
+    });
+    */
+
+    //***********
+
+
+     //////////
+    //***********
+    //sending the coin requests to the frontend of the administartor ( the purpose is to get the coin requests from the database and to show it in the frontend)
+    socket.on('Requested_Coins', function(data) {
+
+      //  logic.find({type: constants.Friends, userid: userid}, function (res) {
+            var response = '{ \"userid\": \"' + 8080 + '\", \"Coins Requested\": ' + 50 + '}';
+            console.log(response);
+            socket.emit('Requested_Coins', JSON.parse(response.toString()));
+       // });
+    });
+    //***********
+
 });
 //Data exchange Broker/ SFBroker
 
