@@ -1,5 +1,13 @@
-<div class="grid">
-  <div class="grid__col grid__col--2-of-2">
-  
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__col grid__col--2-of-2">
+      <form (ngSubmit)="onSubmit()" class="searchform">
+        Email
+        <input type="text" [(ngModel)]="user.email" name="email" placeholder="Email"><br>
+        Password
+        <input type="password" [(ngModel)]="user.password" name="password">
+        <button type="submit" id="register">Login</button>
+      </form>
+    </div>
   </div>
 </div>

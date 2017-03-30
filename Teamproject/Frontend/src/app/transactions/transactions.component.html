@@ -61,24 +61,14 @@
         </div>
 
 
-
-
-
-
-
-
         <table class="transaction__table">
 	<tbody>
-	<tr class="transaction__table__row">
-		<td>Jan's PC</td>
-		<td>150 Tasklets</td>
-		<td class="transaction__table__coins">150 Coins</td>
+	<tr *ngFor="let transaction of transactions" class="transaction__table__row">
+		<td>{{ transaction.provider }}</td>
+		<td>{{ transaction.computation }} Tasklets</td>
+		<td class="transaction__table__coins">{{ transaction.coins }} Coins</td>
 	</tr>
-  <tr class="transaction__table__row">
-		<td>Emma's Cluster</td>
-		<td>200 Tasklets</td>
-		<td class="transaction__table__coins">200 Coins</td>
-	</tr>
+
   <tr class="transaction__table__row__last">
 		<td>Jannicks Server</td>
 		<td>150 Tasklets</td>

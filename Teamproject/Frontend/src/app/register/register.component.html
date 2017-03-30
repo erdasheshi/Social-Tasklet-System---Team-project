@@ -1,13 +1,24 @@
 <div class="wrapper">
   <div class="grid">
     <div class="grid__col grid__col--2-of-2">
-      <form class="searchform">
-        Name
-        <input type="text" name="search" placeholder="Name"><br>
+      <form (ngSubmit)="onSubmit()" class="searchform">
+        First Name
+        <input type="text" [(ngModel)]="user.firstname" name="firstname" placeholder="First Name"><br>
+
+        Last Name
+        <input type="text" [(ngModel)]="user.lastname" name="lastname" placeholder="Last Name"><br>
+
         Email
-        <input type="text" name="search" placeholder="Email"><br>
-        <button (click)="onClickMe()" type="button" id="register">Register</button>
-        {{clickMessage}}
+        <input type="text" [(ngModel)]="user.email" name="email" placeholder="Email"><br>
+
+        Price
+        <input type="number" [(ngModel)]="user.price" name="price" placeholder="Price"><br>
+
+        Password
+        <input type="password" [(ngModel)]="user.password" name="password" placeholder=""><br>
+
+
+        <button type="submit" id="register">Register</button>
       </form>
     </div>
   </div>
