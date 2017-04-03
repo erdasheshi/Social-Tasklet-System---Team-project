@@ -7,7 +7,8 @@ var userSchema = new Schema({ //This is where accountingSchema is defined.
     price: Number,
     email: String,
     firstname: String,
-    lastname: String
+    lastname: String,
+    balance: Number
 });
 
 module.exports.userSchema = userSchema; //Export accountingSchema so that models.js can access it.
