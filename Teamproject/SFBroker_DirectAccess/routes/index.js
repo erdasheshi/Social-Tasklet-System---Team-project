@@ -81,19 +81,18 @@ router.get('/friends', function(req, res) {
     socket.emit('SFB_User_ID_Info', {userid: '8080'});
 });
 
-
-
-router.get('/Requests', function() {
-    socket.emit('Requested_Coins');
+router.get('/Requests', function(data) {
+    var userid ='';
+    socket.emit('Requested_Coins', {userid: userid} );
+    console.log(userid);
 });
 
 router.get('/CoinRequest', function(data) {
-    socket.emit('Coin_request', {userid: '8080', requestedCoins: '70'});
+    socket.emit('Coin_request', {userid: '8081', requestedCoins: '70'});
+    socket.emit('Coin_request', {userid: '8082', requestedCoins: '70'});
+    socket.emit('Coin_request', {userid: '8081', requestedCoins: '70'});
 
 });
-
-
-
 
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
