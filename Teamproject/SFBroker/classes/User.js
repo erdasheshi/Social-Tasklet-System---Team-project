@@ -24,7 +24,7 @@ user.prototype.save =  function() {
             email: this.email,
             firstname: this.firstname,
             lastname: this.lastname,
-            balance: this.balance,
+            balance: this.balance
 
     });
     transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
