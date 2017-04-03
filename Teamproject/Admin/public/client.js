@@ -4,7 +4,7 @@ $(document).ready(function(){
 
 	socket.on('ShowCoinRequest', function (data) {
         var zeit = new Date(data.zeit);
-        var buttonid = data.userid +"_send";
+        var buttonid = data.requestid +"_send";
         //noinspection JSAnnotator,JSAnnotator
         $('#content').append(
             $('<li></li>').append(
@@ -22,7 +22,7 @@ $(document).ready(function(){
                 value: "Confirm"
                 })     
         );
-        $('#' + buttonid).click({requestid: data.requestid}, sendCoinsApproval);
+        $('#' + buttonid).click({requestid: data.requestid, userid: data.userid, requestedcoins: data.requestedcoins}, sendCoinsApproval);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -45,7 +45,7 @@ $(document).ready(function(){
             )
         )
 
-        socket.emit('SendCoinsApproval', {requestid: user.data.requestid, approval: true});
+        socket.emit('SendCoinsApproval', {requestid: user.data.requestid, userid: user.data.userid, requestedcoins: user.data.requestedcoins, approval: true});
     };
 	
 	

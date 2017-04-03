@@ -32,19 +32,20 @@ app.get('/', function (req, res) {
 // Websocket
 io.sockets.on('connection', function (socket) {
 		
-	// Receiving coin request from SFBroker
-		socket.on('Requested_Coins', function (data){
-			console.log('Coin request arrived'); 
-			io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data.requestid, userid: data.userid, requestedcoins: data.requestedCoins});
-		
-	});
-
 	socket.on('SendCoinsApproval', function (data){
-		
-			socket_sf.emit('CoinsApproval', {requestid: data.requestid, approval: data.approval});
+		socket_sf.emit('CoinsApproval', {requestid: data.requestid, userid: data.userid, requestedCoins: data.requestedcoins, approval: data.approval});
 	});
 	
 });
+
+// Receiving coin request from SFBroker
+socket_sf.on('Requested_Coins', function (data){
+		console.log(data.length + 'Coin request(s) arrived');
+		for(var i= 0; i < data.length; i++){
+		io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data[i].requestid, userid: data[i].userid, requestedcoins: data[i].requestedCoins});
+		}
+});
+
 
 
 console.log('Admin runs on http://127.0.0.1:' + port + '/');
