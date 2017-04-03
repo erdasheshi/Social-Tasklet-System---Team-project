@@ -12,7 +12,8 @@ function user(data) {
         this.price = data.price,
         this.email = data.email,
         this.firstname = data.firstname,
-        this.lastname = data.lastname
+        this.lastname = data.lastname,
+        this.balance = data.balance
 }
 
 user.prototype.save =  function() {
@@ -22,7 +23,8 @@ user.prototype.save =  function() {
             price: this.price,
             email: this.email,
             firstname: this.firstname,
-            lastname: this.lastname
+            lastname: this.lastname,
+            balance: this.balance
 
     });
     transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).

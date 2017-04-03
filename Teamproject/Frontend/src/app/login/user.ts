@@ -1,4 +1,4 @@
-export class Friendship {
+export class User {
     constructor(
 
         public firstname: string,

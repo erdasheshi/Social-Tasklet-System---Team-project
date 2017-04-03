@@ -111,6 +111,48 @@ function findAllTransactions(user, callback) {
     });
 }
 
+
+
+
+
+/*
+function CounRequestApproved(user, callback) {
+    var F_List = '[';
+    var user = user.userid;
+    var entriesProcessed = 0;
+    dbAccess.find({type: constants.Accounting, userid: user}).exec(function (e, res) {
+        console.log(res);
+        /*
+         res.forEach(function (data, index, array) {
+         if (data.user_1 == user) {
+         friend = data.user_2;
+         } else if (data.user_2 == user) {
+         friend = data.user_1;
+         }
+
+         F_List = F_List.concat('{ \"userid\": \"' + friend + '\", \"Friendship_Status\": \"' + data.status + '\"}');
+         entriesProcessed += 1;
+         if (entriesProcessed == array.length) {
+         F_List = F_List.concat(']');
+         F_List = F_List.replace('}{', '},{');
+         callback(F_List);
+         }
+         else{
+         F_List = F_List.replace('}{', '},{');
+         }
+         });
+
+
+    });
+}  */
+
+
+
+
+
+
+
+
 //*****
 
 // *****

@@ -1,6 +1,7 @@
-var express = require('express');
-var _ = require('lodash');
-var app = express();
+var express = require('express')
+, _ = require('lodash')
+, app = express()
+,	uuidV1 = require('uuid/v1');
 
 // websocket
 var server = require('http').createServer(app)
@@ -10,6 +11,8 @@ var server = require('http').createServer(app)
 var dbAccess = require('./dbAccess');
 var accountingTransaction = require('../classes/AccountingTransaction');
 var friendshipTransaction = require('../classes/FriendshipTransaction');
+var coinTransaction = require('../classes/CoinTransactions');
+
 var user = require('../classes/User');
 var logic = require('./logic');
 
@@ -101,22 +104,19 @@ io.sockets.on('connection', function (socket) {
         })
     });
 
-
-    //**********
-    //Sending the list of friends and potential friends to the forntend
-
+    //Sending the list of friends and potential friends to the frontend
     socket.on('SFB_User_ID_Info', function (data) {
 
         var userid = data.userid;
         logic.find({type: constants.Friends, userid: userid}, function (res) {
             var response = '{ \"userid\": \"' + userid + '\", \"Conections\": ' + res + '}';
-
+console.log(response);
             socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
         });
     });
-    //**********
-    //Sending the list of friends and potential friends to the forntend
 
+    //**********
+    //Sending the list of transactions and the balance of the user
     socket.on('SFBUserTransactions', function (data) {
 
         var userid = data.userid;
@@ -128,31 +128,50 @@ io.sockets.on('connection', function (socket) {
         //***********
     });
 
+    // Get coin requests and stores them in the database
+    socket.on('Coin_request', function(data) {
+    var userid = data.userid;
+    var requestedCoins = data.requestedCoins;
+    var id = uuidV1();
+    var approval = 'false';
 
-     //////////
-    // ***********
-    // getting the userid from the front end (the purpose is to get the coin requests and to store it in the database)
+       var coin_Transaction = new coinTransaction({requestid: id, userid: userid, requestedCoins: requestedCoins, approval: approval});
+        coin_Transaction.save();
+        });
 
-   /* socket.on('Coin_request', function (data) {
+    //sending the coin requests to the front-end of the administrator
+    socket.on('Requested_Coins', function (data) {
         var userid = data.userid;
+
+        dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
+            console.log(data);
+            socket.emit('Requested_Coins', data);
+        })
     });
-    */
-
-    //***********
 
 
-     //////////
-    //***********
-    //sending the coin requests to the frontend of the administartor ( the purpose is to get the coin requests from the database and to show it in the frontend)
-    socket.on('Requested_Coins', function(data) {
 
-      //  logic.find({type: constants.Friends, userid: userid}, function (res) {
-            var response = '{ \"userid\": \"' + 8080 + '\", \"Coins Requested\": ' + 50 + '}';
-            console.log(response);
-            socket.emit('Requested_Coins', JSON.parse(response.toString()));
-       // });
+
+
+
+
+   /* //Store the request as approved and updates the balance for the user
+    socket.on('CoinsApproval', function (data) {
+      var  requestid   = data.requestid;
+      var  amount   = data.amount;
+      var  approval = data.approval;
+
+        //dbAccess.find({type: constants.CoinReq}).exec(function (e, data) {
+          //  console.log(data);
+          //  socket.emit('Requested_Coins', data);
+       // })
     });
-    //***********
+//***********
+*/
+
+
+
+
 
 });
 //Data exchange Broker/ SFBroker
@@ -172,7 +191,7 @@ socket_c.on('SFInformation', function (data) {
     var qoc_privacy = data.privacy;
 
     logic.find({type: constants.PotentialProvider, userid: userid, privacy: qoc_privacy}, function (res) {
-        //keep this in mind... Its needed whent to emit the result given by the function call in the database
+        //builds the string that will be sent via socket.emit
         var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         console.log(response);
         socket_c.emit('SFInformation', JSON.parse(response.toString()));

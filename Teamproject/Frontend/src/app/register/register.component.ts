@@ -14,17 +14,25 @@ export class RegisterComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
+
   }
 
 
-  user = new User('', '', '', 0, '');
+  user = new User("", "", "", 0, "");
 
   onSubmit() {
     //var j={"type":"User", "userid":"test", "password":"123", "price":"1234", "email":"test", "firstname":"test", "lastname":"test"};
     //JSON.stringify(j);
     console.log(this.user);
 
-    //socket.emit('SFWrite_User', j);
+    var userID= Math.floor((Math.random() * 100) + 1);
+    var userIDNew = userID.toString();
+    var userInfo = {"type":"User", "userid": userIDNew};
+//    var user = userInfo.concat(this.user);
+  //  JSON.stringify(user);
+
+    //socket.emit('SFWrite_User', user);
   }
 
 }
