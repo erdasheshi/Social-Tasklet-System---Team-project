@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Accountings = require("../models/Accountings");
 var Friendships = require("../models/Friendships");
 var Users = require("../models/Users");
+var CoinRequests = require("../models/CoinRequests");
 
 function findAccounting(data){
     var accounting = mongoose.model("Accounting", Accountings.accountingSchema);
@@ -19,10 +20,15 @@ function findAccounting(data){
 }
 
 
-//*****
+function findCoinReq(){
+    var requests = mongoose.model("Coins", CoinRequests.coinRequestSchema);
+        var result = requests.find({}, {});
+    return result
+
+}
+
 function findFriendship(data){
     var friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
-    var result = friendship.find({}, {});
     if (typeof data.userid == 'undefined') {
         var result = friendship.find({}, {});
     } else if(data.FriendshipStatus == 'Network'){
@@ -34,7 +40,6 @@ function findFriendship(data){
     }
     return result
 }
-//*****
 
 
 function findUser(data){
@@ -55,6 +60,9 @@ module.exports = {
             return findFriendship(data);
         }else if (data.type == constants.User) {
             return findUser(data);
+        }
+        else if (data.type == constants.CoinReq) {
+            return findCoinReq(data);
         }
     }
 };

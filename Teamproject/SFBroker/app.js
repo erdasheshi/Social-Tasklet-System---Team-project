@@ -11,6 +11,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var Accountings = require("./models/Accountings");
 var Friendships = require("./models/Friendships");
+var CoinRequests = require("./models/CoinRequests");
 var Users = require("./models/Users");
 mongoose.Promise = global.Promise;
 mongoose.connect('localhost:27017/SFBroker');
@@ -24,8 +25,13 @@ db.once("open", function(callback){
 
 var Accounting = mongoose.model("Accounting", Accountings.accountingSchema); //This creates the Accounting model.
 module.exports.Accounting = Accounting; /* Export the Accounting model so index.js can access it. */
+
 var Friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
 module.exports.Friendship = Friendship;
+
+var Coins = mongoose.model("Coins", CoinRequests.coinRequestSchema);
+module.exports.Coins = Coins;
+
 var User = mongoose.model("User", Users.userSchema);
 module.exports.User = User;
 
