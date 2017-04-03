@@ -77,11 +77,22 @@ router.get('/transactionlistAccounting', function(req, res) {
 
     });
 });
+router.get('/friends', function(req, res) {
+    socket.emit('SFB_User_ID_Info', {userid: '8080'});
+});
 
 
-router.get('/coin_request', function(req, res) {
+
+router.get('/Requests', function() {
     socket.emit('Requested_Coins');
 });
+
+router.get('/CoinRequest', function(data) {
+    socket.emit('Coin_request', {userid: '8080', requestedCoins: '70'});
+
+});
+
+
 
 
 /* GET New Transaction page. */
