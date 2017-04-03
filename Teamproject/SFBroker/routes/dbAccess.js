@@ -19,12 +19,15 @@ function findAccounting(data){
     return result
 }
 
-
-function findCoinReq(){
+function findCoinReq(data){
     var requests = mongoose.model("Coins", CoinRequests.coinRequestSchema);
-        var result = requests.find({}, {});
+    var userid = data.userid;
+    if (userid == '') {
+        var result = requests.find({'approved': 'false'});   //returns only the not approved requests
+    } else{
+        var result = requests.find({ 'userid' : data.userid });
+    }
     return result
-
 }
 
 function findFriendship(data){
@@ -40,7 +43,6 @@ function findFriendship(data){
     }
     return result
 }
-
 
 function findUser(data){
     var user = mongoose.model("User", Users.userSchema);

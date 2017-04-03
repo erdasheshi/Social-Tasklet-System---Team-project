@@ -1,6 +1,7 @@
-var express = require('express');
-var _ = require('lodash');
-var app = express();
+var express = require('express')
+, _ = require('lodash')
+, app = express()
+,	uuidV1 = require('uuid/v1');
 
 // websocket
 var server = require('http').createServer(app)
@@ -127,29 +128,46 @@ console.log(response);
         //***********
     });
 
-
-
-
-
-
     // Get coin requests and stores them in the database
     socket.on('Coin_request', function(data) {
     var userid = data.userid;
     var requestedCoins = data.requestedCoins;
-       var coin_Transaction = new coinTransaction({userid: userid, requestedCoins: requestedCoins});
+    var id = uuidV1();
+    var approval = 'false';
+
+       var coin_Transaction = new coinTransaction({requestid: id, userid: userid, requestedCoins: requestedCoins, approval: approval});
         coin_Transaction.save();
         });
 
     //sending the coin requests to the front-end of the administrator
-    socket.on('Requested_Coins', function () {
-        dbAccess.find({type: constants.CoinReq}).exec(function (e, data) {
+    socket.on('Requested_Coins', function (data) {
+        var userid = data.userid;
+
+        dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
             console.log(data);
             socket.emit('Requested_Coins', data);
         })
     });
 
-//***********
 
+
+
+
+
+
+   /* //Store the request as approved and updates the balance for the user
+    socket.on('CoinsApproval', function (data) {
+      var  requestid   = data.requestid;
+      var  amount   = data.amount;
+      var  approval = data.approval;
+
+        //dbAccess.find({type: constants.CoinReq}).exec(function (e, data) {
+          //  console.log(data);
+          //  socket.emit('Requested_Coins', data);
+       // })
+    });
+//***********
+*/
 
 
 

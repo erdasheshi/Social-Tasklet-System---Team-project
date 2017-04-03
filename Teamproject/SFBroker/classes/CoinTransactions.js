@@ -7,16 +7,21 @@ var mongoose = require('mongoose');
 module.exports = coinRequest
 
 function coinRequest(data) {
+        this.requestid = data.requestid,
         this.userid = data.userid,
         this.requestedCoins = data.requestedCoins,
         this.approval = data.approval
+
+
 }
 
 coinRequest.prototype.save =  function() {
     var transaction = new Models.Coins({ //You're entering a new transaction here
+        requestid: this.requestid,
         userid: this.userid,
         requestedCoins: this.requestedCoins,
         approval: this.approval
+
     });
     transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
         if(error){
