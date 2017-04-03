@@ -22,8 +22,8 @@ function findAccounting(data){
 function findCoinReq(data){
     var requests = mongoose.model("Coins", CoinRequests.coinRequestSchema);
     var userid = data.userid;
-    if (userid == '') {
-        var result = requests.find({'approved': 'false'});   //returns only the not approved requests
+    if (userid == "") {
+        var result = requests.find({'approval': 'false'});   //returns only the not approved requests
     } else{
         var result = requests.find({ 'userid' : data.userid });
     }
