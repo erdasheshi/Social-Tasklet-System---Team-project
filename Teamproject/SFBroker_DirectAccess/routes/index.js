@@ -94,6 +94,11 @@ router.get('/CoinRequest', function(data) {
 
 });
 
+router.get('/Coinapproval', function(data) {
+    socket.emit('CoinsApproval', {requestid: '3b71fa40-185d-11e7-ba5c-2b473db39442', requestedCoins: '90', userid: '8082', approval: "true"});
+
+});
+
 /* GET New Transaction page. */
 router.get('/newtransaction', function(req, res) {
     res.render('newtransaction', { title: 'Add New Transaction' });
