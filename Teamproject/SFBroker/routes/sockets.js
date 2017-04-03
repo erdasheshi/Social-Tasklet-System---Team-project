@@ -145,33 +145,46 @@ console.log(response);
 
         dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
             console.log(data);
-            socket.emit('Requested_Coins', data);
+            io.sockets.emit('Requested_Coins', data);
         })
     });
 
-
-
-
-
-
-
-   /* //Store the request as approved and updates the balance for the user
+   //Store the request as approved and updates the balance for the user
     socket.on('CoinsApproval', function (data) {
-      var  requestid   = data.requestid;
-      var  amount   = data.amount;
-      var  approval = data.approval;
 
-        //dbAccess.find({type: constants.CoinReq}).exec(function (e, data) {
-          //  console.log(data);
-          //  socket.emit('Requested_Coins', data);
-       // })
-    });
-//***********
-*/
+      var userid   = data.userid;
+      var coins    = parseInt( data.requestedCoins);
+        new_balance = 0 ;
 
+        console.log(data);
+        var coinTr = new coinTransaction({
+            requestid: data.requestid,
+            approval: data.approval,
+            userid: userid,
+            requestedCoins: coins
+        });
+        coinTr.update();
 
+        dbAccess.find({type: constants.User, userid: userid}).exec(function (e, data) {
 
+            if (data.balance == undefined){
+           var old_balance = 5;
+               }
+           else {
+                var old_balance = parseInt(data.balance);
+            }
+            new_balance = coins + old_balance;
 
+            var user_balance = new user({
+                userid: data.userid,
+                balance: new_balance,
+            });
+
+            console.log(new_balance);
+            user_balance.update();
+
+        });
+           })
 
 });
 //Data exchange Broker/ SFBroker
