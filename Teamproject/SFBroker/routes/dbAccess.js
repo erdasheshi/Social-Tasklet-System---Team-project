@@ -35,9 +35,10 @@ function findFriendship(data){
     if (typeof data.userid == 'undefined') {
         var result = friendship.find({}, {});
     } else if(data.FriendshipStatus == 'Network'){
+        //its better to create two functions: 1 for the requested (user_1 = userid) and the other for pending (ures_2 = userid)
+        //this way we send less data and the network load is less
         var result = friendship.find().or([{'status': constants.FriendshipStatusConfirmed}, {'status': constants.FriendshipStatusRequested}] ).or([{'user_1': data.userid}, {'user_2': data.userid}]);
     }
-	
 	else {
         var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': data.userid}, {'user_2': data.userid}]);
     }
