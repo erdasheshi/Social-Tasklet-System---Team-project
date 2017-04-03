@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Friendship } from './friendship'
 
+var conf = require('../../../config.json');
+var socket = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
+
 @Component({
   selector: 'app-network',
   templateUrl: './network.component.html',
@@ -11,7 +14,13 @@ export class NetworkComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {  }
+  ngOnInit() {
+      //get friends
+      console.log(socket.emit('SFB_User_ID_Info', 8080));
+
+      //get all users
+      console.log(socket.emit('SFRead_User'));
+  }
 
   //requested confirmed
 

@@ -1,3 +1,6 @@
-/**
- * Created by d060536 on 29/03/2017.
- */
+export class Friendship {
+    constructor(
+        public user1: string,
+        public user2: string,
+        public status: string) { }
+}
