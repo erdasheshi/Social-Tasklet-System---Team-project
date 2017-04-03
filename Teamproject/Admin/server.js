@@ -35,13 +35,13 @@ io.sockets.on('connection', function (socket) {
 	// Receiving coin request from SFBroker
 		socket.on('Requested_Coins', function (data){
 			console.log('Coin request arrived'); 
-			io.sockets.emit('ShowCoinRequest', {zeit: new Date(), userid: data.userid, requestedcoins: data.requestedcoins});
+			io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data.requestid, userid: data.userid, requestedcoins: data.requestedCoins});
 		
 	});
 
 	socket.on('SendCoinsApproval', function (data){
 		
-			socket_sf.emit('CoinsApproval', {userid: data.userid, coins: data.coins, approval: data.approval});
+			socket_sf.emit('CoinsApproval', {requestid: data.requestid, approval: data.approval});
 	});
 	
 });

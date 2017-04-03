@@ -22,7 +22,7 @@ $(document).ready(function(){
                 value: "Confirm"
                 })     
         );
-        $('#' + buttonid).click({userid: data.userid, requestedcoins: data.requestedcoins }, sendCoinsApproval);
+        $('#' + buttonid).click({requestid: data.requestid}, sendCoinsApproval);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -45,7 +45,7 @@ $(document).ready(function(){
             )
         )
 
-        socket.emit('SendCoinsApproval', {userid: user.data.userid, coins: user.data.coins, approval: true});
+        socket.emit('SendCoinsApproval', {requestid: user.data.requestid, approval: true});
     };
 	
 	
