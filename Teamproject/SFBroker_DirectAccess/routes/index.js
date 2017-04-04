@@ -47,7 +47,6 @@ router.get('/transactionlistUser', function(req, res) {
     socket.emit('SFRead_User'
         //, { userid: '8080' }
         );
-
     socket.on('SFRead_User', function (docs) {
         // socket connected
         console.log(docs);
@@ -60,22 +59,14 @@ router.get('/transactionlistUser', function(req, res) {
 
 router.get('/transactionlistNetwork', function(req, res) {
     socket.emit('SFB_User_ID_Info', {userid: '8080'});
-
     socket.on('SFB_User_ID_Info', function (docs) {
         // socket connected
         console.log(docs);
-
     });
 });
 
 router.get('/transactionlistAccounting', function(req, res) {
     socket.emit('SFBUserTransactions', {userid: '8080'});
-
-    socket.on('SFBUserTransactions', function (docs) {
-        // socket connected
-        console.log(docs);
-
-    });
 });
 router.get('/friends', function(req, res) {
     socket.emit('SFB_User_ID_Info', {userid: '8080'});
