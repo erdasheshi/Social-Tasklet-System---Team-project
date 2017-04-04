@@ -34,7 +34,6 @@ function findPotentialProvider(consumer, callback) {
         dbAccess.find({type: constants.User}).exec(function (e, res) {
             res.forEach(function (data, index, array) {
 
-
                 potentialprovider = potentialprovider.concat('{ \"userid\": \"' + data.userid + '\", \"price\": ' + data.price + '}');
                 userProcessed += 1;
                 if (userProcessed == array.length) {
@@ -45,11 +44,9 @@ function findPotentialProvider(consumer, callback) {
                     potentialprovider = potentialprovider.replace('}{', '},{');
                 }
             });
-
         });
     }
 }
-//*****
 
 function findFriends(user, callback) {
     var F_List = '[';
@@ -88,85 +85,14 @@ function findFriends(user, callback) {
                 F_List = F_List.replace('}{', '},{');
             }
         });
-
     });
 }
-
 function findAllTransactions(user, callback) {
-    var F_List = '[';
     var user = user.userid;
-    var entriesProcessed = 0;
     dbAccess.find({type: constants.Accounting, userid: user}).exec(function (e, res) {
-        console.log(res);
-        /*
-        res.forEach(function (data, index, array) {
-            if (data.user_1 == user) {
-                friend = data.user_2;
-            } else if (data.user_2 == user) {
-                friend = data.user_1;
-            }
-
-            F_List = F_List.concat('{ \"userid\": \"' + friend + '\", \"Friendship_Status\": \"' + data.status + '\"}');
-            entriesProcessed += 1;
-            if (entriesProcessed == array.length) {
-                F_List = F_List.concat(']');
-                F_List = F_List.replace('}{', '},{');
-                callback(F_List);
-            }
-            else{
-                F_List = F_List.replace('}{', '},{');
-            }
-        });
-        */
-
-    });
-}
-
-
-
-
-
-/*
-function CounRequestApproved(user, callback) {
-    var F_List = '[';
-    var user = user.userid;
-    var entriesProcessed = 0;
-    dbAccess.find({type: constants.Accounting, userid: user}).exec(function (e, res) {
-        console.log(res);
-        /*
-         res.forEach(function (data, index, array) {
-         if (data.user_1 == user) {
-         friend = data.user_2;
-         } else if (data.user_2 == user) {
-         friend = data.user_1;
-         }
-
-         F_List = F_List.concat('{ \"userid\": \"' + friend + '\", \"Friendship_Status\": \"' + data.status + '\"}');
-         entriesProcessed += 1;
-         if (entriesProcessed == array.length) {
-         F_List = F_List.concat(']');
-         F_List = F_List.replace('}{', '},{');
-         callback(F_List);
-         }
-         else{
-         F_List = F_List.replace('}{', '},{');
-         }
-         });
-
-
-    });
-}  */
-
-
-
-
-
-
-
-
-//*****
-
-// *****
+        callback(res);
+           });
+        }
 module.exports = {
     find: function (data, callback) {
         if (data.type == constants.PotentialProvider) {

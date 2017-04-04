@@ -106,26 +106,26 @@ io.sockets.on('connection', function (socket) {
 
     //Sending the list of friends and potential friends to the frontend
     socket.on('SFB_User_ID_Info', function (data) {
-
         var userid = data.userid;
+
         logic.find({type: constants.Friends, userid: userid}, function (res) {
             var response = '{ \"userid\": \"' + userid + '\", \"Conections\": ' + res + '}';
-console.log(response);
             socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
         });
     });
 
-    //**********
     //Sending the list of transactions and the balance of the user
     socket.on('SFBUserTransactions', function (data) {
-
         var userid = data.userid;
-
+        var balance;
         logic.find({type: constants.AllTransactions, userid: userid}, function (res) {
-            var response = '{ \"userid\": \"' + userid + '\", \"Transactions:\": ' + res + '}';
-            socket.emit('SFBUserTransactions', JSON.parse(response.toString()));
+            logic.find({type: constants.User, userid: userid}, function (resp) {
+                balance = resp.balance;
+            });
+            var response = '{ \"userid\": \"' + userid + '\", \"Balance\": ' + balance + '\", \"Transactions\": [' + res + ']}';
+            console.log(response);
+            socket.emit('SFBUserTransactions', response.toString())
         });
-        //***********
     });
 
     // Get coin requests and stores them in the database
@@ -134,7 +134,6 @@ console.log(response);
     var requestedCoins = data.requestedCoins;
     var id = uuidV1();
     var approval = 'false';
-
        var coin_Transaction = new coinTransaction({requestid: id, userid: userid, requestedCoins: requestedCoins, approval: approval});
         coin_Transaction.save();
         });
@@ -142,7 +141,6 @@ console.log(response);
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
         var userid = data.userid;
-
         dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
             console.log(data);
             io.sockets.emit('Requested_Coins', data);
@@ -151,11 +149,9 @@ console.log(response);
 
    //Store the request as approved and updates the balance for the user
     socket.on('CoinsApproval', function (data) {
-
       var userid   = data.userid;
       var coins    = parseInt( data.requestedCoins);
         new_balance = 0 ;
-
         console.log(data);
         var coinTr = new coinTransaction({
             requestid: data.requestid,
@@ -164,9 +160,7 @@ console.log(response);
             requestedCoins: coins
         });
         coinTr.update();
-
         dbAccess.find({type: constants.User, userid: userid}).exec(function (e, data) {
-
             if (data.balance == undefined){
            var old_balance = 5;
                }
@@ -174,18 +168,14 @@ console.log(response);
                 var old_balance = parseInt(data.balance);
             }
             new_balance = coins + old_balance;
-
             var user_balance = new user({
                 userid: data.userid,
                 balance: new_balance,
             });
-
             console.log(new_balance);
             user_balance.update();
-
         });
            })
-
 });
 //Data exchange Broker/ SFBroker
 
@@ -209,10 +199,8 @@ socket_c.on('SFInformation', function (data) {
         console.log(response);
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     });
-
 });
 ;
-
 
 // Step 5: Receiving provider and consumer informations from Broker
 socket_c.on('ProviderConsumerInformation', function (data) {
@@ -233,4 +221,3 @@ socket_c.on('ProviderConsumerInformation', function (data) {
         taskletid: data.taskletid
     });
 });
-
