@@ -1,5 +1,4 @@
 var constants = require('../constants');
-var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
 
 var mongoose = require('mongoose');
 var Accountings = require("../models/Accountings");
@@ -46,7 +45,7 @@ function findFriendship(data){
 }
 
 function findUser(data){
-    var user = mongoose.model("User", Users.userSchema);
+    var user = require('../models/Users.js');
     if(typeof data.userid == 'undefined'){
         var result = user.find({}, {});
     }else{

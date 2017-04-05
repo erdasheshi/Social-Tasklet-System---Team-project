@@ -1,8 +1,9 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+var passportLocalMongoose = require('passport-local-mongoose');
 
 var userSchema = new Schema({ //This is where accountingSchema is defined.
-    userid: String,
+    username: String,
     password: String,
     price: Number,
     email: String,
@@ -11,4 +12,6 @@ var userSchema = new Schema({ //This is where accountingSchema is defined.
     balance: Number
 });
 
-module.exports.userSchema = userSchema; //Export accountingSchema so that models.js can access it.
+userSchema.plugin(passportLocalMongoose);
+
+module.exports = mongoose.model('users', userSchema);

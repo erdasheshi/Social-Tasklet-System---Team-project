@@ -4,6 +4,8 @@ var Models = require("../app"); //Instantiate a Models object so you can access 
 var mongoose = require('mongoose');
 var Accountings = require("../models/Accountings");
 
+var Accounting = mongoose.model("Accounting", Accountings.accountingSchema); //This creates the Accounting model.
+
 module.exports = AccountingTransaction
 
 function AccountingTransaction(data) {
@@ -15,8 +17,8 @@ function AccountingTransaction(data) {
     this.taskletid = data.taskletid;
 }
 
-AccountingTransaction.prototype.save =  function(){
-    var transaction = new Models.Accounting({ //You're entering a new transaction here
+AccountingTransaction.prototype.save =  function(callback){
+    var transaction = new Accounting({ //You're entering a new transaction here
         consumer: this.consumer,
         provider: this.provider,
         computation: this.computation,
@@ -27,9 +29,9 @@ AccountingTransaction.prototype.save =  function(){
 
     transaction.save({}, function (error, data) {
         if(error){
-            console.error(error.stack || error.message);
-            return;
+            callback(error, false);
         }
+        callback(null, true);
     });
 }
 

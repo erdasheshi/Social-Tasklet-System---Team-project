@@ -1,7 +1,5 @@
 var express = require('express')
-, _ = require('lodash')
-, app = express()
-,	uuidV1 = require('uuid/v1');
+, app = express();
 
 // websocket
 var server = require('http').createServer(app)
@@ -10,65 +8,23 @@ var server = require('http').createServer(app)
 
 var dbAccess = require('./dbAccess');
 var accountingTransaction = require('../classes/AccountingTransaction');
-var friendshipTransaction = require('../classes/FriendshipTransaction');
-var coinTransaction = require('../classes/CoinTransactions');
+var coinTransaction = require('../classes/CoinTransaction');
 
 var user = require('../classes/User');
 var logic = require('./logic');
 
 var constants = require('../constants');
-
 server.listen(conf.ports.sfbroker_socket);
 
 io.sockets.on('connection', function (socket) {
     // der Client ist verbunden
     socket.emit('SFConnection', {zeit: new Date(), text: 'Connected!'});
-
-    socket.on('SFWrite_Acc', function (data) {
-        console.log(data);
-        var accTransaction = new accountingTransaction(data);
-        accTransaction.save();
-    });
-
-    socket.on('SFRead_Acc', function (data) {
-        dbAccess.find({type: constants.Accounting}).exec(function (e, data) {
-            socket.emit('SFRead_Acc', data);
-        })
-    });
-
-    socket.on('SFWrite_Friend', function (data) {
-        console.log(data);
-        var friendTransaction = new friendshipTransaction(data);
-        friendTransaction.save();
-    });
-
-    socket.on('SFRead_Friend', function (data) {
-        dbAccess.find({type: constants.Friendship}).exec(function (e, data) {
-            socket.emit('SFRead_Friend', data);
-        })
-    });
-
-    socket.on('SFWrite_User', function (data) {
+/*
+    socket.on('SFWrite_User', function (data) { // Move to register
         var userSave = new user(data);
         userSave.save();
     });
-
-    socket.on('SFRead_User', function (data) {
-        try {
-            dbAccess.find({type: constants.User, userid: data.userid}).exec(function (e, data) {
-                var result = JSON.parse('[' + JSON.stringify(data) + ']');
-                socket.emit('SFRead_User', result);
-            })
-        }
-        catch (e) {
-            if (e instanceof TypeError) {
-                dbAccess.find({type: constants.User}).exec(function (e, data) {
-                    socket.emit('SFRead_User', data);
-                })
-            }
-        }
-    });
-
+*/
     // Step 11: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function (data) {
         var computation = data.computation;
@@ -103,40 +59,6 @@ io.sockets.on('connection', function (socket) {
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
         })
     });
-
-    //Sending the list of friends and potential friends to the frontend
-    socket.on('SFB_User_ID_Info', function (data) {
-        var userid = data.userid;
-
-        logic.find({type: constants.Friends, userid: userid}, function (res) {
-            var response = '{ \"userid\": \"' + userid + '\", \"Conections\": ' + res + '}';
-            socket.emit('SFB_User_ID_Info', JSON.parse(response.toString()));
-        });
-    });
-
-    //Sending the list of transactions and the balance of the user
-    socket.on('SFBUserTransactions', function (data) {
-        var userid = data.userid;
-        var balance;
-        logic.find({type: constants.AllTransactions, userid: userid}, function (res) {
-            logic.find({type: constants.User, userid: userid}, function (resp) {
-                balance = resp.balance;
-            });
-            var response = '{ \"userid\": \"' + userid + '\", \"Balance\": ' + balance + '\", \"Transactions\": [' + res + ']}';
-            console.log(response);
-            socket.emit('SFBUserTransactions', response.toString())
-        });
-    });
-
-    // Get coin requests and stores them in the database
-    socket.on('Coin_request', function(data) {
-    var userid = data.userid;
-    var requestedCoins = data.requestedCoins;
-    var id = uuidV1();
-    var approval = 'false';
-       var coin_Transaction = new coinTransaction({requestid: id, userid: userid, requestedCoins: requestedCoins, approval: approval});
-        coin_Transaction.save();
-        });
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {

@@ -4,47 +4,34 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var localStrategy = require('passport-local' ).Strategy;
 
-
-// For Mongo DB
-var mongo = require('mongodb');
+// Prepare DB
 var mongoose = require('mongoose');
-var Accountings = require("./models/Accountings");
-var Friendships = require("./models/Friendships");
-var CoinRequests = require("./models/CoinRequests");
-var Users = require("./models/Users");
 mongoose.Promise = global.Promise;
-mongoose.connect('localhost:27017/SFBroker');
+mongoose.connect('127.0.0.1:27017/SFBroker');
 
 var db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", function(callback){
-     console.log("DB Connection Succeeded."); /* Once the database connection has succeeded, the code in db.once is executed. */
- });
+    console.log("DB Connection Succeeded."); /* Once the database connection has succeeded, the code in db.once is executed. */
+});
 
-var Accounting = mongoose.model("Accounting", Accountings.accountingSchema); //This creates the Accounting model.
-module.exports.Accounting = Accounting; /* Export the Accounting model so index.js can access it. */
-
-var Friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
-module.exports.Friendship = Friendship;
-
-var Coins = mongoose.model("Coins", CoinRequests.coinRequestSchema);
-module.exports.Coins = Coins;
-
-var User = mongoose.model("User", Users.userSchema);
-module.exports.User = User;
+// user schema/model
+var User = require('./models/Users.js');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var socket = require('./routes/sockets');
 
 var app = express();
 
-var socket = require('./routes/sockets');
-
 // view engine setup
+
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -52,7 +39,20 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// configure passport
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use('/', index);
 app.use('/users', users);
