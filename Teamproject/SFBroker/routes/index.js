@@ -124,7 +124,7 @@ router.post('/coinrequest', loggedIn, function(req, res, next) {
     });
 });
 
-router.post('/register', loggedIn, function(req, res) {
+router.post('/register', function(req, res) {
     User.register(new User({    username: req.body.username,
                                 email: req.body.email,
                                 firstname: req.body.firstname,
