@@ -27,19 +27,51 @@ io.sockets.on('connection', function (socket) {
 */
     // Step 11: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function (data) {
+        //add security check that the computation is really a number
         var computation = data.computation;
+        var cost;
+        var price;
+        var confirmation = true;
+        var difference;
+        console.log('sfbroker got the cycles');
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
-            var accTransaction = new accountingTransaction({
-                consumer: res.consumer,
-                provider: res.provider,
-                computation: computation,
-                coins: computation,
-                status: constants.AccountingStatusComputed,
-                taskletid: res.taskletid
+            dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
+                console.log(udata.price + '   price');
+                price = udata.price;
+
+                console.log(price + '  price as variable out of function');
+                cost = parseInt(computation) * price;
+                console.log('computation  ' + computation);
+                console.log('cost ' + cost);
+                difference = res.coins - cost;
+                console.log('differenca ' + difference);
+
+                console.log('sfbroker is sending the coinblocked confirmation...' + res.consumer + 'consum' + res.taskletid + ' taskl' + confirmation +' const' + cost +'');
+                var accTransaction = new accountingTransaction({
+                    consumer: res.consumer,
+                    provider: res.provider,
+                    computation: computation,
+                    coins: cost,
+                    status: constants.AccountingStatusComputed,
+                    taskletid: res.taskletid
+                });
+                accTransaction.update();
+
+                //calculates the difference between the blocked coins and the real cost
+                // function call to the e updatebalanc function outside
+                UpdateBalance(difference, res.consumer);
+
+                socket.emit('TaskletCyclesCoinsBlocked', {
+                    consumer: data.consumer,
+                    provider: data.provider,
+                    taskletid: data.taskletid,
+                    confirmation: confirmation,
+                    computation: computation,
+                    coins: cost,
+                    status: constants.AccountingStatusComputed
+                });
             });
-            accTransaction.update();
-            socket.emit('TaskletCyclesCoinsBlocked', res);
-        })
+        });
     });
 
     // Step 14: Receiving the Tasklet result confirmation
@@ -129,17 +161,70 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     var accTransaction = new accountingTransaction({
         consumer: data.consumer,
         provider: data.provider,
-        computation: '100',
-        coins: '200',
+        computation: 0,
+        coins: data.coins,
         status: constants.AccountingStatusBlocked,
         taskletid: data.taskletid
     });
     accTransaction.save();
+
     socket_c.emit('ProviderConsumerInformation', {
-        success: true,
         consumer: data.consumer,
         provider: data.provider,
-        status: constants.AccountingStatusBlocked,
-        taskletid: data.taskletid
+        taskletid: data.taskletid,
+        success: true,
+        coins: data.coins,
+        status: constants.AccountingStatusBlocked
+    });
+    dbAccess.find({type: constants.User, username: data.consumer}).exec(function (e, res) {
+        console.log("Result: " + res);
+        var old_balance = parseInt(res.balance);
+        var new_balance = old_balance + data.coins;
+        console.log("Old:" + old_balance);
+        console.log("Change:" + data.coins);
+        var user_balance = new user({
+            username: res.username,
+            balance: new_balance,
+        });
+        console.log(new_balance);
+        user_balance.update();
+    });
+
+});
+
+socket_c.on('CheckBalance', function (data) {
+    var username = data.name;
+    var name = data.name;
+    var taskletid = data.taskletid;
+    var cost = data.cost;
+    var privacy = data.privacy;
+    var speed = data.speed;
+    var reliability = data.reliability;
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+        console.log(balance);
+        socket_c.emit('CheckBalance', {
+            balance: balance,
+            zeit: new Date(),
+            name: name,
+            taskletid: taskletid,
+            cost: cost,
+            privacy: privacy,
+            speed: speed,
+            reliability: reliability
+
+        });
     });
 });
+
+function UpdateBalance(difference, username) {
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+        balance = balance + difference;
+        var userb = new user({
+            username: username,
+            balance: balance,
+        });
+        userb.update();
+    });
+};

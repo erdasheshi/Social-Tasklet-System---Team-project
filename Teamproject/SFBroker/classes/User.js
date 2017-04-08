@@ -41,9 +41,9 @@ user.prototype.save =  function(callback) {
 user.prototype.update =  function(){
     var transaction = this;
     console.log(transaction);
-    var user = mongoose.model("User", Users.userSchema);
+    //var user = mongoose.model("User", Users.userSchema);
 
-    user.findOne({ 'userid' : this.userid }, function (err, doc) {
+    User.findOne({ 'username' : this.username }, function (err, doc) {
         doc.balance = transaction.balance;
 
         doc.save({}, function (error, data) {
