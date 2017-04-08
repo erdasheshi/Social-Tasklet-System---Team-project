@@ -18,8 +18,8 @@ console.log('Port: ' + port);
 server.listen(port);
 
 // Connect to broker
-var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
-var socket_sf = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket)
+var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
+var socket_sf = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
 //Step 8: Receiving the coins block status
 socket_c.on('CoinsBlock', function(data){

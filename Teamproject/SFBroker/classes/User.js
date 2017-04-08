@@ -34,7 +34,7 @@ user.prototype.save =  function(callback) {
         if(error){
             callback(error, false);
         }
-        callback(null, true);
+        if(callback) callback(null, true);
     });
 }
 

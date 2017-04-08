@@ -33,7 +33,7 @@ $(document).ready(function(){
         var provider = data.potentialprovider;
         var providerinformation = '';
         $.each(provider, function( i, val ) {
-            providerinformation += 'User: ' + val.userid + ' - Price: ' + val.price + ' '
+            providerinformation += 'User: ' + val.username + ' - Price: ' + val.price + ' '
         })
 
         $('#content').append(

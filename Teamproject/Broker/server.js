@@ -7,7 +7,7 @@ var express = require('express')
 , 	constants = require('./constants');
 
 // Webserver
-server.listen(conf.ports.broker);
+server.listen(conf.broker.port);
 
 // static files
 app.use(express.static(__dirname + '/public'));
@@ -20,6 +20,9 @@ app.get('/', function (req, res) {
 
 // Websocket
 io.sockets.on('connection', function (socket) {
+
+    var address = socket.request.connection;
+    console.log('New connection from ' + address.remoteAddress + ':' + address.remotePort);
 
 	//Connecting new Consumer/Provider with Broker
 	socket.on('event', function (data) {
@@ -48,7 +51,6 @@ io.sockets.on('connection', function (socket) {
 
 		//Step 4: Finding most suitable provider
 		var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
-		
 		// Step 5: Sending provider and consumer information to SFBroker
         io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider });
 	 });
@@ -64,7 +66,7 @@ io.sockets.on('connection', function (socket) {
 function addInformations(potentialprovider){
 	
 	for(var i= 0; i < potentialprovider.length; i++){
-		potentialprovider.splice(i, 1, {userid: potentialprovider[i].userid, price: potentialprovider[i].price, actualreliability: 5, actualspeed: 5});
+		potentialprovider.splice(i, 1, {username: potentialprovider[i].username, price: potentialprovider[i].price, actualreliability: 5, actualspeed: 5});
 	}
 	return potentialprovider;
 	
@@ -119,7 +121,7 @@ function scheduling(potentialprovider, cost, reliability, speed){
 		
 		if(newscore < score){
 			score = newscore;
-			provider = potentialprovider[i].userid;
+			provider = potentialprovider[i].username;
 		}
 	}
 	
@@ -127,4 +129,4 @@ function scheduling(potentialprovider, cost, reliability, speed){
 
 }
 
-console.log('Broker runs on http://127.0.0.1:' + conf.ports.broker + '/');
+console.log('Broker runs on http://127.0.0.1:' + conf.broker.port + '/');

@@ -14,7 +14,7 @@ var user = require('../classes/User');
 var logic = require('./logic');
 
 var constants = require('../constants');
-server.listen(conf.ports.sfbroker_socket);
+server.listen(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
     // der Client ist verbunden
@@ -62,8 +62,8 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        var userid = data.userid;
-        dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
+        var username = data.username;
+        dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
             console.log(data);
             io.sockets.emit('Requested_Coins', data);
         })
@@ -71,18 +71,18 @@ io.sockets.on('connection', function (socket) {
 
    //Store the request as approved and updates the balance for the user
     socket.on('CoinsApproval', function (data) {
-      var userid   = data.userid;
+      var username   = data.username;
       var coins    = parseInt( data.requestedCoins);
         new_balance = 0 ;
         console.log(data);
         var coinTr = new coinTransaction({
             requestid: data.requestid,
             approval: data.approval,
-            userid: userid,
+            username: username,
             requestedCoins: coins
         });
         coinTr.update();
-        dbAccess.find({type: constants.User, userid: userid}).exec(function (e, data) {
+        dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
             if (data.balance == undefined){
            var old_balance = 5;
                }
@@ -91,7 +91,7 @@ io.sockets.on('connection', function (socket) {
             }
             new_balance = coins + old_balance;
             var user_balance = new user({
-                userid: data.userid,
+                username: data.username,
                 balance: new_balance,
             });
             console.log(new_balance);
@@ -102,22 +102,22 @@ io.sockets.on('connection', function (socket) {
 //Data exchange Broker/ SFBroker
 
 // Connect to broker
-var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
+var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
 
 socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
-    var userid = data.name;
+    var username = data.name;
     var taskletid = data.taskletid;
     var cost = data.cost;
     var reliability = data.reliability;
     var speed = data.speed;
     var qoc_privacy = data.privacy;
 
-    logic.find({type: constants.PotentialProvider, userid: userid, privacy: qoc_privacy}, function (res) {
+    logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (res) {
         //builds the string that will be sent via socket.emit
-        var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
+        var response = '{ \"name\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         console.log(response);
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     });
