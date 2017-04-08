@@ -18,8 +18,6 @@ $(document).ready(function(){
                 $('<b>').text(typeof(data.name) != 'undefined' ? data.name + ': ' : ''),
 				$('<span>').text('TaskletID: ' + data.taskletid + ' '),
                 // Requirements
-				// do the same for the other broker an dfor th ebuer/seller
-			
                 $('<span>').text('QoC Cost: ' + data.cost + ' ' + 'QoC Privacy: ' + data.privacy +' ' +'QoC Speed: ' + data.speed + ' ' + 'QoC Reliability: ' + data.reliability ))
         );
 		
@@ -27,7 +25,7 @@ $(document).ready(function(){
         $('body').scrollTop($('body')[0].scrollHeight);
     });
 	
-	// Step 3: Illustrating potential provider
+	// Step 5: Illustrating potential provider
 	socket.on('ShowProviderInformation', function (data) {
         var zeit = new Date(data.zeit);
         var provider = data.potentialprovider;

@@ -31,17 +31,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletSendBroker', function (data) {
         // Creating Tasklet ID
 		var taskletid = uuidV1();
-        // Step 2: Information request to SFBroker
-		var string =
-           io.sockets.emit('ShowTaskletRequest', {
-                zeit: new Date(),
-                name: data.name,
-                taskletid: taskletid,
-                cost: data.cost,
-                privacy: data.privacy,
-                speed: data.speed,
-                reliability: data.reliability
-            });
+        // Step 1: Illustrating the Tasklet request
+        io.sockets.emit('ShowTaskletRequest', {zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed,reliability: data.reliability});
+		// Step 2: Balance request to SFBroker
         io.sockets.emit('CheckBalance',{
             name: data.name,
             taskletid: taskletid,
@@ -52,15 +44,16 @@ io.sockets.on('connection', function (socket) {
         });
     });
 
+	// Step 3: Receiving the balance from SFBroker
     socket.on('CheckBalance', function (data) {
         var balance = data.balance;
         if ( balance < 30) {
-            console.log('ba  ' + balance);
-            io.sockets.emit('CancelTasklet');
+            console.log('ba ' + balance);
+            io.sockets.emit('CancelTasklet', {cancel: 'Cancel it'});
         }
-        //why cancelTasklet is called in each case?
+        
         else {
-            console.log(balance + 'balance value when its done the check in the broker');
+           // Step 4: Information request to SFBroker
             io.sockets.emit('SFInformation', {
                 zeit: new Date(),
                 name: data.name,
@@ -73,23 +66,24 @@ io.sockets.on('connection', function (socket) {
         }
     });
 
-	// Step 3: Receiving potential provider information from SFBroker
+	// Step 5: Receiving potential provider information from SFBroker
 	socket.on('SFInformation', function (data) {
 		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
 
 		// Including the speed and reliability informations
 		addInformations(data.potentialprovider);
 
-		//Step 4: Finding most suitable provider
+		//Step 6: Finding most suitable provider
 		var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
 
-		// Step 5: Sending provider and consumer, coins to be blocked information to SFBroker
+		// Step 7: Sending provider and consumer, coins to be blocked information to SFBroker
 		//SFBroker blocks the coins from the consumer
         io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider, coins: 30 });
   });
-	 // Step 7: Receiving potential provider information from SFBroker
+	 // Step 9: Receiving potential provider information from SFBroker
 	socket.on('ProviderConsumerInformation', function (res) {
-		// Step 8: Informing consumer and provider about the coins blocking
+		
+		// Step 10: Informing consumer and provider about the coins blocking
 
             io.sockets.emit('CoinsBlock', {
                 zeit: new Date(),
@@ -117,7 +111,7 @@ function randomNumber(){
 	return Math.floor((Math.random() * 10) + 1)
 }
 
-// Step 4: Scheduler chooses based on QoC the most suitable provider
+// Step 6: Scheduler chooses based on QoC the most suitable provider
 // Assuming price range is 1-10 and for reliability and speed 1 is best, 10 is worst
 function scheduling(potentialprovider, cost, reliability, speed){
 
