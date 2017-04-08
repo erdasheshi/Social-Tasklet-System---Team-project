@@ -6,25 +6,27 @@ var constants = require('../constants');
 
 function findPotentialProvider(consumer, callback) {
     var potentialprovider = '[';
-    var consumer = consumer.userid;
+    var consumer = consumer.username;
     var provider;
     var privacy = consumer.privacy;
     var userProcessed = 0;
     if (privacy == "high") {
-        dbAccess.find({type: constants.Friendship, userid: consumer}).exec(function (e, res) {
+        dbAccess.find({type: constants.Friendship, username: consumer}).exec(function (e, res) {
             res.forEach(function (data, index, array) {
                 if (data.user_1 == consumer) {
                     provider = data.user_2;
                 } else if (data.user_2 == consumer) {
                     provider = data.user_1;
                 }
-                dbAccess.find({type: constants.User, userid: provider}).exec(function (e, res) {
-                    potentialprovider = potentialprovider.concat('{ \"userid\": \"' + res.userid + '\", \"price\": ' + res.price + '}');
+                dbAccess.find({type: constants.User, username: provider}).exec(function (e, res) {
+                    if( res.username !== consumer){
+                        potentialprovider = potentialprovider.concat('{ \"username\": \"' + res.username + '\", \"price\": ' + res.price + '}');
+                    }
                     userProcessed += 1;
                     if (userProcessed == array.length) {
                         potentialprovider = potentialprovider.concat(']');
                         potentialprovider = potentialprovider.replace('}{', '},{');
-                        callback(potentialprovider);
+                        if(callback) callback(potentialprovider);
                     }
                 });
             })
@@ -33,8 +35,9 @@ function findPotentialProvider(consumer, callback) {
     else {
         dbAccess.find({type: constants.User}).exec(function (e, res) {
             res.forEach(function (data, index, array) {
-
-                potentialprovider = potentialprovider.concat('{ \"userid\": \"' + data.userid + '\", \"price\": ' + data.price + '}');
+                if( data.username !== consumer) {
+                    potentialprovider = potentialprovider.concat('{ \"username\": \"' + data.username + '\", \"price\": ' + data.price + '}');
+                }
                 userProcessed += 1;
                 if (userProcessed == array.length) {
                     potentialprovider = potentialprovider.concat(']');
@@ -50,12 +53,12 @@ function findPotentialProvider(consumer, callback) {
 
 function findFriends(user, callback) {
     var F_List = '[';
-    var user = user.userid;
+    var user = user.username;
     var friend;
     var key = 'Network';
     var F_status;
     var userProcessed = 0;
-    dbAccess.find({type: constants.Friendship, userid: user, FriendshipStatus: key}).exec(function (e, res) {
+    dbAccess.find({type: constants.Friendship, username: user, FriendshipStatus: key}).exec(function (e, res) {
         res.forEach(function (data, index, array) {
             if (data.status == constants.FriendshipStatusRequested) {
             if (data.user_1 == user ) {
@@ -88,8 +91,8 @@ function findFriends(user, callback) {
     });
 }
 function findAllTransactions(user, callback) {
-    var user = user.userid;
-    dbAccess.find({type: constants.Accounting, userid: user}).exec(function (e, res) {
+    var user = user.username;
+    dbAccess.find({type: constants.Accounting, username: user}).exec(function (e, res) {
         callback(res);
            });
         }

@@ -128,7 +128,9 @@ router.post('/register', function(req, res) {
     User.register(new User({    username: req.body.username,
                                 email: req.body.email,
                                 firstname: req.body.firstname,
-                                lastname: req.body.lastname }),
+                                lastname: req.body.lastname,
+                                price: req.body.price,
+                                balance: 100}),
         req.body.password, function(err, account) {
             if (err) {
                 return res.status(500).json({

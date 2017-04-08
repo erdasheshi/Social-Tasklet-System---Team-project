@@ -14,7 +14,7 @@ var user = require('../classes/User');
 var logic = require('./logic');
 
 var constants = require('../constants');
-server.listen(conf.ports.sfbroker_socket);
+server.listen(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
     // der Client ist verbunden
@@ -27,19 +27,51 @@ io.sockets.on('connection', function (socket) {
 */
     // Step 11: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function (data) {
+        //add security check that the computation is really a number
         var computation = data.computation;
+        var cost;
+        var price;
+        var confirmation = true;
+        var difference;
+        console.log('sfbroker got the cycles');
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
-            var accTransaction = new accountingTransaction({
-                consumer: res.consumer,
-                provider: res.provider,
-                computation: computation,
-                coins: computation,
-                status: constants.AccountingStatusComputed,
-                taskletid: res.taskletid
+            dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
+                console.log(udata.price + '   price');
+                price = udata.price;
+
+                console.log(price + '  price as variable out of function');
+                cost = parseInt(computation) * price;
+                console.log('computation  ' + computation);
+                console.log('cost ' + cost);
+                difference = res.coins - cost;
+                console.log('differenca ' + difference);
+
+                console.log('sfbroker is sending the coinblocked confirmation...' + res.consumer + 'consum' + res.taskletid + ' taskl' + confirmation +' const' + cost +'');
+                var accTransaction = new accountingTransaction({
+                    consumer: res.consumer,
+                    provider: res.provider,
+                    computation: computation,
+                    coins: cost,
+                    status: constants.AccountingStatusComputed,
+                    taskletid: res.taskletid
+                });
+                accTransaction.update();
+
+                //calculates the difference between the blocked coins and the real cost
+                // function call to the e updatebalanc function outside
+                UpdateBalance(difference, res.consumer);
+
+                socket.emit('TaskletCyclesCoinsBlocked', {
+                    consumer: data.consumer,
+                    provider: data.provider,
+                    taskletid: data.taskletid,
+                    confirmation: confirmation,
+                    computation: computation,
+                    coins: cost,
+                    status: constants.AccountingStatusComputed
+                });
             });
-            accTransaction.update();
-            socket.emit('TaskletCyclesCoinsBlocked', res);
-        })
+        });
     });
 
     // Step 14: Receiving the Tasklet result confirmation
@@ -62,8 +94,8 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        var userid = data.userid;
-        dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
+        var username = data.username;
+        dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
             console.log(data);
             io.sockets.emit('Requested_Coins', data);
         })
@@ -71,18 +103,18 @@ io.sockets.on('connection', function (socket) {
 
    //Store the request as approved and updates the balance for the user
     socket.on('CoinsApproval', function (data) {
-      var userid   = data.userid;
+      var username   = data.username;
       var coins    = parseInt( data.requestedCoins);
         new_balance = 0 ;
         console.log(data);
         var coinTr = new coinTransaction({
             requestid: data.requestid,
             approval: data.approval,
-            userid: userid,
+            username: username,
             requestedCoins: coins
         });
         coinTr.update();
-        dbAccess.find({type: constants.User, userid: userid}).exec(function (e, data) {
+        dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
             if (data.balance == undefined){
            var old_balance = 5;
                }
@@ -91,7 +123,7 @@ io.sockets.on('connection', function (socket) {
             }
             new_balance = coins + old_balance;
             var user_balance = new user({
-                userid: data.userid,
+                username: data.username,
                 balance: new_balance,
             });
             console.log(new_balance);
@@ -102,22 +134,22 @@ io.sockets.on('connection', function (socket) {
 //Data exchange Broker/ SFBroker
 
 // Connect to broker
-var socket_c = require('socket.io-client')('http://localhost:' + conf.ports.broker);
+var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
 
 socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
-    var userid = data.name;
+    var username = data.name;
     var taskletid = data.taskletid;
     var cost = data.cost;
     var reliability = data.reliability;
     var speed = data.speed;
     var qoc_privacy = data.privacy;
 
-    logic.find({type: constants.PotentialProvider, userid: userid, privacy: qoc_privacy}, function (res) {
+    logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (res) {
         //builds the string that will be sent via socket.emit
-        var response = '{ \"name\": \"' + userid + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
+        var response = '{ \"name\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         console.log(response);
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     });
@@ -129,17 +161,70 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     var accTransaction = new accountingTransaction({
         consumer: data.consumer,
         provider: data.provider,
-        computation: '100',
-        coins: '200',
+        computation: 0,
+        coins: data.coins,
         status: constants.AccountingStatusBlocked,
         taskletid: data.taskletid
     });
     accTransaction.save();
+
     socket_c.emit('ProviderConsumerInformation', {
-        success: true,
         consumer: data.consumer,
         provider: data.provider,
-        status: constants.AccountingStatusBlocked,
-        taskletid: data.taskletid
+        taskletid: data.taskletid,
+        success: true,
+        coins: data.coins,
+        status: constants.AccountingStatusBlocked
+    });
+    dbAccess.find({type: constants.User, username: data.consumer}).exec(function (e, res) {
+        console.log("Result: " + res);
+        var old_balance = parseInt(res.balance);
+        var new_balance = old_balance + data.coins;
+        console.log("Old:" + old_balance);
+        console.log("Change:" + data.coins);
+        var user_balance = new user({
+            username: res.username,
+            balance: new_balance,
+        });
+        console.log(new_balance);
+        user_balance.update();
+    });
+
+});
+
+socket_c.on('CheckBalance', function (data) {
+    var username = data.name;
+    var name = data.name;
+    var taskletid = data.taskletid;
+    var cost = data.cost;
+    var privacy = data.privacy;
+    var speed = data.speed;
+    var reliability = data.reliability;
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+        console.log(balance);
+        socket_c.emit('CheckBalance', {
+            balance: balance,
+            zeit: new Date(),
+            name: name,
+            taskletid: taskletid,
+            cost: cost,
+            privacy: privacy,
+            speed: speed,
+            reliability: reliability
+
+        });
     });
 });
+
+function UpdateBalance(difference, username) {
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+        balance = balance + difference;
+        var userb = new user({
+            username: username,
+            balance: balance,
+        });
+        userb.update();
+    });
+};

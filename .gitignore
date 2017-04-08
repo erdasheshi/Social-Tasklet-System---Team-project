@@ -1,1 +1,8 @@
 *.wt
+MongoDB/
+node_modules/
+data/
+MongoDB/
+node_modules/
+data/
+*.md

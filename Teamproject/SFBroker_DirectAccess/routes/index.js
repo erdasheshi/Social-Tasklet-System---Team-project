@@ -3,7 +3,7 @@ var router = express.Router();
 var conf = require('../config.json');
 var constants = require('../constants');
 
-var socket = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
+var socket = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
 // websocket
 socket.on('connection', function () {

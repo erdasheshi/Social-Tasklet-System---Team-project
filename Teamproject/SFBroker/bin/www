@@ -13,7 +13,7 @@ var conf = require('../config.json');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || conf.ports.sfbroker);
+var port = normalizePort(process.env.PORT || conf.sfbroker.port);
 app.set('port', port);
 
 /**
