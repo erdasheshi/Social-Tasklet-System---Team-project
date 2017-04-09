@@ -38,7 +38,7 @@ router.get('/friendship', loggedIn, function(req, res, next) {
 /* GET users. */
 router.get('/user', loggedIn, function(req, res, next) {
 
-    if(typeof req.query.userid == 'undefined'){
+    if(typeof req.query.username == 'undefined'){
         dbAccess.find({type: constants.User}).exec(function (e, data) {
             if(e) return next(e);
             var result = JSON.parse('[' + JSON.stringify(data) + ']');
@@ -56,11 +56,11 @@ router.get('/user', loggedIn, function(req, res, next) {
 /* GET sfbuserinfo. */
 router.get('/sfbuserinfo', loggedIn, function(req, res, next) {
 
-    var userid = req.query.userid;
+    var username = req.query.username;
 
-    logic.find({type: constants.Friends, userid: userid}, function (res) {
+    logic.find({type: constants.Friends, username: username}, function (res) {
         if(e) return next(e);
-        var response = '{ \"userid\": \"' + userid + '\", \"Conections\": ' + res + '}';
+        var response = '{ \"username\": \"' + username + '\", \"Conections\": ' + res + '}';
         res.json(JSON.parse(response.toString()));
     });
 });
@@ -68,14 +68,14 @@ router.get('/sfbuserinfo', loggedIn, function(req, res, next) {
 /* GET sfbusertransactions. */
 router.get('/sfbusertransactions', loggedIn, function(req, res, next) {
 
-    var userid = req.query.userid;
+    var username = req.query.username;
     var balance;
 
-    logic.find({type: constants.AllTransactions, userid: userid}, function (result) {
-        logic.find({type: constants.User, userid: userid}, function (resp) {
+    logic.find({type: constants.AllTransactions, username: username}, function (result) {
+        logic.find({type: constants.User, username: username}, function (resp) {
             balance = resp.balance;
         });
-        var response = '{ "userid": "' + userid + '", "Balance": ' + balance + '", "Transactions": [' + result + ']}';
+        var response = '{ "username": "' + username + '", "Balance": ' + balance + '", "Transactions": [' + result + ']}';
         res.json(response.toString());
     });
 });
@@ -83,9 +83,9 @@ router.get('/sfbusertransactions', loggedIn, function(req, res, next) {
 /* GET requestedcoins. */
 router.get('/requestedcoins', loggedIn, function(req, res, next) {
 
-    var userid = req.query.userid;
+    var username = req.query.username;
 
-    dbAccess.find({type: constants.CoinReq, userid: userid}).exec(function (e, data) {
+    dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
         if(e) return next(e);
         res.json(data);
     })
@@ -112,12 +112,12 @@ router.post('/friendship', loggedIn, function(req, res, next) {
 
 /*POST /CoinRequest*/
 router.post('/coinrequest', loggedIn, function(req, res, next) {
-    var userid = req.body.userid;
+    var username = req.body.username;
     var requestedCoins = req.body.requestedCoins;
     console.log(req.body);
     var id = uuidV1();
     var approval = 'false';
-    var coin_Transaction = new coinTransaction({requestid: id, userid: userid, requestedCoins: requestedCoins, approval: approval});
+    var coin_Transaction = new coinTransaction({requestid: id, username: username, requestedCoins: requestedCoins, approval: approval});
     coin_Transaction.save(function (err, post) {
         if (err) return next(err);
         res.json(post);
@@ -173,6 +173,11 @@ router.get('/logout', loggedIn, function(req, res) {
     res.status(200).json({
         status: 'Bye!'
     });
+});
+
+router.get('/download', loggedIn, function (req, res, next) {
+    var filePath = "../SFBroker/download/test.txt";
+    res.download(filePath);
 });
 
 function loggedIn(req, res, next) {
