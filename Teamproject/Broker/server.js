@@ -155,6 +155,10 @@ function scheduling(potentialprovider, cost, reliability, speed){
 	// Calculating the score (1-10) for every potential provider
 	for(var i= 0; i < potentialprovider.length; i++){
 		
+		if(potentialprovider[i].price > 10){
+		console.log('Price is more than 10 ! Please revise');
+		}
+		
 		var newscore = (weightcost * potentialprovider[i].price) + (weightreliability * potentialprovider[i].actualreliability) + (weightspeed * potentialprovider[i].actualspeed);
 		
 		if(newscore < score){

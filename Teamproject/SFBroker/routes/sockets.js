@@ -25,7 +25,7 @@ io.sockets.on('connection', function (socket) {
         userSave.save();
     });
 */
-    // Step 11: Tasklet finished + Tasklet cycles known
+    // Step 13: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function (data) {
         //add security check that the computation is really a number
         var computation = data.computation;
@@ -33,20 +33,16 @@ io.sockets.on('connection', function (socket) {
         var price;
         var confirmation = true;
         var difference;
-        console.log('sfbroker got the cycles');
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
             dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
-                console.log(udata.price + '   price');
+               
                 price = udata.price;
-
-                console.log(price + '  price as variable out of function');
+				
                 cost = parseInt(computation) * price;
                 console.log('computation  ' + computation);
                 console.log('cost ' + cost);
                 difference = res.coins - cost;
-                console.log('differenca ' + difference);
 
-                console.log('sfbroker is sending the coinblocked confirmation...' + res.consumer + 'consum' + res.taskletid + ' taskl' + confirmation +' const' + cost +'');
                 var accTransaction = new accountingTransaction({
                     consumer: res.consumer,
                     provider: res.provider,
@@ -61,10 +57,10 @@ io.sockets.on('connection', function (socket) {
                 // function call to the e updatebalanc function outside
                 UpdateBalance(difference, res.consumer);
 
-                socket.emit('TaskletCyclesCoinsBlocked', {
-                    consumer: data.consumer,
-                    provider: data.provider,
-                    taskletid: data.taskletid,
+                io.sockets.emit('TaskletCyclesCoinsBlocked', {
+                    consumer: res.consumer,
+                    provider: res.provider,
+                    taskletid: res.taskletid,
                     confirmation: confirmation,
                     computation: computation,
                     coins: cost,
@@ -74,10 +70,10 @@ io.sockets.on('connection', function (socket) {
         });
     });
 
-    // Step 14: Receiving the Tasklet result confirmation
+    // Step 16: Receiving the Tasklet result confirmation
     socket.on('TaskletResultConfirm', function (data) {
         var computation = data.computation;
-        // Step 15: Releasing the blocked coins
+        // Step 17: Releasing the blocked coins
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
             var accTransaction = new accountingTransaction({
                 consumer: res.consumer,
@@ -138,7 +134,7 @@ var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + co
 
 socket_c.emit('event', {connection: 'I want to connect'});
 
-// Step 3: Finding and sending friends information for Broker
+// Step 5: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
     var username = data.name;
     var taskletid = data.taskletid;
@@ -150,13 +146,12 @@ socket_c.on('SFInformation', function (data) {
     logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (res) {
         //builds the string that will be sent via socket.emit
         var response = '{ \"name\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
-        console.log(response);
         socket_c.emit('SFInformation', JSON.parse(response.toString()));
     });
 });
 ;
 
-// Step 5: Receiving provider and consumer informations from Broker
+// Step 7: Receiving provider and consumer informations from Broker
 socket_c.on('ProviderConsumerInformation', function (data) {
     var accTransaction = new accountingTransaction({
         consumer: data.consumer,
@@ -179,7 +174,7 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     dbAccess.find({type: constants.User, username: data.consumer}).exec(function (e, res) {
         console.log("Result: " + res);
         var old_balance = parseInt(res.balance);
-        var new_balance = old_balance + data.coins;
+        var new_balance = old_balance - data.coins;
         console.log("Old:" + old_balance);
         console.log("Change:" + data.coins);
         var user_balance = new user({

@@ -113,7 +113,6 @@ $(document).ready(function(){
 
     });
 
-    //**************why data.consumer is valid and data.coins is not recognized???????
 	// Step 14: Coins were blocked for provider
     socket.on('ShowTaskletCyclesCoinsBlocked', function (data) {
 
@@ -133,7 +132,7 @@ $(document).ready(function(){
                 $('<b>').text('Provider: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(', the amount of '+ data.coins + ' coins for calculation are reserved - '),
+                $('<b>').text(', '+ data.coins + ' coins for calculation are reserved - '),
                 // Text
                 $('<span>').text('Consumer: ' + data.consumer + ' ' )),
             $('<input/>').attr({
@@ -165,7 +164,7 @@ $(document).ready(function(){
                     $('<b>').text('Provider: Tasklet '),
                     // ID
                     $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                    $('<span>').text(' coins for calculation were not reserved because the consumer had not enough money to pay for the transaction.'))
+                    $('<span>').text(' coins for calculation were not reserved because the Consumer had not enough money to pay for the transaction.'))
             );
 
             // scroll down
@@ -190,7 +189,7 @@ $(document).ready(function(){
                 $('<b>').text('Consumer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(' result ' + data.result + ' received - Total cycles of Tasklet was: ' + data.computation + '  and it costed: ' + data.coins),
+                $('<b>').text(' result ' + data.result + ' received - Cycles of Tasklet computation was ' + data.computation + ' and it cost ' + data.coins),
                 // Text
                 $('<span>').text(' Provider: ' + data.provider + ' ' )),
             $('<input/>').attr({
@@ -350,7 +349,7 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(result),
 
-                $('<span>').text(' returned to ' + tasklet.data.consumer + ' The total number of cycles was: ' + tasklet.data.computation + 'and it costed: ' + tasklet.data.coins )
+                $('<span>').text(' returned to ' + tasklet.data.consumer + ' - Cycles of Tasklet computation was ' + tasklet.data.computation + ' and it cost ' + tasklet.data.coins )
             )
         )
         socket.emit('ReturnTaskletToConsumer', {taskletid: tasklet.data.id, coins: tasklet.data.coins, computation: tasklet.data.computation, provider: tasklet.data.provider, consumer: tasklet.data.consumer, result: result});
