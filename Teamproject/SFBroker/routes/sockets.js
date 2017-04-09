@@ -84,6 +84,8 @@ io.sockets.on('connection', function (socket) {
                 taskletid: res.taskletid
             });
             accTransaction.update();
+
+            UpdateBalance(data.coins, data.provider);
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
         })
     });
