@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User }    from './user';
-import { UserService } from '../shared/services/user.service';
+import { UserService } from '../shared/services/user.service'; //API Service
 import { Router } from '@angular/router';
 
 var conf = require('../../../config.json');
@@ -9,12 +9,12 @@ var conf = require('../../../config.json');
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  providers: [UserService]
+  providers: [UserService] //API Service
 })
 export class RegisterComponent implements OnInit {
 
   constructor(
-      private userService: UserService,
+      private userService: UserService, //API Service
       private router: Router,
   ) { }
 

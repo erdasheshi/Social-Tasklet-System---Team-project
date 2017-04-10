@@ -1,23 +1,51 @@
 import { Component, OnInit } from '@angular/core';
-import { Friendship } from './friendship'
+import { Friendship } from './friendship';
+import { UserService } from '../shared/services/user.service'; //API Service
+import { NetworkUser } from '../shared/model/networkuser'
 
 var conf = require('../../../config.json');
 
 @Component({
   selector: 'app-network',
   templateUrl: './network.component.html',
-  styleUrls: ['./network.component.css']
+  styleUrls: ['./network.component.css'],
+  providers: [UserService] //API Service
 })
 
 export class NetworkComponent implements OnInit {
 
-  constructor() { }
+  networkUsers: NetworkUser[];
+  friendships2: Friendship[];
+
+  constructor(
+      private userService: UserService, //API Service
+  ) { }
 
   ngOnInit() {
 
+    this.userService
+        .getNetwork()
+        .then(result => {
+          console.log(result);
+          this.networkUsers = result;
+          console.log(this.networkUsers);
+        })
+        .catch(this.handleError);
+
+    this.userService
+        .getFriends('8080') //change the username
+        .then(result => {
+          console.log(result);
+          this.friendships2 = result;
+          console.log(this.friendships2);
+        })
+        .catch(this.handleError);
+
   }
 
-  //requested confirmed
+  private handleError(error: any): Promise<any> {
+    return Promise.reject(error.message || error);
+  }
 
 
   friendships = [
