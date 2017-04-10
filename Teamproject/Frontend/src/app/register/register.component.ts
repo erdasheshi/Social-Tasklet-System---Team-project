@@ -1,38 +1,49 @@
 import { Component, OnInit } from '@angular/core';
 import { User }    from './user';
+import { UserService } from '../shared/services/user.service';
+import { Router } from '@angular/router';
 
 var conf = require('../../../config.json');
-var socket = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  providers: [UserService]
 })
 export class RegisterComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+      private userService: UserService,
+      private router: Router,
+  ) { }
 
   ngOnInit() {
 
 
   }
 
+  user = new User("", "", "", "", 0, "");
 
-  user = new User("", "", "", 0, "");
-
-  onSubmit() {
-    //var j={"type":"User", "userid":"test", "password":"123", "price":"1234", "email":"test", "firstname":"test", "lastname":"test"};
-    //JSON.stringify(j);
+  onSubmit(user: User) {
     console.log(this.user);
+    this.userService
+        .registerUser(this.user)
+        .then(res => {
+          console.log(JSON.stringify(res));
+          if (res.status === 200){
+            this.router.navigate(['/transactions']);
+          }
+        })
+        .catch(this.handleError);
+  }
 
-    var userID= Math.floor((Math.random() * 100) + 1);
-    var userIDNew = userID.toString();
-    var userInfo = {"type":"User", "userid": userIDNew};
-//    var user = userInfo.concat(this.user);
-  //  JSON.stringify(user);
-
-    //socket.emit('SFWrite_User', user);
+  private handleError(err: any) {
+    if (err.status === 409) {
+      alert('This user was already added.');
+    } else {
+      alert(err || err.message);
+    }
   }
 
 }

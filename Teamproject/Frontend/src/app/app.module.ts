@@ -12,6 +12,8 @@ import { NetworkComponent } from './network/network.component';
 import { CoinsComponent } from './coins/coins.component';
 import { HeaderComponent } from './header/header.component';
 
+import { UserService } from './shared/services/user.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +57,7 @@ import { HeaderComponent } from './header/header.component';
 
     ], {useHash: true})
   ],
-  providers: [],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

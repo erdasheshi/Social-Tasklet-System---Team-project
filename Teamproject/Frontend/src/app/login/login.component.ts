@@ -1,29 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { User }    from './user';
+import { UserService } from '../shared/services/user.service';
+import { Router } from '@angular/router';
+
 
 var conf = require('../../../config.json');
-var socket = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  providers: [UserService]
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+      private userService: UserService,
+        private router: Router,
+  ) { }
 
   ngOnInit() {
   }
 
-  user = new User('', '', '', 0, '');
+  user = new User("", "", "", "", 0, "");
 
-  onSubmit() {
-    //var j={"type":"User", "userid":"test", "password":"123", "price":"1234", "email":"test", "firstname":"test", "lastname":"test"};
-    //JSON.stringify(j);
+  onSubmit(user: User) {
     console.log(this.user);
+    this.userService
+        .loginUser(this.user)
+        .then(res => {
+            console.log(res.status);
+            if (res.status === 200){
+                this.router.navigate(['/transactions']);
+            }
+          console.log(JSON.stringify(res));
+        })
+        .catch(this.handleError);
+  }
 
-    //socket.emit('SFWrite_User', j);
+  private handleError(err: any) {
+
+      alert(err || err.message);
+
   }
 
 }
