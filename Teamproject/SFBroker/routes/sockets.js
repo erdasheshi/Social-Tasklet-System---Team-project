@@ -66,28 +66,36 @@ io.sockets.on('connection', function (socket) {
                     coins: cost,
                     status: constants.AccountingStatusComputed
                 });
+                console.log(cost + 'after update cost');
             });
         });
     });
 
     // Step 16: Receiving the Tasklet result confirmation
     socket.on('TaskletResultConfirm', function (data) {
-        var computation = data.computation;
+        var cost;
         // Step 17: Releasing the blocked coins
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
-            var accTransaction = new accountingTransaction({
-                consumer: res.consumer,
-                provider: res.provider,
-                computation: res.computation,
-                coins: res.coins,
-                status: constants.AccountingStatusConfirmed,
-                taskletid: res.taskletid
-            });
-            accTransaction.update();
+            dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
 
-            UpdateBalance(res.coins, res.provider);
-            console.log('Tasklet ' + res.taskletid + ' confirmed!');
-        })
+                price = udata.price;
+                cost = res.coins * price;
+                console.log('cost in the result confirm event ' + cost);
+
+                var accTransaction = new accountingTransaction({
+                    consumer: res.consumer,
+                    provider: res.provider,
+                    computation: res.computation,
+                    coins: cost,
+                    status: constants.AccountingStatusConfirmed,
+                    taskletid: res.taskletid
+                });
+                accTransaction.update();
+                console.log(cost + 'coins' + res.computation + 'computation');
+                UpdateBalance(cost, res.provider);
+                console.log('Tasklet ' + res.taskletid + ' confirmed!');
+            })
+        });
     });
 
     //sending the coin requests to the front-end of the administrator
