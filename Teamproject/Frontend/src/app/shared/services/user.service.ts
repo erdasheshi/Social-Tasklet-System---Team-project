@@ -13,7 +13,7 @@ export class UserService {
   private apiURLRegister = 'http://localhost:8001/register/';
   private apiURLLogin = 'http://localhost:8001/login/';
   private apiURLNetwork = 'http://localhost:8001/user/';
-  private apiURLFriendships = 'http://localhost:8001/user/';
+  private apiURLFriendships = 'http://localhost:8001/user/?all=x';
   private apiURLAddFriend = 'http://localhost:8001/friendship/';
 
 
