@@ -73,11 +73,11 @@
         <div style="  margin-top: 40px;" class="welcomeMessage">Network</div>
 
         <div *ngFor="let friendship of getNetwork()" class="friend__tile">
-            <div (click)="addFriend(friendship.user2)" class="friend__name">
-                {{ friendship.user2 }} (Add)
+            <div (click)="addFriend(networkUsers.username)" class="friend__name">
+                {{ networkUsers.username }} (Add)
             </div>
 
-            <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='pending'}" class="friend__innerTile">
+            <div class="friend__innerTile">
                 <div class="friend__image">
                 </div>
                 <div class="friend__stats">
