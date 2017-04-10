@@ -13,6 +13,8 @@ export class UserService {
   private apiURLRegister = 'http://localhost:8001/register/';
   private apiURLLogin = 'http://localhost:8001/login/';
   private apiURLNetwork = 'http://localhost:8001/user/';
+  private apiURLFriendships = 'http://localhost:8001/user/';
+  private apiURLAddFriend = 'http://localhost:8001/friendship/';
 
 
   constructor(private http: Http) { }
@@ -36,10 +38,16 @@ export class UserService {
         .catch(this.handleError);
   }
 
-  getFriends(user: string): Promise<Friendship[]> {
-    return this.http.get(this.apiURLNetwork + '?user=' + user)
+  getFriends(): Promise<Friendship[]> {
+    return this.http.get(this.apiURLFriendships)
         .toPromise()
         .then((res: Response) => res.json())
+        .catch(this.handleError);
+  }
+
+  addFriend(name: string): Promise<any> {
+    return this.http.post(this.apiURLAddFriend, name)
+        .toPromise()
         .catch(this.handleError);
   }
 

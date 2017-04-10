@@ -72,7 +72,7 @@
 
         <div style="  margin-top: 40px;" class="welcomeMessage">Network</div>
 
-        <div *ngFor="let friendship of getNetwork()" class="friend__tile">
+        <div *ngFor="let networkUsers of getNetwork()" class="friend__tile">
             <div (click)="addFriend(networkUsers.username)" class="friend__name">
                 {{ networkUsers.username }} (Add)
             </div>

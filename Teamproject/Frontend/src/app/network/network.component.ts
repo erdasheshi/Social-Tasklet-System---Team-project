@@ -14,7 +14,7 @@ var conf = require('../../../config.json');
 
 export class NetworkComponent implements OnInit {
 
-  networkUsers: NetworkUser[];
+  networkUsers2: NetworkUser[];
   friendships2: Friendship[];
 
   constructor(
@@ -23,20 +23,24 @@ export class NetworkComponent implements OnInit {
 
   ngOnInit() {
 
+    //get all users in network
     this.userService
         .getNetwork()
         .then(result => {
+          debugger;
           console.log(result);
-          this.networkUsers = result;
-          console.log(this.networkUsers);
+          this.networkUsers2 = result
+          console.log(this.networkUsers2);
         })
         .catch(this.handleError);
 
+    //get all friends of current user
     this.userService
-        .getFriends('8080') //change the username
+        .getFriends()
         .then(result => {
+          debugger;
           console.log(result);
-          this.friendships2 = result;
+          this.friendships2 = result
           console.log(this.friendships2);
         })
         .catch(this.handleError);
@@ -48,6 +52,14 @@ export class NetworkComponent implements OnInit {
   }
 
 
+  //needs to be replaced with real data
+  networkUsers = [
+    new NetworkUser('09042342', 'Sebastian', 'firstname', 'lastname', 'app@seprodu.com', 100, '100'),
+    new NetworkUser('09042342', 'Alex', 'firstname', 'lastname', 'app@seprodu.com', 100, '100'),
+    new NetworkUser('09042342', 'Daniel', 'firstname', 'lastname', 'app@seprodu.com', 100, '100'),
+  ];
+
+  //needs to be replaced with real data
   friendships = [
     new Friendship('Sebastian', 'Sammer', 'accepted'),
     new Friendship('Sebastian', 'Erda', 'none'),
@@ -60,14 +72,25 @@ export class NetworkComponent implements OnInit {
     return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'pending');
   }
 
-  getNetwork(): Friendship[] {
-    return this.friendships.filter(friendship => friendship.status === 'none');
+  getNetwork(): NetworkUser[] {
+    return this.networkUsers;
   }
 
   addFriend(user) {
 
-    var friendshipsLength = this.friendships.length;
+    //get all friends of current user
+    this.userService
+        .addFriend(user)
+        .then(res => {
+          console.log(res.status);
+          if (res.status === 200){
+            console.log('success adding a friend');
+          }
+          console.log(JSON.stringify(res));
+        })
+        .catch(this.handleError);
 
+    var friendshipsLength = this.friendships.length;
     for (var i = 0; i < friendshipsLength; i++) {
       if(this.friendships[i].user2 === user){
         this.friendships[i].status = 'accepted';

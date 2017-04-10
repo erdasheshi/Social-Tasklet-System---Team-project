@@ -6,5 +6,5 @@ export class NetworkUser {
         public lastname: string,
         public email: string,
         public price: number,
-        public balance: string) { }
+        public balance: number) { }
 }
