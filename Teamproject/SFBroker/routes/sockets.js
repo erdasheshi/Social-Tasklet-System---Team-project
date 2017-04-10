@@ -153,7 +153,7 @@ socket_c.on('SFInformation', function (data) {
     var speed = data.speed;
     var qoc_privacy = data.privacy;
 
-    logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (res) {
+    logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (e, res) {
         //builds the string that will be sent via socket.emit
         var response = '{ \"name\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
         socket_c.emit('SFInformation', JSON.parse(response.toString()));

@@ -36,7 +36,7 @@ function findFriendship(data){
     } else if(data.FriendshipStatus == 'Network'){
         //its better to create two functions: 1 for the requested (user_1 = username) and the other for pending (ures_2 = username)
         //this way we send less data and the network load is less
-        var result = friendship.find().or([{'status': constants.FriendshipStatusConfirmed}, {'status': constants.FriendshipStatusRequested}] ).or([{'user_1': data.username}, {'user_2': data.username}]);
+        var result = friendship.find().or([{'user_1': data.username}, {'user_2': data.username}]);
     }
 	else {
         var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': data.username}, {'user_2': data.username}]);
@@ -56,6 +56,7 @@ function findUser(data){
 
 module.exports = {
     find: function (data) {
+        console.log(data.type);
         if (data.type == constants.Accounting) {
             return findAccounting(data);
         }else if (data.type == constants.Friendship) {

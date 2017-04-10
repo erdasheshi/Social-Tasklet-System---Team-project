@@ -20,25 +20,40 @@ router.get('/', function(req, res, next) {
 
 /* GET Acc transactions. */
 router.get('/acctransaction', loggedIn, function(req, res, next) {
-    console.log(req);
-    dbAccess.find({type: constants.Accounting}).exec(function (e, data) {
-        if(e) return next(e);
-        res.json(data);
-    })
+    if(typeof req.user.username == 'undefined') {
+        dbAccess.find({type: constants.Accounting}).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        })
+    }
+    else{
+        dbAccess.find({type: constants.Accounting, username: req.user.username}).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        })
+    }
 });
 
 /* GET friend transactions. */
 router.get('/friendship', loggedIn, function(req, res, next) {
-    dbAccess.find({type: constants.Friendship}).exec(function (e, data) {
-        if(e) return next(e);
-        res.json(data);
-    })
+    if(typeof req.user.username == 'undefined') {
+        dbAccess.find({type: constants.Friendship}).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        })
+    }
+    else{
+        dbAccess.find({type: constants.Friendship, username: req.user.username }).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        })
+    }
 });
 
 /* GET users. */
 router.get('/user', loggedIn, function(req, res, next) {
 
-    if(typeof req.query.username == 'undefined'){
+    if(typeof req.user.username == 'undefined'){
         dbAccess.find({type: constants.User}).exec(function (e, data) {
             if(e) return next(e);
             var result = JSON.parse('[' + JSON.stringify(data) + ']');
@@ -46,7 +61,7 @@ router.get('/user', loggedIn, function(req, res, next) {
         })
     }
     else{
-        dbAccess.find({type: constants.User}).exec(function (e, data) {
+        dbAccess.find({type: constants.User, username: req.user.username}).exec(function (e, data) {
             if(e) return next(e);
             res.json(data);
         })
@@ -56,11 +71,10 @@ router.get('/user', loggedIn, function(req, res, next) {
 /* GET sfbuserinfo. */
 router.get('/sfbuserinfo', loggedIn, function(req, res, next) {
 
-    var username = req.query.username;
-
-    logic.find({type: constants.Friends, username: username}, function (res) {
+    var username = req.user.username;
+    logic.find({type: constants.Friends, username: username}, function (e, data) {
         if(e) return next(e);
-        var response = '{ \"username\": \"' + username + '\", \"Conections\": ' + res + '}';
+        var response = '{ "username": "' + username + '", "conections": ' + data + '}';
         res.json(JSON.parse(response.toString()));
     });
 });
@@ -68,22 +82,25 @@ router.get('/sfbuserinfo', loggedIn, function(req, res, next) {
 /* GET sfbusertransactions. */
 router.get('/sfbusertransactions', loggedIn, function(req, res, next) {
 
-    var username = req.query.username;
-    var balance;
+    var username = req.user.username;
 
-    logic.find({type: constants.AllTransactions, username: username}, function (result) {
-        logic.find({type: constants.User, username: username}, function (resp) {
-            balance = resp.balance;
+    logic.find({type: constants.AllTransactions, username: username}, function (e, result) {
+        if(e) return next(e);
+        var fin_result = result;
+        console.log(fin_result);
+        dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+            if(e) return next(e);
+            var response = '{ username: \'' + username + '\', balance: ' + data.balance + ', transactions: [' + fin_result + ']}';
+            console.log(response);
+            res.json(JSON.parse(response.toString()));
         });
-        var response = '{ "username": "' + username + '", "Balance": ' + balance + '", "Transactions": [' + result + ']}';
-        res.json(response.toString());
     });
 });
 
 /* GET requestedcoins. */
 router.get('/requestedcoins', loggedIn, function(req, res, next) {
 
-    var username = req.query.username;
+    var username = req.user.username;
 
     dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
         if(e) return next(e);
