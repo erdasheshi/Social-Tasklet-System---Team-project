@@ -1,3 +1,10 @@
-/**
- * Created by d060536 on 09/04/2017.
- */
+export class User {
+    constructor(
+
+        public username: string,
+        public firstname: string,
+        public lastname: string,
+        public email: string,
+        public price: number,
+        public password: string) { }
+}
