@@ -96,11 +96,29 @@ function findFriends(user, callback) {
 }
 function findAllTransactions(user, callback) {
     var user = user.username;
+    var transactionsProcessed = 0;
+    var transactionList = '[';
     dbAccess.find({type: constants.Accounting, username: user}).exec(function (e, res) {
         if (e) callback(e, null);
-        callback(null, res);
-           });
-        }
+        res.forEach(function (data, index, array) {
+            transactionList = transactionList.concat('{ "consumer": "' + data.consumer +
+                '", "provider": "' + data.provider +
+                '", "computation": ' + data.computation +
+                ', "coins": ' + data.coins +
+                ', "status": "' + data.status +
+                '", "taskletid": "' + data.taskletid + '" }');
+            transactionsProcessed += 1;
+            if (transactionsProcessed == array.length) {
+                transactionList = transactionList.concat(']');
+                transactionList = transactionList.replace('}{', '},{');
+                callback(null, transactionList);
+            }
+            else {
+                transactionList = transactionList.replace('}{', '},{');
+            }
+        });
+    });
+}
 
 module.exports = {
     find: function (data, callback) {

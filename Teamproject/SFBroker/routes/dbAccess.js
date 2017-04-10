@@ -56,7 +56,6 @@ function findUser(data){
 
 module.exports = {
     find: function (data) {
-        console.log(data.type);
         if (data.type == constants.Accounting) {
             return findAccounting(data);
         }else if (data.type == constants.Friendship) {

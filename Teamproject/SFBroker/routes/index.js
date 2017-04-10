@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 
 /* GET Acc transactions. */
 router.get('/acctransaction', loggedIn, function(req, res, next) {
-    if(typeof req.user.username == 'undefined') {
+    if(req.query.all == 'X') {
         dbAccess.find({type: constants.Accounting}).exec(function (e, data) {
             if (e) return next(e);
             res.json(data);
@@ -36,7 +36,7 @@ router.get('/acctransaction', loggedIn, function(req, res, next) {
 
 /* GET friend transactions. */
 router.get('/friendship', loggedIn, function(req, res, next) {
-    if(typeof req.user.username == 'undefined') {
+    if(req.query.all == 'X') {
         dbAccess.find({type: constants.Friendship}).exec(function (e, data) {
             if (e) return next(e);
             res.json(data);
@@ -53,7 +53,7 @@ router.get('/friendship', loggedIn, function(req, res, next) {
 /* GET users. */
 router.get('/user', loggedIn, function(req, res, next) {
 
-    if(typeof req.user.username == 'undefined'){
+    if(req.query.all == 'X') {
         dbAccess.find({type: constants.User}).exec(function (e, data) {
             if(e) return next(e);
             var result = JSON.parse('[' + JSON.stringify(data) + ']');
@@ -61,10 +61,7 @@ router.get('/user', loggedIn, function(req, res, next) {
         })
     }
     else{
-        dbAccess.find({type: constants.User, username: req.user.username}).exec(function (e, data) {
-            if(e) return next(e);
-            res.json(data);
-        })
+        res.json(req.user);
     }
 });
 
@@ -87,11 +84,9 @@ router.get('/sfbusertransactions', loggedIn, function(req, res, next) {
     logic.find({type: constants.AllTransactions, username: username}, function (e, result) {
         if(e) return next(e);
         var fin_result = result;
-        console.log(fin_result);
         dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
             if(e) return next(e);
-            var response = '{ username: \'' + username + '\', balance: ' + data.balance + ', transactions: [' + fin_result + ']}';
-            console.log(response);
+            var response = '{ "username": "' + username + '", "balance": ' + data.balance + ', "transactions": ' + fin_result + '}';
             res.json(JSON.parse(response.toString()));
         });
     });
