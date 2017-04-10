@@ -51,7 +51,7 @@ io.sockets.on('connection', function (socket) {
         var balance = data.balance;
         if ( balance < 30) {
             console.log('ba ' + balance);
-            io.sockets.emit('CancelTasklet', {cancel: 'Cancel it'});
+            io.sockets.emit('CancelTasklet', {name: data.name});
         }
         
         else {
@@ -97,6 +97,16 @@ io.sockets.on('connection', function (socket) {
                 taskletid: res.taskletid
             });
 
+	});
+	
+	// Step 11: Provider gets Tasklets
+	socket.on('SendingTaskletToProvider', function (data) {
+		io.sockets.emit('SendingTaskletToProvider', data);
+	});
+	
+	// Step 15: Consumer gets Tasklet result
+	socket.on('SendTaskletResultToConsumer', function (data) {
+		io.sockets.emit('SendTaskletResultToConsumer', data);
 	});
 	
 });
