@@ -5,6 +5,7 @@ import 'rxjs/add/operator/toPromise';
 import {User} from '../model/user';
 import {NetworkUser} from '../model/networkuser';
 import {Friendship} from '../model/friendship';
+import {TransactionList} from '../model/transactionlist';
 
 
 @Injectable()
@@ -15,6 +16,7 @@ export class UserService {
     private apiURLNetwork = 'http://localhost:8001/user/?all=X';
     private apiURLFriendships = 'http://localhost:8001/user/';
     private apiURLAddFriend = 'http://localhost:8001/friendship/';
+    private apiURLTransaction = 'http://localhost:8001/acctransaction?all=X';
 
 
     constructor(private http: Http) {
@@ -38,6 +40,15 @@ export class UserService {
             .then((res: Response) => {
                 debugger;
                 return res.json()[0].map(obj => new NetworkUser(obj))
+            })
+            .catch(this.handleError);
+    }
+
+    getTransactions(): Promise<TransactionList[]> {
+        return this.http.get(this.apiURLTransaction)
+            .toPromise()
+            .then((res: Response) => {
+                return res.json().map(obj => new TransactionList(obj))
             })
             .catch(this.handleError);
     }
