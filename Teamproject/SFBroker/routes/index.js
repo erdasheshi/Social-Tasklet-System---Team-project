@@ -45,6 +45,8 @@ router.get('/friendship', loggedIn, function(req, res, next) {
     else{
         dbAccess.find({type: constants.Friendship, username: req.user.username }).exec(function (e, data) {
             if (e) return next(e);
+            var response = '{ "username": "' + username + '", "conections": ' + data + '}';
+            res.json(JSON.parse(response.toString()));
             res.json(data);
         })
     }
@@ -115,7 +117,7 @@ router.post('/acctransaction', loggedIn, function(req, res, next) {
 
 /* POST /Friend Transaction */
 router.post('/friendship', loggedIn, function(req, res, next) {
-    var friendTransaction = new friendshipTransaction(req.body);
+    var friendTransaction = new friendshipTransaction({user_1: req.user.username, user_2: req.body.user_2, status: req.body.status});
     friendTransaction.save(function (err, post) {
         if (err) return next(err);
         res.json(post);
