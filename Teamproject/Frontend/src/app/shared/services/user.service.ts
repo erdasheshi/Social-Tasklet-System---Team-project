@@ -12,8 +12,8 @@ export class UserService {
 
     private apiURLRegister = 'http://localhost:8001/register/';
     private apiURLLogin = 'http://localhost:8001/login/';
-    private apiURLNetwork = 'http://localhost:8001/user/';
-    private apiURLFriendships = 'http://localhost:8001/user/?all=X';
+    private apiURLNetwork = 'http://localhost:8001/user/?all=X';
+    private apiURLFriendships = 'http://localhost:8001/user/';
     private apiURLAddFriend = 'http://localhost:8001/friendship/';
 
 
@@ -35,7 +35,10 @@ export class UserService {
     getNetwork(): Promise<NetworkUser[]> {
         return this.http.get(this.apiURLNetwork)
             .toPromise()
-            .then((res: Response) => res.json()[0].map(obj => new NetworkUser(obj)))
+            .then((res: Response) => {
+                debugger;
+                return res.json()[0].map(obj => new NetworkUser(obj))
+            })
             .catch(this.handleError);
     }
 

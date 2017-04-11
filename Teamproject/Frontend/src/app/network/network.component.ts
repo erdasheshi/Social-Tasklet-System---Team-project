@@ -27,7 +27,7 @@ export class NetworkComponent implements OnInit {
             .getNetwork()
             .then(result => {
                 debugger;
-                console.log(result);
+                console.log('Network' + result);
                 this.networkUsers = result;
             })
             .catch(this.handleError);
@@ -37,7 +37,7 @@ export class NetworkComponent implements OnInit {
             .getFriends()
             .then(result => {
                 debugger;
-                console.log(result);
+                console.log('Friends' + result);
                 this.friendships2 = result;
             })
             .catch(this.handleError);
