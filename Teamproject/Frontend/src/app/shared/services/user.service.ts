@@ -16,7 +16,7 @@ export class UserService {
     private apiURLNetwork = 'http://localhost:8001/user/?all=X';
     private apiURLFriendships = 'http://localhost:8001/user/';
     private apiURLAddFriend = 'http://localhost:8001/friendship/';
-    private apiURLTransaction = 'http://localhost:8001/acctransaction?all=X';
+    private apiURLTransaction = 'http://localhost:8001/acctransaction';
 
 
     constructor(private http: Http) {
