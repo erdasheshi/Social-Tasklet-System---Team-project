@@ -36,6 +36,8 @@ router.get('/acctransaction', loggedIn, function(req, res, next) {
 
 /* GET friend transactions. */
 router.get('/friendship', loggedIn, function(req, res, next) {
+    var username = req.user.username;
+
     if(req.query.all == 'X') {
         dbAccess.find({type: constants.Friendship}).exec(function (e, data) {
             if (e) return next(e);
@@ -43,10 +45,10 @@ router.get('/friendship', loggedIn, function(req, res, next) {
         })
     }
     else{
-        dbAccess.find({type: constants.Friendship, username: req.user.username }).exec(function (e, data) {
+        dbAccess.find({type: constants.Friendship, username: username }).exec(function (e, data) {
             if (e) return next(e);
-            var response = '{ "username": "' + username + '", "conections": ' + data + '}';
-            res.json(JSON.parse(response.toString()));
+            //var response = '{ "username": "' + username + '", "connections": ' + data + '}';
+            //res.json(JSON.parse(response.toString()));
             res.json(data);
         })
     }
@@ -73,7 +75,7 @@ router.get('/sfbuserinfo', loggedIn, function(req, res, next) {
     var username = req.user.username;
     logic.find({type: constants.Friends, username: username}, function (e, data) {
         if(e) return next(e);
-        var response = '{ "username": "' + username + '", "conections": ' + data + '}';
+        var response = '{ "username": "' + username + '", "connections": ' + data + '}';
         res.json(JSON.parse(response.toString()));
     });
 });
