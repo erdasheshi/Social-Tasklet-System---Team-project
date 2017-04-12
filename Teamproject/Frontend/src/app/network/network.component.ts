@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Friendship } from './friendship';
+import { Friendship } from '../shared/model/friendship';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { NetworkUser } from '../shared/model/networkuser'
 import {AddFriendship} from "../shared/model/addFriendship";
@@ -16,7 +16,7 @@ const conf = require('../../../config.json');
 export class NetworkComponent implements OnInit {
 
     networkUsers: NetworkUser[];
-    friendships2: Friendship[];
+    friendships: Friendship[];
 
     constructor(private userService: UserService, //API Service
     ) { }
@@ -33,26 +33,20 @@ export class NetworkComponent implements OnInit {
             .catch(this.handleError);
 
         //get all friends of current user
-        // this.userService
-        //     .getFriends()
-        //     .then(result => {
-        //         debugger;
-        //         console.log('Friends' + result);
-        //         this.friendships2 = result;
-        //     })
-        //     .catch(this.handleError);
+         this.userService
+             .getFriends()
+             .then(result => {
+                 debugger;
+                 console.log('Friends' + result);
+                 this.friendships = result;
+             })
+             .catch(this.handleError);
 
     }
 
 
     //needs to be replaced with real data
-    friendships = [
-        new Friendship('Sebastian', 'Sammer', 'accepted'),
-        new Friendship('Sebastian', 'Erda', 'none'),
-        new Friendship('Sebastian', 'Alex', 'accepted'),
-        new Friendship('Sebastian', 'Daniel', 'pending'),
-        new Friendship('Sebastian', 'Philipp', 'accepted'),
-    ];
+
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
@@ -60,7 +54,9 @@ export class NetworkComponent implements OnInit {
 
 
     getFriends(): Friendship[] {
-        return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'requested');
+        if (this.friendships){
+            return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'requested');
+        }
     }
 
     getNetwork(): NetworkUser[] {
@@ -69,7 +65,7 @@ export class NetworkComponent implements OnInit {
 
     private updateFriendship(friendships: Friendship[], user, status: string): Friendship[] {
         return friendships.map(friendship => {
-            if (friendship.user2 === user) friendship.status = status;
+            if (friendship.user_2 === user) friendship.status = status;
             return friendship;
         });
     }
@@ -94,7 +90,9 @@ export class NetworkComponent implements OnInit {
     }
 
     deleteFriend(user) {
-        this.friendships = this.updateFriendship(this.friendships, user, 'none');
+        if (this.friendships){
+            this.friendships = this.updateFriendship(this.friendships, user, 'none');
+        }
     }
 
 }
