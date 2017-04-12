@@ -8,4 +8,4 @@ echo Start Buyer
 start node server.js albrinkm
 
 cd ..
-start java -jar Tasklet1.jar
+start java -jar Tasklet.jar

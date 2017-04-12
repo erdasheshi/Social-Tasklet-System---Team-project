@@ -199,7 +199,7 @@ router.get('/logout', loggedIn, function(req, res) {
 });
 
 router.get('/download', loggedIn, function (req, res, next) {
-    var filePath = "../SFBroker/download/test.txt";
+    var filePath = "../SFBroker/download/Executable.zip";
     res.download(filePath);
 });
 
