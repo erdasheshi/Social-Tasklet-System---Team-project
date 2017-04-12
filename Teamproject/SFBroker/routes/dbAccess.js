@@ -39,8 +39,8 @@ function findFriendship(data){
         var result = friendship.find().or([{'user_1': data.username}, {'user_2': data.username}]);
     }
 	else {
-        var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': data.username}, {'user_2': data.username}]);
-    }
+       var result = friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': data.username}, {'user_2': data.username}]);
+   }
     return result
 }
 
