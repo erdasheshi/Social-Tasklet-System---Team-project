@@ -375,3 +375,7 @@
   .transaction__table__row__last td, .transaction__table__row__last th {
         border-bottom: 2px solid #000000;
       }
+  .transaction__table__row__first td, .transaction__table__row__first th {
+        border-bottom: 2px solid #000000;
+        font-weight: bold;
+      }

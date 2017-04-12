@@ -37,6 +37,10 @@ export class TransactionsComponent implements OnInit {
       return Promise.reject(error.message || error);
   }
 
+  getTransactions(): TransactionList[] {
+      return this.transactionListItems;
+  }
+
   transactions = [
     new Transaction('Sebastian', 'Sammer', 250, 250, 'successful', '1'),
     new Transaction('Sebastian', 'Erda', 450, 450, 'successful', '1'),

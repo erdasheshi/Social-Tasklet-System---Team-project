@@ -37,19 +37,14 @@ export class UserService {
     getNetwork(): Promise<NetworkUser[]> {
         return this.http.get(this.apiURLNetwork)
             .toPromise()
-            .then((res: Response) => {
-                debugger;
-                return res.json()[0].map(obj => new NetworkUser(obj))
-            })
+            .then((res: Response) => res.json()[0].map(obj => new NetworkUser(obj)))
             .catch(this.handleError);
     }
 
     getTransactions(): Promise<TransactionList[]> {
         return this.http.get(this.apiURLTransaction)
             .toPromise()
-            .then((res: Response) => {
-                return res.json().map(obj => new TransactionList(obj))
-            })
+            .then((res: Response) => res.json().map(obj => new TransactionList(obj)))
             .catch(this.handleError);
     }
 
