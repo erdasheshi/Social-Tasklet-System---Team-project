@@ -18,7 +18,7 @@ console.log('Port: ' + port);
 server.listen(port);
 
 // Connect to SFbroker
-var socket_sf = require('socket.io-client')('http://localhost:' + conf.ports.sfbroker_socket);
+var socket_sf = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
 // static files
 app.use(express.static(__dirname + '/public'));
