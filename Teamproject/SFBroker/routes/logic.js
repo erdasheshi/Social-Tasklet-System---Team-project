@@ -58,19 +58,20 @@ function findFriends(user, callback) {
     var user = user.username;
     var friend;
     var key = 'Network';
-    var F_status;
+    var status;
     var userProcessed = 0;
     dbAccess.find({type: constants.Friendship, username: user, FriendshipStatus: key}).exec(function (e, res) {
         if (e) callback(e, null);
-
         res.forEach(function (data, index, array) {
             if (data.status == constants.FriendshipStatusRequested) {
                 if (data.user_1 == user) {
                     friend = data.user_2;
-                    F_status = 'requested';
+                    status = constants.FriendshipStatusRequested;
                 } else if (data.user_2 == user) {
                     friend = data.user_1;
-                    F_status = 'pending';
+                    status = constants.FriendshipStatusPending;
+                    console.log('HIER' + status);
+                    console.log('HIER' + status);
                 }
             }
             else if (data.status == constants.FriendshipStatusConfirmed) {
@@ -79,9 +80,9 @@ function findFriends(user, callback) {
                 } else if (data.user_2 == user) {
                     friend = data.user_1;
                 }
-                F_status = data.status;
+                status = data.status;
         }
-            F_List = F_List.concat('{ "name": "' + friend + '", "Friendship_Status": "' + F_status + '"}');
+            F_List = F_List.concat('{ "name": "' + friend + '", "status": "' + status + '"}');
             userProcessed += 1;
             if (userProcessed == array.length) {
                 F_List = F_List.concat(']');

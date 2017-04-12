@@ -8,8 +8,9 @@ const AccountingStatusComputed  = 'Computed';
 const AccountingStatusBlocked   = 'Blocked';
 const AccountingStatusConfirmed = 'Confirmed';
 
-const FriendshipStatusRequested   = 'Requested';
-const FriendshipStatusConfirmed = 'Confirmed';
+const FriendshipStatusRequested     = 'Requested';
+const FriendshipStatusConfirmed     = 'Confirmed';
+const FriendshipStatusPending       = 'Pending';
 
 const CoinReq = 'CoinReq';
 
@@ -26,6 +27,7 @@ module.exports = {
     AccountingStatusConfirmed: AccountingStatusConfirmed,
 
     FriendshipStatusRequested: FriendshipStatusRequested,
-    FriendshipStatusConfirmed: FriendshipStatusConfirmed
+    FriendshipStatusConfirmed: FriendshipStatusConfirmed,
+    FriendshipStatusPending: FriendshipStatusPending
 
 };
