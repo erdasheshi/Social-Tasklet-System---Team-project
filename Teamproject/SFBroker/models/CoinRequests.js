@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var coinRequestSchema = new Schema({ //This is where coinRequestSchema is defined.
     requestid: String,
-    userid: String,
+    username: String,
     requestedCoins: Number,
     approval: String
 });
