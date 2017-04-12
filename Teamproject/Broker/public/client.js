@@ -1,6 +1,7 @@
 $(document).ready(function(){
     // WebSocket
-    var socket = io.connect();
+    var socket = io.connect('http://localhost:8003');
+
 
 	// Step 1: Illustrating the Tasklet request
 	socket.on('ShowTaskletRequest', function (data) {

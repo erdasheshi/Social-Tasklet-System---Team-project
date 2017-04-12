@@ -181,4 +181,4 @@ function scheduling(potentialprovider, cost, reliability, speed){
 
 }
 
-console.log('Broker runs on http://127.0.0.1:' + conf.broker.port + '/');
+console.log('Broker runs on http://' + conf.broker.ip  + ':' + conf.broker.port + '/');
