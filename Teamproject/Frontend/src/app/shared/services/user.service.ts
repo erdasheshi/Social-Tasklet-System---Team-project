@@ -52,7 +52,7 @@ export class UserService {
     getFriends(): Promise<Friendship[]> {
         return this.http.get(this.apiURLFriendships)
             .toPromise()
-            .then((res: Response) => res.json().map(obj => new Friendship(obj)))
+            .then((res: Response) => res.json().connections.map(obj => new Friendship(obj)))
             .catch(this.handleError);
     }
 

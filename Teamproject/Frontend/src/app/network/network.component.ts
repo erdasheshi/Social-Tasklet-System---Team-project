@@ -36,8 +36,8 @@ export class NetworkComponent implements OnInit {
          this.userService
              .getFriends()
              .then(result => {
-                 debugger;
                  console.log('Friends' + result);
+                 debugger;
                  this.friendships = result;
              })
              .catch(this.handleError);
@@ -53,9 +53,19 @@ export class NetworkComponent implements OnInit {
     }
 
 
-    getFriends(): Friendship[] {
+    getPendingFriends(): Friendship[] {
+        console.log('yolo1');
         if (this.friendships){
-            return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'requested');
+            console.log('yolo');
+            return this.friendships.filter(friendship => friendship.Friendship_Status === 'pending');
+        }
+    }
+
+    getFriends(): Friendship[] {
+        console.log('yolo1');
+        if (this.friendships){
+            console.log('yolo');
+            return this.friendships.filter(friendship => friendship.Friendship_Status === 'Confirmed');
         }
     }
 
@@ -65,14 +75,14 @@ export class NetworkComponent implements OnInit {
 
     private updateFriendship(friendships: Friendship[], user, status: string): Friendship[] {
         return friendships.map(friendship => {
-            if (friendship.user_2 === user) friendship.status = status;
+            if (friendship.name === user) friendship.status = status;
             return friendship;
         });
     }
 
-    addFriend(user) {
+    confirmFriend(user) {
         //get all friends of current user
-        var newFriendship = new AddFriendship(user, 'pending');
+        var newFriendship = new AddFriendship(user, 'Confirmed');
 
         this.userService
             .addFriend(newFriendship)
@@ -86,7 +96,26 @@ export class NetworkComponent implements OnInit {
             .catch(this.handleError);
 
         // TODO (hejsfj): Leads to an inconsistency if update fails
-        this.friendships = this.updateFriendship(this.friendships, user, 'pending');
+        this.friendships = this.updateFriendship(this.friendships, user, 'Confirmed');
+    }
+
+    addFriend(user) {
+        //get all friends of current user
+        var newFriendship = new AddFriendship(user, 'Requested');
+
+        this.userService
+            .addFriend(newFriendship)
+            .then(res => {
+                console.log(res.status);
+                if (res.status === 200) {
+                    console.log('success adding a friend');
+                }
+                console.log(JSON.stringify(res));
+            })
+            .catch(this.handleError);
+
+        // TODO (hejsfj): Leads to an inconsistency if update fails
+        this.friendships = this.updateFriendship(this.friendships, user, 'Requested');
     }
 
     deleteFriend(user) {

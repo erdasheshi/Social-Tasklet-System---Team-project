@@ -32,11 +32,50 @@
 
     <div class="grid__col grid__col--2-of-2">
 
+        <div style="  margin-top: 40px;" class="welcomeMessage">Pending Friends</div>
+
+        <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
+            <div (click)="confirmFriend(friendship.name)" class="friend__name">
+                {{ friendship.name }} (Confirm)
+            </div>
+            <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='pending'}" class="friend__innerTile">
+                <div class="friend__image">
+                </div>
+                <div class="friend__stats">
+                    <div class="statsSection__tile">
+                        <div class="statsSection__tile__value">
+                            0
+                        </div>
+                        <div class="statsSection__tile__description">
+                            Buyer
+                        </div>
+                    </div>
+                    <div class="statsSection__tile">
+                        <div class="statsSection__tile__value">
+                            0
+                        </div>
+                        <div class="statsSection__tile__description">
+                            Seller
+                        </div>
+                    </div>
+                    <div class="statsSection__tile">
+                        <div class="statsSection__tile__value">
+                            0
+                        </div>
+                        <div class="statsSection__tile__description">
+                            Friends
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div style="  margin-top: 40px;" class="welcomeMessage">Friends</div>
 
         <div *ngFor="let friendship of getFriends()" class="friend__tile">
-            <div (click)="deleteFriend(friendship.user2)" class="friend__name">
-                {{ friendship.user2 }} (Delete)
+            <div (click)="deleteFriend(friendship.name)" class="friend__name">
+                {{ friendship.name }} (Delete)
             </div>
             <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='pending'}" class="friend__innerTile">
                 <div class="friend__image">
