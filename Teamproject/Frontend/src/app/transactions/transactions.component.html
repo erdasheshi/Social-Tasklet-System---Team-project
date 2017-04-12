@@ -4,17 +4,11 @@
       <div class="welcomeMessage">Hej Sebastian!</div>
     </div>
 
-<!--
-    <div *ngFor="let transactionListItems of getTransactions()" class="friend__tile">
-            {{ transactionListItems.id }} (Add)
-    </div>
--->
-
     <div class="grid__col grid__col--2-of-2">
       <div class="statsSection">
         <div class="statsSection__tile">
           <div class="statsSection__tile__value">
-            3222
+            0
           </div>
           <div class="statsSection__tile__description">
             Coins
@@ -32,7 +26,7 @@
 
         <div class="statsSection__tile">
           <div class="statsSection__tile__value">
-            1
+            0
           </div>
           <div class="statsSection__tile__description">
             Buyer
@@ -62,13 +56,39 @@
             </div>
           </div>
           <div class="transaction__tile__header__icon">
-            UP
+
           </div>
         </div>
 
-
         <table class="transaction__table">
+        	<tbody>
+            <tr class="transaction__table__row__first">
+              <td>ID</td>
+              <td>Consumer</td>
+              <td>Provider</td>
+              <td>Computation</td>
+              <td>Coins</td>
+              <td>Status</td>
+              <td>Tasklet ID</td>
+            </tr>
+            <tr *ngFor="let transactionListItem of getTransactions()" class="transaction__table__row">
+              <td>{{ transactionListItem.id }}</td>
+              <td>{{ transactionListItem.consumer }}</td>
+              <td>{{ transactionListItem.provider }}</td>
+              <td>{{ transactionListItem.computation }}</td>
+              <td>{{ transactionListItem.coins }}</td>
+              <td>{{ transactionListItem.status }}</td>
+              <td>{{ transactionListItem.taskletid }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+<!--
+<table class="transaction__table">
 	<tbody>
+    <div *ngFor="let transactionListItem of getTransactions()" class="friend__tile">
+            {{ transactionListItem.id }}
+    </div>
 	<tr *ngFor="let transaction of transactions" class="transaction__table__row">
 		<td>{{ transaction.provider }}</td>
 		<td>{{ transaction.computation }} Tasklets</td>
@@ -88,9 +108,7 @@
 	</tr>
 	</tbody>
 </table>
-
-
-
+-->
 
       </div>
     </div>

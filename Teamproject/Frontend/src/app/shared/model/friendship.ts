@@ -1,6 +1,13 @@
 export class Friendship {
-    constructor(
-        public user1: string,
-        public user2: string,
-        public status: string) { }
+
+    user_1: string;
+    user_2: string;
+    status: string;
+
+    constructor(userObj) {
+        this.user_1 = userObj.user_1;
+        this.user_2 = userObj.user_2;
+        this.status = userObj.status;
+
+    }
 }
