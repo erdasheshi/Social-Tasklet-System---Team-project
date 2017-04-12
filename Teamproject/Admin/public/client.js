@@ -15,14 +15,14 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-            $('<span>').text('User ' + data.userid + ' requested ' + data.requestedcoins + ' Coins.')),
+            $('<span>').text('User ' + data.username + ' requested ' + data.requestedcoins + ' Coins.')),
 			$('<input/>').attr({
                 type: "button",
                 id: buttonid,
                 value: "Confirm"
                 })     
         );
-        $('#' + buttonid).click({requestid: data.requestid, userid: data.userid, requestedcoins: data.requestedcoins}, sendCoinsApproval);
+        $('#' + buttonid).click({requestid: data.requestid, username: data.username, requestedcoins: data.requestedcoins}, sendCoinsApproval);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -45,8 +45,15 @@ $(document).ready(function(){
             )
         )
 
-        socket.emit('SendCoinsApproval', {requestid: user.data.requestid, userid: user.data.userid, requestedcoins: user.data.requestedcoins, approval: true});
+        socket.emit('SendCoinsApproval', {requestid: user.data.requestid, username: user.data.username, requestedcoins: user.data.requestedcoins, approval: true});
     };
 	
+	function send(){
+		
+		socket.emit('GetRequests', {requests: 'Send it'});
+	};
+	
+	 // Trigger function when clicking
+    $('#get').click(send);
 	
 });

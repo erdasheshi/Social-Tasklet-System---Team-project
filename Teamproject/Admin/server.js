@@ -33,16 +33,21 @@ app.get('/', function (req, res) {
 io.sockets.on('connection', function (socket) {
 		
 	socket.on('SendCoinsApproval', function (data){
-		socket_sf.emit('CoinsApproval', {requestid: data.requestid, userid: data.userid, requestedCoins: data.requestedcoins, approval: data.approval});
+		socket_sf.emit('CoinsApproval', {requestid: data.requestid, username: data.username, requestedCoins: data.requestedcoins, approval: data.approval});
+	});
+	
+	socket.on('GetRequests', function (data) {
+		console.log('Get the requested');
+		socket_sf.emit('Requested_Coins', {username: ''});
 	});
 	
 });
 
 // Receiving coin request from SFBroker
 socket_sf.on('Requested_Coins', function (data){
-		console.log(data.length + 'Coin request(s) arrived');
+		console.log(data.length + ' Coin request(s) arrived');
 		for(var i= 0; i < data.length; i++){
-		io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data[i].requestid, userid: data[i].userid, requestedcoins: data[i].requestedCoins});
+		io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data[i].requestid, username: data[i].username, requestedcoins: data[i].requestedCoins});
 		}
 });
 
