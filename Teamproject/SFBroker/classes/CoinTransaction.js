@@ -11,7 +11,7 @@ module.exports = coinTransaction
 
 function coinTransaction(data) {
         this.requestid = data.requestid,
-        this.userid = data.userid,
+        this.username = data.username,
         this.requestedCoins = data.requestedCoins,
         this.approval = data.approval
 }
@@ -19,7 +19,7 @@ function coinTransaction(data) {
 coinTransaction.prototype.save =  function(callback) {
     var transaction = new Coins({ //You're entering a new transaction here
         requestid: this.requestid,
-        userid: this.userid,
+        username: this.username,
         requestedCoins: this.requestedCoins,
         approval: this.approval
 
@@ -39,7 +39,7 @@ coinTransaction.prototype.update =  function(){
 
     Coins.findOne({ 'requestid' : this.requestid }, function (err, doc) {
         doc.approval = transaction.approval;
-        doc.userid =  transaction.userid;
+        doc.username =  transaction.username;
         doc.requestedCoins =  transaction.requestedCoins;
         doc.save({}, function (error, data) {
             if (error) {
