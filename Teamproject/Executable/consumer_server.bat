@@ -1,11 +1,11 @@
 @echo off
 
-cd Buyer
-echo Prepare Buyer/Seller
+cd Client
+echo Prepare Client
 call npm install
 
-echo Start Buyer
-start node server.js albrinkm
+echo Start Client
+start node server.js %1
 
 cd ..
 start java -jar Tasklet.jar
