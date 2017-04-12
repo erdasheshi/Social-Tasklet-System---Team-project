@@ -1,2 +1,2 @@
-Please open the cmd here and execute consumer_server.bat as follows:
-consumer_server.bat <your username>
+Please open the cmd here and execute client_server.bat as follows:
+client_server.bat <your username>
