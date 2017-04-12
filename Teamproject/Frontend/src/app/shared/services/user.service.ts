@@ -5,6 +5,7 @@ import 'rxjs/add/operator/toPromise';
 import {User} from '../model/user';
 import {NetworkUser} from '../model/networkuser';
 import {Friendship} from '../model/friendship';
+import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 
 
@@ -14,7 +15,7 @@ export class UserService {
     private apiURLRegister = 'http://localhost:8001/register/';
     private apiURLLogin = 'http://localhost:8001/login/';
     private apiURLNetwork = 'http://localhost:8001/user/?all=X';
-    private apiURLFriendships = 'http://localhost:8001/user/';
+    private apiURLFriendships = 'http://localhost:8001/sfbuserinfo/';
     private apiURLAddFriend = 'http://localhost:8001/friendship/';
     private apiURLTransaction = 'http://localhost:8001/acctransaction';
 
@@ -51,12 +52,12 @@ export class UserService {
     getFriends(): Promise<Friendship[]> {
         return this.http.get(this.apiURLFriendships)
             .toPromise()
-            .then((res: Response) => res.json())
+            .then((res: Response) => res.json().map(obj => new Friendship(obj)))
             .catch(this.handleError);
     }
 
-    addFriend(name: string): Promise<any> {
-        return this.http.post(this.apiURLAddFriend, name)
+    addFriend(addFriendship: AddFriendship): Promise<any> {
+        return this.http.post(this.apiURLAddFriend, addFriendship)
             .toPromise()
             .catch(this.handleError);
     }

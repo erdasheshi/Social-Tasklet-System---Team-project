@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Friendship } from './friendship';
+import { Friendship } from '../shared/model/friendship';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { NetworkUser } from '../shared/model/networkuser'
+import {AddFriendship} from "../shared/model/addFriendship";
 
 const conf = require('../../../config.json');
 
@@ -15,7 +16,7 @@ const conf = require('../../../config.json');
 export class NetworkComponent implements OnInit {
 
     networkUsers: NetworkUser[];
-    friendships2: Friendship[];
+    friendships: Friendship[];
 
     constructor(private userService: UserService, //API Service
     ) { }
@@ -26,7 +27,6 @@ export class NetworkComponent implements OnInit {
         this.userService
             .getNetwork()
             .then(result => {
-                debugger;
                 console.log('Network' + result);
                 this.networkUsers = result;
             })
@@ -38,7 +38,7 @@ export class NetworkComponent implements OnInit {
             .then(result => {
                 debugger;
                 console.log('Friends' + result);
-                this.friendships2 = result;
+                this.friendships = result;
             })
             .catch(this.handleError);
 
@@ -48,17 +48,9 @@ export class NetworkComponent implements OnInit {
         return Promise.reject(error.message || error);
     }
 
-    //needs to be replaced with real data
-    friendships = [
-        new Friendship('Sebastian', 'Sammer', 'accepted'),
-        new Friendship('Sebastian', 'Erda', 'none'),
-        new Friendship('Sebastian', 'Alex', 'accepted'),
-        new Friendship('Sebastian', 'Daniel', 'pending'),
-        new Friendship('Sebastian', 'Philipp', 'accepted'),
-    ];
 
     getFriends(): Friendship[] {
-        return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'pending');
+        return this.friendships.filter(friendship => friendship.status === 'accepted' || friendship.status === 'requested');
     }
 
     getNetwork(): NetworkUser[] {
@@ -74,8 +66,10 @@ export class NetworkComponent implements OnInit {
 
     addFriend(user) {
         //get all friends of current user
+        var newFriendship = new AddFriendship(user, 'pending');
+
         this.userService
-            .addFriend(user)
+            .addFriend(newFriendship)
             .then(res => {
                 console.log(res.status);
                 if (res.status === 200) {
@@ -86,7 +80,7 @@ export class NetworkComponent implements OnInit {
             .catch(this.handleError);
 
         // TODO (hejsfj): Leads to an inconsistency if update fails
-        this.friendships = this.updateFriendship(this.friendships, user, 'accepted');
+        this.friendships = this.updateFriendship(this.friendships, user, 'pending');
     }
 
     deleteFriend(user) {
