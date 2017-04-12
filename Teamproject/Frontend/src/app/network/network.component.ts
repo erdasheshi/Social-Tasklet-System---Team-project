@@ -54,17 +54,13 @@ export class NetworkComponent implements OnInit {
 
 
     getPendingFriends(): Friendship[] {
-        console.log('yolo1');
         if (this.friendships){
-            console.log('yolo');
             return this.friendships.filter(friendship => friendship.Friendship_Status === 'pending');
         }
     }
 
     getFriends(): Friendship[] {
-        console.log('yolo1');
         if (this.friendships){
-            console.log('yolo');
             return this.friendships.filter(friendship => friendship.Friendship_Status === 'Confirmed');
         }
     }
