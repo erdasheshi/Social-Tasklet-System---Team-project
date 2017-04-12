@@ -98,11 +98,20 @@ router.get('/sfbusertransactions', loggedIn, function(req, res, next) {
 router.get('/requestedcoins', loggedIn, function(req, res, next) {
 
     var username = req.user.username;
+    var x = req.body.x;
 
-    dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
-        if(e) return next(e);
-        res.json(data);
-    })
+
+        dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        })
+
+
+    /* dbAccess.find({type: constants.CoinReq}).exec(function (e, data) {
+            if (e) return next(e);
+            res.json(data);
+        }) */
+
 });
 
 /// Post
@@ -126,7 +135,7 @@ router.post('/friendship', loggedIn, function(req, res, next) {
 
 /*POST /CoinRequest*/
 router.post('/coinrequest', loggedIn, function(req, res, next) {
-    var username = req.body.username;
+    var username = req.user.username;
     var requestedCoins = req.body.requestedCoins;
     console.log(req.body);
     var id = uuidV1();
