@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*-----------------------------------*\
 
   $TOAST-GRID
@@ -312,6 +311,33 @@
 
 /*# sourceMappingURL=grid.css.map */
 
-body{
-  margin: 0px;
+.wrapper{
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 80px;
+}
+
+.welcomeMessage{
+  font-family: Helvetica;
+  font-size: 28px;
+}
+
+.statsSection{
+  display: flex;
+  margin-top: 20px;
+}
+
+.transaction__tile{
+  margin-top: 40px;
+  background-color: #ffffff;
+}
+
+.searchform{
+  width: 100%;
+}
+
+.searchform input{
+  width: 100%;
+  font-size: 32px;
+  margin-bottom: 10px;
 }

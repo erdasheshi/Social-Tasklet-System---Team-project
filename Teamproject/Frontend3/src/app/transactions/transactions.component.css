@@ -312,6 +312,70 @@
 
 /*# sourceMappingURL=grid.css.map */
 
-body{
-  margin: 0px;
+.wrapper{
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 80px;
 }
+
+.welcomeMessage{
+  font-family: Helvetica;
+  font-size: 28px;
+}
+
+.statsSection{
+  display: flex;
+  margin-top: 40px;
+  width: 100%;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.transaction__tile{
+  margin-top: 40px;
+  background-color: #ffffff;
+  padding: 40px;
+  box-shadow: 2px 2px 20px 0px #888888;
+}
+
+.statsSection__tile__value{
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.transaction__tile__header{
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.transaction__table{
+  width: 100%;
+  margin-top: 40px;
+  border-collapse: collapse;
+}
+
+.transaction__table tr{
+  line-height: 38px;
+}
+
+.transaction__table__coins{
+  text-align: right;
+}
+
+.transaction__table__sumNumber{
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.transaction__table__row td, .transaction__table__row th {
+     border-bottom: 1px solid #F0F0F0;
+   }
+
+  .transaction__table__row__last td, .transaction__table__row__last th {
+        border-bottom: 2px solid #000000;
+      }
+  .transaction__table__row__first td, .transaction__table__row__first th {
+        border-bottom: 2px solid #000000;
+        font-weight: bold;
+      }
