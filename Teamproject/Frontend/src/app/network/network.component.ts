@@ -9,7 +9,7 @@ const conf = require('../../../config.json');
 @Component({
     selector: 'app-network',
     templateUrl: './network.component.html',
-    styleUrls: ['./network.component.css'],
+    styleUrls: ['./network.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
     providers: [UserService] //API Service
 })
 

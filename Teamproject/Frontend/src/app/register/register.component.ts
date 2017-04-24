@@ -8,7 +8,7 @@ var conf = require('../../../config.json');
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css'],
+  styleUrls: ['./register.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
   providers: [UserService] //API Service
 })
 export class RegisterComponent implements OnInit {

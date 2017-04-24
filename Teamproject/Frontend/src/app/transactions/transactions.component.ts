@@ -7,7 +7,7 @@ var conf = require('../../../config.json');
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.css'],
+  styleUrls: ['./transactions.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
   providers: [UserService] //API Service
 })
 export class TransactionsComponent implements OnInit {

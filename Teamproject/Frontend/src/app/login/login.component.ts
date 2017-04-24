@@ -9,7 +9,7 @@ var conf = require('../../../config.json');
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
   providers: [UserService]
 })
 export class LoginComponent implements OnInit {
