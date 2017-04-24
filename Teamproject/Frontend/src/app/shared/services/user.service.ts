@@ -12,12 +12,12 @@ import {TransactionList} from '../model/transactionlist';
 @Injectable()
 export class UserService {
 
-    private apiURLRegister = 'http://localhost:8001/register/';
-    private apiURLLogin = 'http://localhost:8001/login/';
-    private apiURLNetwork = 'http://localhost:8001/user/?all=X';
-    private apiURLFriendships = 'http://localhost:8001/sfbuserinfo/';
-    private apiURLAddFriend = 'http://localhost:8001/friendship/';
-    private apiURLTransaction = 'http://localhost:8001/acctransaction';
+    private apiURLRegister = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/register/';
+    private apiURLLogin = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/login/';
+    private apiURLNetwork = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/user/?all=X';
+    private apiURLFriendships = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/sfbuserinfo/';
+    private apiURLAddFriend = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/friendship/';
+    private apiURLTransaction = 'http://ec2-34-209-109-232.us-west-2.compute.amazonaws.com:8001/acctransaction';
 
 
     constructor(private http: Http) {

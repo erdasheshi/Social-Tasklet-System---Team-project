@@ -1,10 +1,10 @@
-import { SdsAppPage } from './app.po';
+import { Frontend3Page } from './app.po';
 
-describe('sds-app App', function() {
-  let page: SdsAppPage;
+describe('frontend3 App', function() {
+  let page: Frontend3Page;
 
   beforeEach(() => {
-    page = new SdsAppPage();
+    page = new Frontend3Page();
   });
 
   it('should display message saying app works', () => {

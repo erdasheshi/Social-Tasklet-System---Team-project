@@ -31,6 +31,7 @@ export class TransactionsComponent implements OnInit {
             console.log(this.transactionListItems);
         })
         .catch(this.handleError);
+
   }
 
   private handleError(error: any): Promise<any> {

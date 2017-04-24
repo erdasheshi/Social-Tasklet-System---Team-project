@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class SdsAppPage {
+export class Frontend3Page {
   navigateTo() {
     return browser.get('/');
   }
