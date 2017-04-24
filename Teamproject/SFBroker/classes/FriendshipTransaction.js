@@ -8,23 +8,38 @@ var Friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
 
 module.exports = friendshipTransaction
 
-function friendshipTransaction(data) {
+function friendshipTransaction(data, callback) {
     this.user_1 = data.user_1;
     this.user_2 = data.user_2;
     this.status = data.status;
 }
 
 friendshipTransaction.prototype.save =  function(callback) {
-    var transaction = new Friendship({ //You're entering a new transaction here
-        user_1: this.user_1,
-        user_2: this.user_2,
-        status: this.status
-    });
-
-    transaction.save({}, function (error, data) {
-        if(error){
-            callback(error, false);
+    var user_1 = this.user_1;
+    var user_2 = this.user_2;
+    var status = this.status;
+    Friendship.findOne({ 'user_1' : this.user_1 , 'user_2' : this.user_2 }).exec(function (e, udata) {
+        if(udata == null){
+            var transaction = new Friendship({ //You're entering a new transaction here
+                user_1: user_1,
+                user_2: user_2,
+                status: status
+            });
+            transaction.save({}, function (error, data) {
+                if(error){
+                    callback(error, false);
+                }
+                if(callback) callback(null, true);
+            });
         }
-        if(callback) callback(null, true);
+        else{
+            Friendship.update({'user_1' : user_1 , 'user_2' : user_2}, {'status': status}, function(e, data){
+                if(e){
+                    callback(e, false);
+                }
+                if(callback) callback(null, true);
+            });
+        }
+
     });
 }

@@ -119,11 +119,14 @@ router.get('/requestedcoins', loggedIn, function(req, res, next) {
 /// Post
 /* POST /Accounting Transaction */
 router.post('/acctransaction', loggedIn, function(req, res, next) {
-    var accTransaction = new accountingTransaction(req.body);
-    accTransaction.save(function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+    var accTransaction = new accountingTransaction(req.body, function (e) {
+        if (e) return next(e);
+        accTransaction.save(function (err, post) {
+            if (err) return next(err);
+            res.json(post);
+        });
     });
+
 });
 
 /* POST /Friend Transaction */
