@@ -66,8 +66,8 @@ export class UserService {
       .catch(this.handleError);
   }
 
-  addFriend(addFriendship: AddFriendship): Promise<any> {
-    return this.http.post(this.apiURLAddFriend, addFriendship)
+  addFriend(friendship: Friendship): Promise<any> {
+    return this.http.post(this.apiURLAddFriend, friendship)
       .toPromise()
       .catch(this.handleError);
   }
