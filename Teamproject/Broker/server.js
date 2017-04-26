@@ -33,6 +33,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletSendBroker', function (data) {
         // Creating Tasklet ID
 		var taskletid = uuidV1();
+		console.log('I am here');
         // Step 1: Illustrating the Tasklet request
         io.sockets.emit('ShowTaskletRequest', {zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed,reliability: data.reliability});
 		// Step 2: Balance request to SFBroker

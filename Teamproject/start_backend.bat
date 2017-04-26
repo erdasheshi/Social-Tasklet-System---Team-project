@@ -26,8 +26,14 @@ start node Broker/server.js
 echo Start Client
 start node Client/server.js albrinkm
 
+echo Start Client
+start node Client/server.js dhelfer 8081
+
 echo Open Client URL
 start http://127.0.0.1:8080/
+
+echo Open Client URL
+start http://127.0.0.1:8081/
 
 echo Open Broker URL
 start http://127.0.0.1:8003/

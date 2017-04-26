@@ -29,16 +29,18 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletCycles', function (data) {
         //add security check that the computation is really a number
         var computation = data.computation;
+        console.log('computation cycles...socket sf broker' + computation);
         var cost;
         var price;
         var confirmation = true;
         var difference;
+
         dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
             dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
                
                 price = udata.price;
 				
-                cost = parseInt(computation) * price;
+                cost = computation * price;
                 console.log('computation  ' + computation);
                 console.log('cost ' + cost);
                 difference = res.coins - cost;
@@ -53,8 +55,7 @@ io.sockets.on('connection', function (socket) {
                 });
                 accTransaction.update();
 
-                //calculates the difference between the blocked coins and the real cost
-                // function call to the e updatebalanc function outside
+                // function call for the updatebalanc function
                 UpdateBalance(difference, res.consumer);
 
                 io.sockets.emit('TaskletCyclesCoinsBlocked', {
@@ -146,6 +147,7 @@ socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 5: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
+    console.log('I am here' + data);
     var username = data.name;
     var taskletid = data.taskletid;
     var cost = data.cost;
@@ -225,6 +227,10 @@ socket_c.on('CheckBalance', function (data) {
 function UpdateBalance(difference, username) {
     dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
         var balance = data.balance;
+
+        if (isNaN(difference)){
+        difference = 0; }
+
         balance = balance + difference;
         var userb = new user({
             username: username,

@@ -5,18 +5,23 @@ var express = require('express')
 ,   conf = require('./config.json')
 , 	constants = require('./constants');
 
-// Processing the stated port number
+// Processing the stated user name
 if (process.argv.length <= 2) {
-    console.log("Port number needed");
+    console.log("User name needed");
     process.exit(-1);
 }
  
 //var port = process.argv[2];
-console.log('Port: ' + 8080);
-var username = process.argv[2];
 
+var username = process.argv[2];
+var port = 8080;
 // Webserver
-server.listen(8080);
+if (typeof process.argv[3] != 'undefined') {
+    port = process.argv[3];
+}
+console.log('Port: ' + port);
+
+server.listen(port);
 
 // Connect to broker
 var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
@@ -113,4 +118,4 @@ socket_sf.on('TaskletCyclesCoinsBlocked', function(data){
     }
 });
 
-console.log('Consumer/Provider runs on http://127.0.0.1:8080'  );
+console.log('Consumer/Provider runs on http://127.0.0.1:' + port  );
