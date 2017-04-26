@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { TransactionList } from '../shared/model/transactionlist';
+import { NetworkUser } from '../shared/model/networkuser'
 
 var conf = require('../../../config.json');
 
@@ -13,6 +14,8 @@ var conf = require('../../../config.json');
 export class TransactionsComponent implements OnInit {
 
   transactionListItems: TransactionList[];
+  NetworkUserItems: NetworkUser;
+  balance = 101;
 
   constructor(private userService: UserService,) { }
 
@@ -29,6 +32,15 @@ export class TransactionsComponent implements OnInit {
         })
         .catch(this.handleError);
 
+        //get balance
+        this.userService
+            .getUser()
+            .then(result => {
+                this.NetworkUserItems = result;
+                this.balance = this.NetworkUserItems.balance;
+            })
+            .catch(this.handleError);
+
   }
 
   private handleError(error: any): Promise<any> {
@@ -38,5 +50,9 @@ export class TransactionsComponent implements OnInit {
   getTransactions(): TransactionList[] {
       return this.transactionListItems;
   }
+
+    getUser(): NetworkUser{
+        return this.NetworkUserItems;
+    }
 
 }
