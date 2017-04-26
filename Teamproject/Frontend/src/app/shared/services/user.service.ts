@@ -10,18 +10,19 @@ import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 
 var conf = require('../../../../../config.json');
+var awsURL = 'http://ec2-52-41-66-178.us-west-2.compute.amazonaws.com'
 
 @Injectable()
 export class UserService {
 
-  private apiURLRegister = 'http://localhost' + ':8001/register/';
-  private apiURLLogin = 'http://localhost' + ':8001/login/';
-  private apiURLNetwork = 'http://localhost' + ':8001/user/?all=X';
-  private apiURLFriendships = 'http://localhost' + ':8001/sfbuserinfo/';
-  private apiURLAddFriend = 'http://localhost' + ':8001/friendship/';
-  private apiURLTransaction = 'http://localhost' + ':8001/acctransaction';
-  private apiURLUser = 'http://localhost' + ':8001/user';
-  private apiURLAddCoins = 'http://localhost' + ':8001/coinrequest/';
+  private apiURLRegister = awsURL + ':8001/register/';
+  private apiURLLogin = awsURL + ':8001/login/';
+  private apiURLNetwork = awsURL + ':8001/user/?all=X';
+  private apiURLFriendships = awsURL + ':8001/sfbuserinfo/';
+  private apiURLAddFriend = awsURL + ':8001/friendship/';
+  private apiURLTransaction = awsURL + ':8001/acctransaction';
+  private apiURLUser = awsURL + ':8001/user';
+  private apiURLAddCoins = awsURL + ':8001/coinrequest/';
 
   constructor(private http: Http) {
   }
