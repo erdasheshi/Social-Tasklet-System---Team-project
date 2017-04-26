@@ -8,7 +8,7 @@
       <div class="statsSection">
         <div class="statsSection__tile">
           <div class="statsSection__tile__value">
-            3222
+            {{ balance }}
           </div>
           <div class="statsSection__tile__description">
             Coins
@@ -35,15 +35,21 @@
 	<tbody>
 
 
+    <form (ngSubmit)="onSubmit()" class="searchform">
+      Coins
+      <input type="number" [(ngModel)]="coinsReq.requestedCoins" name="requestedCoins" placeholder="Coins"><br>
+      <button type="submit" id="request">Request</button>
+    </form>
 
+<!--
   <tr>
-
 		<td><div class="transaction__table__sumNumber"><input class="transaction__table__input"></div><div>Coins</div></td>
 		<td class="transaction__table__coins"><div class="transaction__table__sumNumber">500</div><div>€</div></td>
 	</tr>
+    <button>Charge</button>
+-->
 	</tbody>
 
-  <button>Charge</button>
 </table>
 
 

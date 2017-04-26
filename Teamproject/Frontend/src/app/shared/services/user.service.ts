@@ -7,18 +7,21 @@ import {NetworkUser} from '../model/networkuser';
 import {Friendship} from '../model/friendship';
 import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
+import {coinsRequest} from '../model/coinsRequest';
 
 var conf = require('../../../../../config.json');
 
 @Injectable()
 export class UserService {
 
-  private apiURLRegister = conf.sfbroker.ip + ':8001/register/';
-  private apiURLLogin = conf.sfbroker.ip + ':8001/login/';
-  private apiURLNetwork = conf.sfbroker.ip + ':8001/user/?all=X';
-  private apiURLFriendships = conf.sfbroker.ip + ':8001/sfbuserinfo/';
-  private apiURLAddFriend = conf.sfbroker.ip + ':8001/friendship/';
-  private apiURLTransaction = conf.sfbroker.ip + ':8001/acctransaction';
+  private apiURLRegister = 'http://localhost' + ':8001/register/';
+  private apiURLLogin = 'http://localhost' + ':8001/login/';
+  private apiURLNetwork = 'http://localhost' + ':8001/user/?all=X';
+  private apiURLFriendships = 'http://localhost' + ':8001/sfbuserinfo/';
+  private apiURLAddFriend = 'http://localhost' + ':8001/friendship/';
+  private apiURLTransaction = 'http://localhost' + ':8001/acctransaction';
+  private apiURLUser = 'http://localhost' + ':8001/user';
+  private apiURLAddCoins = 'http://localhost' + ':8001/coinrequest/';
 
   constructor(private http: Http) {
   }
@@ -49,6 +52,13 @@ export class UserService {
       .catch(this.handleError);
   }
 
+  getUser(): Promise<NetworkUser> {
+    return this.http.get(this.apiURLUser)
+      .toPromise()
+      .then((res: Response) => res.json() as NetworkUser)
+      .catch(this.handleError);
+  }
+
   getFriends(): Promise<Friendship[]> {
     return this.http.get(this.apiURLFriendships)
       .toPromise()
@@ -58,6 +68,12 @@ export class UserService {
 
   addFriend(addFriendship: AddFriendship): Promise<any> {
     return this.http.post(this.apiURLAddFriend, addFriendship)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  requestCoins(addCoins: coinsRequest): Promise<any> {
+    return this.http.post(this.apiURLAddCoins, addCoins)
       .toPromise()
       .catch(this.handleError);
   }
