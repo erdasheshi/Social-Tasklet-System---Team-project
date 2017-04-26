@@ -326,6 +326,10 @@ $(document).ready(function(){
                 $('<span>').text(' sent')
             )
         )
+
+        if (isNaN(computation))
+        {computation = 0 ;}
+
 		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id});
     };
 

@@ -1,22 +1,22 @@
 {
 	"sfbroker": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8001
 	},
 	"sfbroker_socket": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8002
 	},
 	"broker": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8003
 	},
 	"broker_socket": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8004
 	},
 	"direct_access": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8009
 	}
 }
