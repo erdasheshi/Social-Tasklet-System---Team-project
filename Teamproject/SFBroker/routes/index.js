@@ -131,7 +131,7 @@ router.post('/acctransaction', loggedIn, function(req, res, next) {
 
 /* POST /Friend Transaction */
 router.post('/friendship', loggedIn, function(req, res, next) {
-    var friendTransaction = new friendshipTransaction({user_1: req.user.username, user_2: req.body.user_2, status: req.body.status});
+    var friendTransaction = new friendshipTransaction({user_1: req.user.username, user_2: req.body.name, status: req.body.status});
     friendTransaction.save(function (err, post) {
         if (err) return next(err);
         res.json(post);

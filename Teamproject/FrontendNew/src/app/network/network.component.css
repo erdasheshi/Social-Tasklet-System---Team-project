@@ -1,0 +1,96 @@
+/*# sourceMappingURL=grid.css.map */
+
+.transaction__tile{
+  margin-top: 40px;
+  background-color: #ffffff;
+  padding: 40px;
+  box-shadow: 2px 2px 20px 0px #888888;
+}
+
+.statsSection__tile__value{
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.transaction__tile__header{
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.transaction__table{
+  width: 100%;
+  margin-top: 40px;
+  border-collapse: collapse;
+}
+
+.transaction__table tr{
+  line-height: 38px;
+}
+
+.transaction__table__coins{
+  text-align: right;
+}
+
+.transaction__table__sumNumber{
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.transaction__table__row td, .transaction__table__row th {
+     border-bottom: 1px solid #F0F0F0;
+   }
+
+  .transaction__table__row__last td, .transaction__table__row__last th {
+        border-bottom: 2px solid #000000;
+      }
+
+      .searchform{
+        width: 100%;
+        display: flex;
+      }
+
+      .searchform input{
+        width: 100%;
+        font-size: 32px;
+        background-color: transparent;
+border: none;
+border-bottom: 2px solid;
+      }
+
+
+      .friend__tile{
+        margin-top: 40px;
+      }
+
+      .friend__innerTile{
+        margin-top: 10px;
+        background-color: #ffffff;
+        box-shadow: 2px 2px 20px 0px #888888;
+        display: flex;
+
+      }
+
+      .friend__innerTile--inactive{
+        opacity: 0.5;
+
+      }
+
+
+.friend__stats{
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+}
+
+.friend__image{
+  width: 300px;
+  background-color: #939393;
+
+}
+
+.friend__name{
+  color: #979797;
+}
