@@ -10,7 +10,7 @@ import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 
 var conf = require('../../../../../config.json');
-var awsURL = 'http://ec2-52-41-66-178.us-west-2.compute.amazonaws.com'
+var awsURL = 'http://ec2-35-165-46-54.us-west-2.compute.amazonaws.com'
 
 @Injectable()
 export class UserService {
