@@ -6,11 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
+var conf = require('../config.json');
 
 // Prepare DB
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('127.0.0.1:27017/SFBroker');
+//mongoose.connect('127.0.0.1:27017/SFBroker');
+var mongodbAddress = conf.mongoDB.address + ':' + conf.mongoDB.port  + '/' + conf.mongoDB.database;
+console.log(mongodbAddress);
+mongoose.connect(mongodbAddress);
 
 var db = mongoose.connection;
 

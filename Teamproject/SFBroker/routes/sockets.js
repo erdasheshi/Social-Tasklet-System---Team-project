@@ -19,12 +19,8 @@ server.listen(conf.sfbroker_socket.port);
 io.sockets.on('connection', function (socket) {
     // der Client ist verbunden
     socket.emit('SFConnection', {zeit: new Date(), text: 'Connected!'});
-/*
-    socket.on('SFWrite_User', function (data) { // Move to register
-        var userSave = new user(data);
-        userSave.save();
-    });
-*/
+
+    /*
     // Step 13: Tasklet finished + Tasklet cycles known
     socket.on('TaskletCycles', function (data) {
         //add security check that the computation is really a number
@@ -71,7 +67,8 @@ io.sockets.on('connection', function (socket) {
             });
         });
     });
-
+    */
+/*
     // Step 16: Receiving the Tasklet result confirmation
     socket.on('TaskletResultConfirm', function (data) {
         var cost;
@@ -98,6 +95,7 @@ io.sockets.on('connection', function (socket) {
             })
         });
     });
+    */
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
@@ -154,14 +152,32 @@ socket_c.on('SFInformation', function (data) {
     var reliability = data.reliability;
     var speed = data.speed;
     var qoc_privacy = data.privacy;
+    var min_balance = 1;
 
-    logic.find({type: constants.PotentialProvider, username: username, privacy: qoc_privacy}, function (e, res) {
-        //builds the string that will be sent via socket.emit
-        var response = '{ \"name\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
-        socket_c.emit('SFInformation', JSON.parse(response.toString()));
+    // Check Balance >= min_balance
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+
+        if(balance >= min_balance) {
+            logic.find({
+                type: constants.PotentialProvider,
+                username: username,
+                privacy: qoc_privacy
+            }, function (e, res) {
+                //builds the string that will be sent via socket.emit
+                var response = '{ \"username\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
+                socket_c.emit('SFInformation', JSON.parse(response.toString()));
+            });
+        }
+        else{
+            socket_c.emit('SFInformation', { balance_check: false, username : username, taskletid : taskletid, min_balance : min_balance });
+        }
+
     });
+
 });
-;
+
+
 
 // Step 7: Receiving provider and consumer informations from Broker
 socket_c.on('ProviderConsumerInformation', function (data) {
@@ -198,7 +214,7 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     });
 
 });
-
+/* Deprecated
 socket_c.on('CheckBalance', function (data) {
     var username = data.name;
     var name = data.name;
@@ -220,6 +236,46 @@ socket_c.on('CheckBalance', function (data) {
             speed: speed,
             reliability: reliability
 
+        });
+    });
+});
+*/
+
+// Step 13: Tasklet finished + Tasklet cycles known
+socket_c.on('TaskletCyclesReturn', function (data) {
+    //add security check that the computation is really a number
+    var computation = data.computation;
+    console.log('computation cycles...socket sf broker' + computation);
+    var cost;
+    var price;
+    var confirmation = true;
+    var difference;
+
+    dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
+        dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
+
+            price = udata.price;
+
+            cost = computation * price;
+            console.log('computation  ' + computation);
+            console.log('cost ' + cost);
+            difference = res.coins - cost;
+
+            var accTransaction = new accountingTransaction({
+                consumer: res.consumer,
+                provider: res.provider,
+                computation: computation,
+                coins: cost,
+                status: constants.AccountingStatusConfirmed,
+                taskletid: res.taskletid
+            });
+            accTransaction.update();
+
+            // function call for the updatebalanc function
+            UpdateBalance(difference, res.consumer);
+
+            console.log(cost + 'after update cost');
+            console.log('Tasklet ' + res.taskletid + ' confirmed!');
         });
     });
 });

@@ -50,8 +50,9 @@ socket_c.on('SendingTaskletToProvider', function (data) {
 
 // Step 15: Consumer receives Tasklet result
 socket_c.on('SendTaskletResultToConsumer', function (data){
+	console.log(data.consumer);
 	if(username == data.consumer){
-    io.sockets.emit('ShowTaskletFinished', { zeit: new Date(), taskletid: data.taskletid, coins: data.coins, computation: data.computation, provider: data.provider, consumer: data.consumer, result: data.result});
+    io.sockets.emit('ShowTaskletFinished', { zeit: new Date(), taskletid: data.taskletid, computation: data.computation, provider: data.provider  });
     }
 });
 
@@ -93,10 +94,11 @@ io.sockets.on('connection', function (socket) {
 
 	// Step 13: Sending Tasklet cycles to SFBroker
     socket.on('TaskletCycles', function (data) {
-        socket_sf.emit('TaskletCycles', data);
+    	console.log(data);
+        socket_c.emit('TaskletCyclesReturn', { computation: data.computation, taskletid: data.taskletid, provider: username , consumer: data.consumer } );
     });
 
-
+	/*
 	// Step 15: Sending Tasklet result to consumer
     socket.on('ReturnTaskletToConsumer', function (data){
 		socket_c.emit('SendTaskletResultToConsumer', {taskletid: data.taskletid, provider: data.provider, coins: data.coins, computation: data.computation, consumer: data.consumer, result: data.result});
@@ -106,7 +108,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('TaskletResultConfirm', function (data){
         socket_sf.emit('TaskletResultConfirm', data);
     });
-	
+*/
 
 });
 

@@ -189,14 +189,9 @@ $(document).ready(function(){
                 $('<b>').text('Consumer: Tasklet '),
                 // ID
                 $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(' result ' + data.result + ' received - Cycles of Tasklet computation was ' + data.computation + ' and it cost ' + data.coins),
+                $('<b>').text(' received - Cycles of Tasklet computation was ' + data.computation + ' .'),
                 // Text
-                $('<span>').text(' Provider: ' + data.provider + ' ' )),
-            $('<input/>').attr({
-                type: "button",
-                id: buttonid,
-                value: "Send Confirmation to SFBroker"
-            })
+                $('<b>').text(' Provider: ' + data.provider + ' ' ))
         );
         $('#' + buttonid).click({id: data.taskletid}, sendResultConfirmationToSFBroker);
 
@@ -229,13 +224,13 @@ $(document).ready(function(){
                 $('<input/>').attr({
                 type: "button",
                 id: buttonid,
-                value: "Send Confirmation to SFBroker"
+                value: "Send Tasklet Confirmation to Broker"
                 }),
                 $('<input/>').attr({
                 id: inputComputation, placeholder: "Computation_Cylces"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid}, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid, consumer: data.consumer }, sendConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -330,7 +325,7 @@ $(document).ready(function(){
         if (isNaN(computation))
         {computation = 0 ;}
 
-		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id});
+		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id, consumer: tasklet.data.consumer });
     };
 
     // Step 15: Trigger send result to consumer

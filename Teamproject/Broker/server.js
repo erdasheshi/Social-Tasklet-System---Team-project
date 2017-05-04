@@ -36,8 +36,9 @@ io.sockets.on('connection', function (socket) {
 		console.log('I am here');
         // Step 1: Illustrating the Tasklet request
         io.sockets.emit('ShowTaskletRequest', {zeit: new Date(), name: data.name, taskletid: taskletid, cost: data.cost, privacy: data.privacy, speed: data.speed,reliability: data.reliability});
-		// Step 2: Balance request to SFBroker
-        io.sockets.emit('CheckBalance',{
+		// Step 2: Balance request to SFBroker - Deprecated
+        /*
+		io.sockets.emit('CheckBalance',{
             name: data.name,
             taskletid: taskletid,
             cost: data.cost,
@@ -45,9 +46,24 @@ io.sockets.on('connection', function (socket) {
             speed: data.speed,
             reliability: data.reliability
         });
+        */
+
+        // Step 2: Information request to SFBroker
+        io.sockets.emit('SFInformation', {
+            zeit: new Date(),
+            name: data.name,
+            taskletid: taskletid,
+            cost: data.cost,
+            privacy: data.privacy,
+            speed: data.speed,
+            reliability: data.reliability
+        });
+
+
     });
 
-	// Step 3: Receiving the balance from SFBroker
+	// Step 3: Receiving the balance from SFBroker - Deprecated
+	/*
     socket.on('CheckBalance', function (data) {
         var balance = data.balance;
         if ( balance < 30) {
@@ -68,20 +84,29 @@ io.sockets.on('connection', function (socket) {
             });
         }
     });
+    */
 	
 	// Step 5: Receiving potential provider information from SFBroker
 	socket.on('SFInformation', function (data) {
-		io.sockets.emit('ShowProviderInformation', {zeit: new Date(), name: data.name, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
+
+		if(typeof data.balance_check == 'undefined'){
+
+			io.sockets.emit('ShowProviderInformation', {zeit: new Date(), username: data.username, taskletid: data.taskletid, potentialprovider: data.potentialprovider });
 		
 		// Including the speed and reliability informations
-		addInformations(data.potentialprovider);
+			addInformations(data.potentialprovider);
 
 		//Step 6: Finding most suitable provider
-		var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
+			var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
 
 		// Step 7: Sending provider and consumer, coins to be blocked information to SFBroker
 		//SFBroker blocks the coins from the consumer
-        io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.name, taskletid: data.taskletid, provider: provider, coins: 30 });
+
+        	io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.username, taskletid: data.taskletid, provider: provider, coins: 1 });
+        }
+        else{
+            io.sockets.emit('ShowProviderInformation', {zeit: new Date(), balance_check : data.balance_check, consumer : data.username, taskletid : data.taskletid, min_balance : data.min_balance });
+		}
 	});
 	 // Step 9: Receiving potential provider information from SFBroker
 	socket.on('ProviderConsumerInformation', function (res) {
@@ -99,17 +124,25 @@ io.sockets.on('connection', function (socket) {
             });
 
 	});
-	
+
+    // Steps 8 & 9 & 10: Provider sends notification including the consumed time to Broker after finishing the Tasklet Provider sends Tasklet result to Consumer
+
+    socket.on('TaskletCyclesReturn', function (data) {
+        io.sockets.emit('SendTaskletResultToConsumer', data);
+
+        io.sockets.emit('TaskletCyclesReturn', data);
+    });
+
 	// Step 11: Provider gets Tasklets
 	socket.on('SendingTaskletToProvider', function (data) {
 		io.sockets.emit('SendingTaskletToProvider', data);
 	});
-	
-	// Step 15: Consumer gets Tasklet result
+/*
+	// Step 15: Consumer gets Tasklet result - Deprecated
 	socket.on('SendTaskletResultToConsumer', function (data) {
 		io.sockets.emit('SendTaskletResultToConsumer', data);
 	});
-	
+*/
 });
 
 function addInformations(potentialprovider){

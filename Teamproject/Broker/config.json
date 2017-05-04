@@ -1,22 +1,27 @@
 {
 	"sfbroker": {
-		"ip": "127.0.0.1",
+		"ip": "ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
 		"port": 8001
 	},
 	"sfbroker_socket": {
-		"ip": "127.0.0.1",
+		"ip": "ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
 		"port": 8002
 	},
 	"broker": {
-		"ip": "127.0.0.1",
+		"ip": "ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
 		"port": 8003
 	},
 	"broker_socket": {
-		"ip": "127.0.0.1",
+		"ip": "ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
 		"port": 8004
 	},
 	"direct_access": {
-		"ip": "127.0.0.1",
+		"ip": "ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
 		"port": 8009
+	},
+	"mongoDB":{
+		"address": "bitnami:tasklet@ec2-34-209-8-134.us-west-2.compute.amazonaws.com",
+        "port": "27017",
+		"database": "SFBroker"
 	}
 }
