@@ -16,20 +16,30 @@
       <file leaf-file-name="sockets.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SFBroker/routes/sockets.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="547">
-              <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
+            <state relative-caret-position="1292">
+              <caret line="146" column="34" lean-forward="true" selection-start-line="146" selection-start-column="34" selection-end-line="146" selection-end-column="34" />
               <folding>
-                <marker date="1494174518584" expanded="true" signature="8687:9988" ph="{...}" />
+                <marker date="1494176485890" expanded="true" signature="4221:5534" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AccountingTransaction.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SFBroker/classes/AccountingTransaction.js">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SFBroker/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="68">
+              <caret line="4" column="9" lean-forward="false" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="logic.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SFBroker/routes/logic.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="816">
+              <caret line="150" column="17" lean-forward="true" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -54,6 +64,7 @@
       <find>Computation</find>
       <find>sendConfirmationToSFBroker(</find>
       <find>conf</find>
+      <find>logic</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -71,6 +82,7 @@
         <option value="$PROJECT_DIR$/Client/public/client.js" />
         <option value="$PROJECT_DIR$/config.json" />
         <option value="$PROJECT_DIR$/SFBroker/app.js" />
+        <option value="$PROJECT_DIR$/SFBroker/routes/logic.js" />
         <option value="$PROJECT_DIR$/SFBroker/routes/sockets.js" />
       </list>
     </option>
@@ -599,15 +611,15 @@
       <workItem from="1493278349417" duration="1193000" />
       <workItem from="1493655690594" duration="7336000" />
       <workItem from="1493828382992" duration="2758000" />
-      <workItem from="1494172790937" duration="1710000" />
+      <workItem from="1494172790937" duration="2779000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17859000" />
+    <option name="totallyTimeSpent" value="18928000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -842,7 +854,7 @@
         <state relative-caret-position="1326">
           <caret line="78" column="74" lean-forward="false" selection-start-line="78" selection-start-column="74" selection-end-line="78" selection-end-column="100" />
           <folding>
-            <marker date="1494174518584" expanded="true" signature="8687:9988" ph="{...}" />
+            <marker date="1494176485890" expanded="true" signature="4221:5534" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -911,7 +923,7 @@
         <state relative-caret-position="1176">
           <caret line="56" column="0" lean-forward="true" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
           <folding>
-            <marker date="1494174518584" expanded="true" signature="8687:9988" ph="{...}" />
+            <marker date="1494176485890" expanded="true" signature="4221:5534" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -942,14 +954,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SFBroker/routes/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" column="30" lean-forward="false" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
           <folding />
         </state>
       </provider>
@@ -1022,14 +1026,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SFBroker/routes/logic.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1054">
-          <caret line="62" column="84" lean-forward="false" selection-start-line="62" selection-start-column="81" selection-end-line="62" selection-end-column="84" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SFBroker/routes/dbAccess.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
@@ -1046,12 +1042,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SFBroker/routes/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="9" lean-forward="false" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SFBroker/routes/logic.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="150" column="17" lean-forward="true" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SFBroker/routes/sockets.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
+        <state relative-caret-position="1292">
+          <caret line="146" column="34" lean-forward="true" selection-start-line="146" selection-start-column="34" selection-end-line="146" selection-end-column="34" />
           <folding>
-            <marker date="1494174518584" expanded="true" signature="8687:9988" ph="{...}" />
+            <marker date="1494176485890" expanded="true" signature="4221:5534" ph="{...}" />
           </folding>
         </state>
       </provider>

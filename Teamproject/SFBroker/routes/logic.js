@@ -121,6 +121,23 @@ function findAllTransactions(user, callback) {
     });
 }
 
+function UpdateBalance(difference, username) {
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        var balance = data.balance;
+
+        if (isNaN(difference)){
+            difference = 0; }
+
+        balance = balance + difference;
+        var userb = new user({
+            username: username,
+            balance: balance,
+        });
+        userb.update();
+    });
+};
+
+
 module.exports = {
     find: function (data, callback) {
         if (data.type == constants.PotentialProvider) {
@@ -130,5 +147,9 @@ module.exports = {
         } else if (data.type == constants.AllTransactions) {
             return findAllTransactions(data, callback);
         }
+    },
+    updateBalance: function(difference, username) {
+        return UpdateBalance(difference, username)
     }
+
 };
