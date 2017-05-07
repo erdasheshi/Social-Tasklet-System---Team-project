@@ -6,3 +6,4 @@ MongoDB/
 node_modules/
 data/
 *.md
+*.wt
