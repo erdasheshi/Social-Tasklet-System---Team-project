@@ -113,7 +113,7 @@ socket_c.on('SFInformation', function (data) {
 
 });
 
-// Step 12: Tasklet finished + Tasklet cycles known
+// Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
     //add security check that the computation is really a number
     var computation = data.computation;
@@ -152,7 +152,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             // function call for the updatebalanc function
             logic.updateBalance(difference, consumer);
 
-            console.log(cost + 'after update cost');
+            console.log(cost + ' after update cost');
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
         });
     });

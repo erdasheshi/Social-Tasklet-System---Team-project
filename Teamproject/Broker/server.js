@@ -54,42 +54,27 @@ io.sockets.on('connection', function (socket) {
 
 			//Step 4: Finding most suitable provider
 			var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
+			var consumer = data.username;
 			
-			//Step 5: Sending the Provider and Consumer informations to the SFBroker
-        	io.sockets.emit('ProviderConsumerInformation', {zeit: new Date(), consumer: data.username, taskletid: data.taskletid, provider: provider, coins: 1});
+			// Step 5: Informing consumer
+			io.sockets.emit('CoinsBlock', {consumer: consumer, provider: provider, taskletid: data.taskletid});
         }
+		
         else{
 			// If balance not sufficient, inform the Consumer about the cancelation
             io.sockets.emit('CancelTasklet', {zeit: new Date(), balance_check : data.balance_check, consumer : data.username, taskletid : data.taskletid, min_balance : data.min_balance });
 		}
 	});
-	
-	 // Step 5: Receiving the succesful transaction storing and blocking from SFBroker
-	socket.on('ProviderConsumerInformation', function (res) {
-		
-		// Step 6: Informing consumer and provider about the coins blocking
-         io.sockets.emit('CoinsBlock', {
-                zeit: new Date(),
-                success: res.success,
-                consumer: res.consumer,
-                provider: res.provider,
-                status: res.status,
-                coins: res.coins,
-                taskletid: res.taskletid
-            });
 
-	});
-
-    // Steps 10 & 11: Receiving notification including the consumed time from Provider and sending this to the SFBroker
+    // Steps 9 & 10: Receiving notification including the consumed time from Provider and sending this to the SFBroker
     socket.on('TaskletCyclesReturn', function (data) {
         io.sockets.emit('SendTaskletResultToConsumer', data);
 
         io.sockets.emit('TaskletCyclesReturn', data);
     });
 
-	// Step 7: Provider gets Tasklets
+	// Step 6: Provider gets Tasklets
 	socket.on('SendingTaskletToProvider', function (data) {
-		console.log('broker');
 		io.sockets.emit('SendingTaskletToProvider', data);
 	});
 

@@ -3,6 +3,7 @@
  */
 var dbAccess = require('./dbAccess');
 var constants = require('../constants');
+var user = require('../classes/User');
 
 function findPotentialProvider(consumer, callback) {
     var potentialprovider = '[';

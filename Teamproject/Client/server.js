@@ -26,24 +26,24 @@ server.listen(port);
 var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
 var socket_sf = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
-//Step 6: Receiving the coins block status
+//Step 5: Receiving the coins block status
 socket_c.on('CoinsBlock', function(data){
 
-	// Step 7: Sending the Tasklet
+	// Step 6: Sending the Tasklet
 	if(username == data.consumer){
 		io.sockets.emit('ShowTaskletCalc', {zeit: new Date(), provider: data.provider, consumer: data.consumer, taskletid: data.taskletid});
 	}
 
 });
 
-// Step 7: Provider receives Tasklet
+// Step 6: Provider receives Tasklet
 socket_c.on('SendingTaskletToProvider', function (data) {
 	if(username == data.provider){
 	io.sockets.emit('ShowTaskletReceived', {zeit: new Date(), consumer: data.consumer, taskletid: data.taskletid});
 	}
 });
 
-// Step 10: Consumer receives Tasklet result
+// Step 9: Consumer receives Tasklet result
 socket_c.on('SendTaskletResultToConsumer', function (data){
 	if(username == data.consumer){
     io.sockets.emit('ShowTaskletFinished', { zeit: new Date(), taskletid: data.taskletid, computation: data.computation, provider: data.provider  });
@@ -81,12 +81,12 @@ io.sockets.on('connection', function (socket) {
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 	});
 
-	// Step 7: Consumer sends Tasklet to Provider
+	// Step 6: Consumer sends Tasklet to Provider
 	socket.on('SendTaskletToProvider', function (data){
 		socket_c.emit('SendingTaskletToProvider', data);
 	});
 
-	// Step 9: Sending Tasklet cycles to Broker
+	// Step 8: Sending Tasklet cycles to Broker
     socket.on('TaskletCycles', function (data) {
         socket_c.emit('TaskletCyclesReturn', { computation: data.computation, taskletid: data.taskletid, provider: username , consumer: data.consumer } );
     });
