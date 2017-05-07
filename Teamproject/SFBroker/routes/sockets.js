@@ -169,6 +169,20 @@ socket_c.on('SFInformation', function (data) {
                 var response = '{ \"username\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
                 socket_c.emit('SFInformation', JSON.parse(response.toString()));
             });
+
+            // create dummy transaction
+            var accTransaction = new accountingTransaction({
+                consumer: username,
+                computation: 0,
+                coins: min_balance,
+                status: constants.AccountingStatusBlocked,
+                taskletid: taskletid
+            });
+            accTransaction.save();
+
+            var difference = -1 * min_balance;
+            UpdateBalance(difference, username);
+
         }
         else{
             socket_c.emit('SFInformation', {balance_check: false, username : username, taskletid : taskletid, min_balance : min_balance});
@@ -177,7 +191,7 @@ socket_c.on('SFInformation', function (data) {
     });
 
 });
-
+/*
 // Step 5: Receiving provider and consumer informations from Broker
 socket_c.on('ProviderConsumerInformation', function (data) {
     var accTransaction = new accountingTransaction({
@@ -215,38 +229,45 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     });
 
 });
-
+*/
 // Step 12: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
     //add security check that the computation is really a number
     var computation = data.computation;
     var cost;
     var price;
-    var confirmation = true;
-    var difference;
+    var taskletid = data.taskletid;
+    var provider = data.provider;
 
-    dbAccess.find({type: constants.Accounting, taskletid: data.taskletid}).exec(function (e, res) {
-        dbAccess.find({type: constants.User, username: res.provider}).exec(function (e, udata) {
+    dbAccess.find({type: constants.Accounting, taskletid: taskletid}).exec(function (e, res) {
+
+        var initial_coins = res.coins;
+        var consumer = res.consumer;
+
+        dbAccess.find({type: constants.User, username: provider}).exec(function (e, udata) {
 
             price = udata.price;
 
             cost = computation * price;
             console.log('computation  ' + computation);
             console.log('cost ' + cost);
-            difference = res.coins - cost;
+            var difference = initial_coins - cost;
 
             var accTransaction = new accountingTransaction({
-                consumer: res.consumer,
-                provider: res.provider,
+                consumer: consumer,
+                provider: provider,
                 computation: computation,
                 coins: cost,
                 status: constants.AccountingStatusConfirmed,
-                taskletid: res.taskletid
+                taskletid: taskletid
             });
-            accTransaction.update();
+            accTransaction.save();
 
             // function call for the updatebalanc function
-            UpdateBalance(difference, res.consumer);
+            UpdateBalance(cost, provider);
+
+            // function call for the updatebalanc function
+            UpdateBalance(difference, consumer);
 
             console.log(cost + 'after update cost');
             console.log('Tasklet ' + res.taskletid + ' confirmed!');
