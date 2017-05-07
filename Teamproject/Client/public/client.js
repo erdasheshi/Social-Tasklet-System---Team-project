@@ -29,15 +29,14 @@ $(document).ready(function(){
             $('<li></li>').append(
 
                 $('<b>').text('Broker: '),
-                $('<span>').text('You have sent a Tasklet request - '),
-                //QoC text
+                $('<span>').text('You have sent a Tasklet request with TaskletID' + data.taskletid),
                 $('<span>').text(' but you have not enough money in your account! To change your current balance, please proceed with a coin request.'))
         );
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
     });
 	
-	// Step 10: Showing coins block status
+	// Step 6: Showing coins block status
 	socket.on('ShowCoinsBlock', function (data) {
         var zeit = new Date(data.zeit);
 		// Coins block was successful
@@ -51,7 +50,7 @@ $(document).ready(function(){
                     (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
                     + '] '
                 ),
-				$('<span>').text('The amount of ' + data.coins +' coins is blocked from ' + data.consumer + ', for ' + data.provider + ' - regarding Tasklet ' + data.taskletid))
+				$('<span>').text('The default amount of ' + data.coins +' coins is blocked from ' + data.consumer + ', for ' + data.provider + ' - regarding Tasklet ' + data.taskletid))
 				);
         
 		// scroll down
@@ -59,8 +58,7 @@ $(document).ready(function(){
 		}
 		
 		// Coins block was not successful
-            //***************this one does not give a correct result of the condition...it comes always as true
-           //it has to be checked when we will want to cancel the tasklet if the user has not enough money for the real computation cycles
+        //****this one does not give a correct result of the condition...it comes always as true****
 		else {
         $('#content').append(
             $('<li></li>').append(
@@ -80,7 +78,7 @@ $(document).ready(function(){
 		}
     });
 
-	// Step 11: Sending Tasklet to provider
+	// Step 7: Sending Tasklet to provider
     socket.on('ShowTaskletCalc', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_send";
@@ -113,66 +111,7 @@ $(document).ready(function(){
 
     });
 
-	// Step 14: Coins were blocked for provider
-    socket.on('ShowTaskletCyclesCoinsBlocked', function (data) {
-
-        if (data.confirmation == true) {
-			var zeit = new Date(data.zeit);
-			var buttonid = data.taskletid +"_return";
-        //noinspection JSAnnotator,JSAnnotator
-        $('#content').append(
-            $('<li></li>').append(
-                // Uhrzeit
-                $('<span>').text('[' +
-                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
-                    + ':' +
-                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
-                    + '] '
-                ),
-                $('<b>').text('Provider: Tasklet '),
-                // ID
-                $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                $('<b>').text(', '+ data.coins + ' coins for calculation are reserved - '),
-                // Text
-                $('<span>').text('Consumer: ' + data.consumer + ' ' )),
-            $('<input/>').attr({
-                type: "button",
-                id: buttonid,
-                value: "Return Tasklet Result to Consumer"
-            })
-        );
-        $('#' + buttonid).click({id: data.taskletid, provider: data.provider, consumer: data.consumer, coins: data.coins, computation: data.computation}, returnTaskletToConsumer);
-
-        // scroll down
-        $('body').scrollTop($('body')[0].scrollHeight);
-        }
-        else{
-            //*****when the else executes it doesnt show most of the messages (messages that are before this call)
-
-            var zeit = new Date(data.zeit);
-          
-            //noinspection JSAnnotator,JSAnnotator
-            $('#content').append(
-                $('<li></li>').append(
-                    // Uhrzeit
-                    $('<span>').text('[' +
-                        (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
-                        + ':' +
-                        (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
-                        + '] '
-                    ),
-                    $('<b>').text('Provider: Tasklet '),
-                    // ID
-                    $('<b>').text(typeof(data.taskletid) != 'undefined' ? data.taskletid : ''),
-                    $('<span>').text(' coins for calculation were not reserved because the Consumer had not enough money to pay for the transaction.'))
-            );
-
-            // scroll down
-            $('body').scrollTop($('body')[0].scrollHeight);
-        }
-    });
-
-	// Step 15: Consumer received Tasklet result
+	// Step 10: Consumer received Tasklet result
     socket.on('ShowTaskletFinished', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_finished";
@@ -193,14 +132,13 @@ $(document).ready(function(){
                 // Text
                 $('<b>').text(' Provider: ' + data.provider + ' ' ))
         );
-        $('#' + buttonid).click({id: data.taskletid}, sendResultConfirmationToSFBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
 
     });
 
-	// Step 13: Provider received Tasklet
+	// Step 8: Provider received Tasklet
     socket.on('ShowTaskletReceived', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.taskletid +"_received";
@@ -230,7 +168,7 @@ $(document).ready(function(){
                 id: inputComputation, placeholder: "Computation_Cylces"
             })
         );
-        $('#' + buttonid).click({id: data.taskletid, consumer: data.consumer }, sendConfirmationToSFBroker);
+        $('#' + buttonid).click({id: data.taskletid, consumer: data.consumer }, sendConfirmationToBroker);
 
         // scroll down
         $('body').scrollTop($('body')[0].scrollHeight);
@@ -277,7 +215,7 @@ $(document).ready(function(){
     // Trigger function when clicking
     $('#send').click(send);
 
-    //Step 11: Trigger send to Provider
+    //Step 7: Trigger send to Provider
     function sendTaskletToProvider(tasklet){
         var zeit = new Date();
         $(this).prop("disabled",true);
@@ -300,8 +238,8 @@ $(document).ready(function(){
 		socket.emit('SendTaskletToProvider', {taskletid: tasklet.data.id, provider: tasklet.data.provider, consumer: tasklet.data.consumer});
     };
 
-    // Step 13: Trigger send computation cycles to SFBroker
-    function sendConfirmationToSFBroker(tasklet){
+    // Step 9: Trigger send computation cycles to Broker
+    function sendConfirmationToBroker(tasklet){
         var zeit = new Date();
 		var computation = $('#' + tasklet.data.id +"Computation").val();
         $(this).prop("disabled",true);
@@ -318,7 +256,7 @@ $(document).ready(function(){
                 // ID
                 $('<span>').text(tasklet.data.id),
 
-                $('<span>').text(' sent')
+                $('<span>').text(' sent as well as the result back to the Consumer')
             )
         )
 
@@ -326,56 +264,6 @@ $(document).ready(function(){
         {computation = 0 ;}
 
 		socket.emit('TaskletCycles', {computation: computation, taskletid: tasklet.data.id, consumer: tasklet.data.consumer });
-    };
-
-    // Step 15: Trigger send result to consumer
-    function returnTaskletToConsumer(tasklet){
-        var zeit = new Date();
-		// generate default result
-		var result = ['3', '7', '11']
-		
-        $(this).prop("disabled",true);
-        $('#content').append(
-            $('<li></li>').append(
-                // Uhrzeit
-                $('<span>').text('[' +
-                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
-                    + ':' +
-                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
-                    + '] '
-                ),
-                $('<span>').text('Tasklet result '),
-                // ID
-                $('<span>').text(result),
-
-                $('<span>').text(' returned to ' + tasklet.data.consumer + ' - Cycles of Tasklet computation was ' + tasklet.data.computation + ' and it cost ' + tasklet.data.coins )
-            )
-        )
-        socket.emit('ReturnTaskletToConsumer', {taskletid: tasklet.data.id, coins: tasklet.data.coins, computation: tasklet.data.computation, provider: tasklet.data.provider, consumer: tasklet.data.consumer, result: result});
-    };
-
-    // Step 16: Trigger confirmation of Tasklet result
-    function sendResultConfirmationToSFBroker(tasklet){
-        var zeit = new Date();
-        $(this).prop("disabled",true);
-        $('#content').append(
-            $('<li></li>').append(
-                // Uhrzeit
-                $('<span>').text('[' +
-                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
-                    + ':' +
-                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
-                    + '] '
-                ),
-                $('<span>').text('Result of Tasklet '),
-                // ID
-                $('<span>').text(tasklet.data.id),
-
-                $('<span>').text(' confirmed')
-            )
-        )
-
-        socket.emit('TaskletResultConfirm', {taskletid: tasklet.data.id});
     };
 
 });

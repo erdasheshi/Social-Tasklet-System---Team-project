@@ -136,22 +136,23 @@ io.sockets.on('connection', function (socket) {
         });
            })
 });
+
 //Data exchange Broker/ SFBroker
 
-// Connect to broker
+// Connect to Broker
 var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
 
 socket_c.emit('event', {connection: 'I want to connect'});
 
-// Step 5: Finding and sending friends information for Broker
+// Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
-    console.log('I am here' + data);
     var username = data.name;
     var taskletid = data.taskletid;
     var cost = data.cost;
     var reliability = data.reliability;
     var speed = data.speed;
     var qoc_privacy = data.privacy;
+	// Setting the required minimum balance
     var min_balance = 1;
 
     // Check Balance >= min_balance
@@ -170,16 +171,14 @@ socket_c.on('SFInformation', function (data) {
             });
         }
         else{
-            socket_c.emit('SFInformation', { balance_check: false, username : username, taskletid : taskletid, min_balance : min_balance });
+            socket_c.emit('SFInformation', {balance_check: false, username : username, taskletid : taskletid, min_balance : min_balance});
         }
 
     });
 
 });
 
-
-
-// Step 7: Receiving provider and consumer informations from Broker
+// Step 5: Receiving provider and consumer informations from Broker
 socket_c.on('ProviderConsumerInformation', function (data) {
     var accTransaction = new accountingTransaction({
         consumer: data.consumer,
@@ -191,6 +190,7 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     });
     accTransaction.save();
 
+	// Step 5: Sending the successful saving of the transaction back to the Broker
     socket_c.emit('ProviderConsumerInformation', {
         consumer: data.consumer,
         provider: data.provider,
@@ -199,6 +199,7 @@ socket_c.on('ProviderConsumerInformation', function (data) {
         coins: data.coins,
         status: constants.AccountingStatusBlocked
     });
+	
     dbAccess.find({type: constants.User, username: data.consumer}).exec(function (e, res) {
         console.log("Result: " + res);
         var old_balance = parseInt(res.balance);
@@ -214,38 +215,11 @@ socket_c.on('ProviderConsumerInformation', function (data) {
     });
 
 });
-/* Deprecated
-socket_c.on('CheckBalance', function (data) {
-    var username = data.name;
-    var name = data.name;
-    var taskletid = data.taskletid;
-    var cost = data.cost;
-    var privacy = data.privacy;
-    var speed = data.speed;
-    var reliability = data.reliability;
-    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
-        var balance = data.balance;
-        console.log(balance);
-        socket_c.emit('CheckBalance', {
-            balance: balance,
-            zeit: new Date(),
-            name: name,
-            taskletid: taskletid,
-            cost: cost,
-            privacy: privacy,
-            speed: speed,
-            reliability: reliability
 
-        });
-    });
-});
-*/
-
-// Step 13: Tasklet finished + Tasklet cycles known
+// Step 12: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
     //add security check that the computation is really a number
     var computation = data.computation;
-    console.log('computation cycles...socket sf broker' + computation);
     var cost;
     var price;
     var confirmation = true;
