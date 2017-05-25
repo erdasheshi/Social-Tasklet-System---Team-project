@@ -1,0 +1,10 @@
+IP_Responder: 127.0.0.1
+Tasklet_Monitor: 127.0.0.1
+Number_of_TVMs: 4
+Timeout: 20
+Heartbeat_Frequency: 1000
+Tasklet_Timeout: 2000
+Failure_Rate: 0
+Explicit_Leave_Ratio: 50
+Min_Intermediate_Comp: 40
+Max_Intermediate_Comp: 60
