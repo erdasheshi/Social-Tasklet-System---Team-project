@@ -29,8 +29,8 @@ friendshipTransaction.prototype.save =  function(callback) {
                     var transaction = new Friendship({ //You're entering a new transaction here
                         user_1: user_1,
                         user_2: user_2,
-                        status: status
-						version: version;
+                        status: status,
+						version: version
                     });
                     transaction.save({}, function (error, data) {
                         if(error){
