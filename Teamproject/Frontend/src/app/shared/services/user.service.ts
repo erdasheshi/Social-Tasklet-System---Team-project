@@ -11,6 +11,7 @@ import {coinsRequest} from '../model/coinsRequest';
 
 var conf = require('../../../../config.json');
 var awsURL = 'http://ec2-35-162-119-6.us-west-2.compute.amazonaws.com'
+awsURL = 'http://localhost';
 
 @Injectable()
 export class UserService {
