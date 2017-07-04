@@ -1,7 +1,9 @@
 # SocialTasklets
-Repo for Teamproject Social Distributed Computing - Tasklets
+Repository for the Teamproject Social Distributed Systems (SDS)
 
-## Starting the Teamproject with Docker
+Server IP: 46.101.198.127
+
+## Starting the Teamproject with Docker on your local machine
 The Teamproject consists of multiple modules that are contained in docker containers.
 To test the app locally you need to perform the following steps.
 
