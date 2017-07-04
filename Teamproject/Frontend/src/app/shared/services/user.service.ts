@@ -9,7 +9,7 @@ import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 
-var conf = require('../../../../../config.json');
+var conf = require('../../../../config.json');
 var awsURL = 'http://ec2-35-162-119-6.us-west-2.compute.amazonaws.com'
 
 @Injectable()

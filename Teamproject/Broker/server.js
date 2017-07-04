@@ -95,28 +95,10 @@ function addInformations(potentialprovider){
 function scheduling(potentialprovider, cost, reliability, speed){
 	
 	//Converting QoC high and low to 9 and 1
-	if(cost == 'low'){
-		cost = 9;
-	}
-	else{
-		cost= 1;
-	}
-	
-	if(reliability == 'high'){
-		reliability = 9;
-	}
-	else {
-		reliability = 1;
-	}
-	
-	if (speed == 'high'){
-		speed = 9;
-	}
-	else {
-		speed = 1;
-	}
-	
-	
+	cost = cost === 'low' ? 9 : 1;
+    reliability = reliability === 'high' ? 9 : 1;
+    speed = speed === 'high' ? 9 : 1;
+
 	// Calculating the weights based on QoC high and low
 	var total = cost + reliability + speed;
 	
