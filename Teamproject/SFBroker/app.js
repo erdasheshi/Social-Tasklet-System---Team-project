@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
 var conf = require('../config.json');
+var cors = require('cors')
 
 // Prepare DB
 var mongoose = require('mongoose');
@@ -31,6 +32,8 @@ var users = require('./routes/users');
 var socket = require('./routes/sockets');
 
 var app = express();
+
+app.listen(conf.sfbroker.port);
 
 // view engine setup
 
@@ -57,6 +60,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// allow CORS
+app.use(cors());
 
 app.use('/', index);
 app.use('/users', users);
