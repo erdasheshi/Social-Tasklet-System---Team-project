@@ -19,6 +19,21 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
 
+// Prepare DB
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+//mongoose.connect('127.0.0.1:27018/Broker');
+var mongodbAddress = 'mongodb://' + conf.broker.mongoDB.address + ':' + conf.broker.mongoDB.port  + '/' + conf.broker.mongoDB.database;
+console.log(mongodbAddress);
+mongoose.connect(mongodbAddress);
+
+var db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "Connection error:"));
+db.once("open", function(callback){
+    console.log("DB Connection Succeeded."); /* Once the database connection has succeeded, the code in db.once is executed. */
+});
+
 var tasklets = require('./service/tasklet_interface.js');
 var websockets = require('./service/websockets');
 
