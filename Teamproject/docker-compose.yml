@@ -17,29 +17,13 @@ services:
     build: Broker/
     ports:
       - "8003:8003"
+      - "34123:34123"
+      - "63667:63667"
+      - "49129:49129"
     depends_on:
       - sf-broker
-
-  client1:
-    build: Client/
-    ports:
-      - "8080:8080"
-    command: node server.js albrinkm 8080
-    depends_on:
-      - broker
-
-  client2:
-    build: Client/
-    ports:
-      - "8081:8081"
-    command: node server.js dhelfer 8081
-    depends_on:
-      - broker
 
   frontend:
     build: Frontend/
     ports:
       - "4200:80"
-    depends_on:
-      - client1
-      - client2

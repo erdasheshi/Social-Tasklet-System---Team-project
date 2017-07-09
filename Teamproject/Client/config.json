@@ -23,5 +23,17 @@
 		"address": "mongodb",
 		"port": "27017",
 		"database": ""
+	},
+	"tasklet":{
+		"ip": "0.0.0.0",
+		"port": 49129
+	},
+	"heartbeat":{
+		"ip": "0.0.0.0",
+		"port": 34123
+	},
+	"vmup":{
+		"ip": "0.0.0.0",
+		"port": 63667
 	}
 }

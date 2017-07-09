@@ -9,5 +9,8 @@ COPY . /usr/src/app
 COPY ./config.json /usr/src
 
 EXPOSE 8003
+EXPOSE 34123
+EXPOSE 63667
+EXPOSE 49129
 
 CMD ["node","server.js"]
