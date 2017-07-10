@@ -1,17 +1,19 @@
 version: '2'
 services:
 
-  mongodb:
-    build: Database/
-    ports:
-      - "27017:27017"
+  mongodb-sfbroker:
+      image: 'mongo:latest'
+
+  mongodb-broker:
+     image: 'mongo:latest'
+     command: mongod --port 27018
 
   sf-broker:
     build: SFBroker/
     ports:
       - "8001:8001"
     depends_on:
-      - mongodb
+      - mongodb-sfbroker
 
   broker:
     build: Broker/
@@ -21,9 +23,11 @@ services:
       - "63667:63667"
       - "49129:49129"
     depends_on:
-      - sf-broker
+      - mongodb-broker
 
   frontend:
     build: Frontend/
     ports:
       - "4200:80"
+    depends_on:
+      - sf-broker
