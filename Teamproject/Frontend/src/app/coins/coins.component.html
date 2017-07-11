@@ -58,25 +58,26 @@
       </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <div class="grid__col grid__col--2-of-2">
+      <div class="transaction__tile">
+        <table class="transaction__table">
+          <tbody>
+            <tr class="transaction__table__row__first">
+              <td>ID</td>
+              <td>RequestID</td>
+              <td>Username</td>
+              <td>RequestedCoins</td>
+              <td>Approval</td>
+            </tr>
+            <tr *ngFor="let transactionListItem of getTransactions()" class="transaction__table__row">
+              <td>{{ transactionListItem.id }}</td>
+              <td>{{ transactionListItem.requestid }}</td>
+              <td>{{ transactionListItem.username }}</td>
+              <td>{{ transactionListItem.requestedCoins }}</td>
+              <td>{{ transactionListItem.approval }}</td>
+            </tr>
+          </tbody>
+        </table>
 
   </div>
 </div>

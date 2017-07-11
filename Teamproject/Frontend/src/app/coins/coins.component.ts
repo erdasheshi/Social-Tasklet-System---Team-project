@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { NetworkUser } from '../shared/model/networkuser';
 import { coinsRequest }    from '../shared/model/coinsRequest';
+import { RequestedCoinsList } from '../shared/model/requestedCoinsList';
 
 var conf = require('../../../config.json');
 
@@ -14,7 +15,12 @@ var conf = require('../../../config.json');
 export class CoinsComponent implements OnInit {
 
   NetworkUserItems: NetworkUser;
+<<<<<<< Updated upstream
   balance = 0;
+=======
+  requestedCoinsListItems: RequestedCoinsList[];
+  balance = 101;
+>>>>>>> Stashed changes
   coinsReq = new coinsRequest (0);
 
   constructor(private userService: UserService) { }
@@ -32,6 +38,17 @@ export class CoinsComponent implements OnInit {
             this.balance = this.NetworkUserItems.balance;
         })
         .catch(this.handleError);
+
+        //get all coin requests
+        this.userService
+            .getRequestedCoins()
+            .then(result => {
+                console.log('RequestedCoins' + result);
+                console.log('Hallo');
+                this.requestedCoinsListItems = result;
+                console.log(this.requestedCoinsListItems);
+            })
+            .catch(this.handleError);
 
   }
 

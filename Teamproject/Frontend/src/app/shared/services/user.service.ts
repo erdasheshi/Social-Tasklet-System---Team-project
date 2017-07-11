@@ -8,6 +8,7 @@ import {Friendship} from '../model/friendship';
 import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
+import {RequestedCoinsList} from '../model/requestedCoinsList';
 
 var conf = require('../../../../config.json');
 var awsURL = 'http://ec2-35-162-119-6.us-west-2.compute.amazonaws.com'
@@ -24,6 +25,7 @@ export class UserService {
   private apiURLTransaction = awsURL + ':8001/acctransaction';
   private apiURLUser = awsURL + ':8001/user';
   private apiURLAddCoins = awsURL + ':8001/coinrequest/';
+  private apiURLRequestedCoins = awsURL + ':8001/requestedcoins/';
 
   constructor(private http: Http) {
   }
@@ -65,6 +67,13 @@ export class UserService {
     return this.http.get(this.apiURLFriendships)
       .toPromise()
       .then((res: Response) => res.json().connections.map(obj => new Friendship(obj)))
+      .catch(this.handleError);
+  }
+
+  getRequestedCoins(): Promise<RequestedCoinsList[]> {
+    return this.http.get(this.apiURLRequestedCoins)
+      .toPromise()
+      .then((res: Response) => res.json().map(obj => new RequestedCoinsList(obj)))
       .catch(this.handleError);
   }
 
