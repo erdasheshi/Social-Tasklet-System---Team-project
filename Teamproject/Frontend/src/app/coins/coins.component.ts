@@ -14,7 +14,7 @@ var conf = require('../../../config.json');
 export class CoinsComponent implements OnInit {
 
   NetworkUserItems: NetworkUser;
-  balance = 101;
+  balance = 0;
   coinsReq = new coinsRequest (0);
 
   constructor(private userService: UserService) { }
