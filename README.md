@@ -19,7 +19,7 @@ Prerequisite: Installation of docker and docker-compose
 - Client 1: 8080:8080
 - Client 2: 8081:8081
 - Frontend: 4200:80
-
+5. Refresh project each time you made changes `docker-compose up -d --build`
 
 ## Starting the Teamproject with Docker on our Digital Ocean Server once you are logged-in
 
