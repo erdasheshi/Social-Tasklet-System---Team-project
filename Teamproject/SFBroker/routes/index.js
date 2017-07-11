@@ -157,8 +157,10 @@ router.post('/register', function(req, res) {
                                 email: req.body.email,
                                 firstname: req.body.firstname,
                                 lastname: req.body.lastname,
+                                password: req.body.password,
                                 price: req.body.price,
-                                balance: 100}),
+                                balance: 100,
+                                version: 1}),
         req.body.password, function(err, account) {
             if (err) {
                 return res.status(500).json({

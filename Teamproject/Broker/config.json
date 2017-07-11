@@ -1,6 +1,6 @@
 {
 	"sfbroker": {
-		"ip": "sf-broker",
+		"ip": "127.0.0.1",
 		"port": 8001
 	},
 	"sfbroker_socket": {
@@ -21,7 +21,7 @@
 	},
 	"mongoDB":{
 		"address": "mongodb",
-        "port": "27017",
+		"port": "27017",
 		"database": ""
 	}
 }
