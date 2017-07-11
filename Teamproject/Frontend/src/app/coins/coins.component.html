@@ -19,27 +19,22 @@
       </div>
     </div>
 
-    <div class="grid__col grid__col--4-of-4">
+    <div class="grid__col grid__col--4-of-4" id="1">
       <div class="transaction__tile">
         <div class="transaction__tile__header">
           <div class="transaction__tile__header__id">
             <div>
               1 coin costs 1€
             </div>
-
           </div>
-
         </div>
-
         <table class="transaction__table">
-	<tbody>
-
-
-    <form (ngSubmit)="onSubmit()" class="searchform">
-      Coins
-      <input type="number" [(ngModel)]="coinsReq.requestedCoins" name="requestedCoins" placeholder="Coins"><br>
-      <button type="submit" id="request">Request</button>
-    </form>
+          <tbody>
+            <form (ngSubmit)="onSubmit()" class="searchform">
+              Coins
+              <input type="number" [(ngModel)]="coinsReq.requestedCoins" name="requestedCoins" placeholder="Coins"><br>
+              <button type="submit" id="request">Request</button>
+            </form>
 
 <!--
   <tr>
@@ -48,17 +43,13 @@
 	</tr>
     <button>Charge</button>
 -->
-	</tbody>
 
-</table>
-
-
-
-
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="grid__col grid__col--2-of-2">
+    <div class="grid__col grid__col--2-of-2" id="2">
       <div class="transaction__tile">
         <table class="transaction__table">
           <tbody>
@@ -69,15 +60,16 @@
               <td>RequestedCoins</td>
               <td>Approval</td>
             </tr>
-            <tr *ngFor="let transactionListItem of getTransactions()" class="transaction__table__row">
-              <td>{{ transactionListItem.id }}</td>
-              <td>{{ transactionListItem.requestid }}</td>
-              <td>{{ transactionListItem.username }}</td>
-              <td>{{ transactionListItem.requestedCoins }}</td>
-              <td>{{ transactionListItem.approval }}</td>
+            <tr *ngFor="let requestedCoinsListItem of getRequestedCoins()" class="transaction__table__row">
+              <td>{{ requestedCoinsListItem.id }}</td>
+              <td>{{ requestedCoinsListItem.requestid }}</td>
+              <td>{{ requestedCoinsListItem.username }}</td>
+              <td>{{ requestedCoinsListItem.requestedCoins }}</td>
+              <td>{{ requestedCoinsListItem.approval }}</td>
             </tr>
           </tbody>
         </table>
-
+      </div>
+    </div>
   </div>
 </div>

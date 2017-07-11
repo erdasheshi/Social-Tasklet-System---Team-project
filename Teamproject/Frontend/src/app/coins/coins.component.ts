@@ -12,15 +12,12 @@ var conf = require('../../../config.json');
   styleUrls: ['./coins.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
   providers: [UserService] //API Service
 })
+
 export class CoinsComponent implements OnInit {
 
-  NetworkUserItems: NetworkUser;
-<<<<<<< Updated upstream
-  balance = 0;
-=======
   requestedCoinsListItems: RequestedCoinsList[];
-  balance = 101;
->>>>>>> Stashed changes
+  NetworkUserItems: NetworkUser;
+  balance = 0;
   coinsReq = new coinsRequest (0);
 
   constructor(private userService: UserService) { }
@@ -67,6 +64,10 @@ export class CoinsComponent implements OnInit {
 
   private handleError(error: any): Promise<any> {
       return Promise.reject(error.message || error);
+  }
+
+  getRequestedCoins(): RequestedCoinsList[] {
+    return this.requestedCoinsListItems;
   }
 
   getUser(): NetworkUser{
