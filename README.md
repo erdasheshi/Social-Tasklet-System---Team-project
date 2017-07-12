@@ -1,7 +1,9 @@
 # SocialTasklets
 Repository for the Teamproject Social Distributed Systems (SDS)
-
 Server IP: 46.101.198.127
+
+# IMPORTANT: Current workaround for testing
+Current workaround for the whole project to work: Disable Web Security in Chrome or Firerfox to get it up running: open -a Google\ Chrome --args --disable-web-security --user-data-dir (MAC)
 
 ## Starting the Teamproject with Docker on your local machine
 The Teamproject consists of multiple modules that are contained in docker containers.
