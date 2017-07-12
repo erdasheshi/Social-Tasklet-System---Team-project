@@ -10,7 +10,7 @@ import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 import {RequestedCoinsList} from '../model/requestedCoinsList';
 
-var conf = require('../../../config.json');
+var conf = require('../../../../config.json');
 var serverURL = '46.101.198.127';
 
 @Injectable()
