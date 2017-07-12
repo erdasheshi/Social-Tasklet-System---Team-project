@@ -24,7 +24,7 @@ export class UserService {
   private apiURLTransaction =  serverURL + ':8001/acctransaction';
   private apiURLUser =  serverURL + ':8001/user';
   private apiURLAddCoins =  serverURL + ':8001/coinrequest/';
-  private apiURLRequestedCoins = awsURL + ':8001/requestedcoins/';
+  private apiURLRequestedCoins = serverURL + ':8001/requestedcoins/';
 
   constructor(private http: Http) {
   }
