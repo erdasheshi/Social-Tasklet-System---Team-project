@@ -19,6 +19,7 @@ export class UserService {
 
   private apiURLRegister = awsURL + ':8001/register/';
   private apiURLLogin = awsURL + ':8001/login/';
+  private apiURLLogout = awsURL + ':8001/logout/';
   private apiURLNetwork = awsURL + ':8001/user/?all=X';
   private apiURLFriendships = awsURL + ':8001/sfbuserinfo/';
   private apiURLAddFriend = awsURL + ':8001/friendship/';
@@ -38,6 +39,12 @@ export class UserService {
 
   loginUser(newUser: User): Promise<any> {
     return this.http.post(this.apiURLLogin, newUser)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  logoutUser(): Promise<any> {
+    return this.http.get(this.apiURLLogout)
       .toPromise()
       .catch(this.handleError);
   }
