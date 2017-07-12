@@ -1,4 +1,4 @@
-export class NetworkUser {
+export class NetworkUser { //used for get
 
     id: string;
     username: string;
@@ -15,6 +15,6 @@ export class NetworkUser {
         this.lastname = userObj.lastname;
         this.email = userObj.email;
         this.price = userObj.price;
-        this.balance = userObj.balance;
+        this.balance = userObj.balance; //total coins
     }
 }
