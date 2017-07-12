@@ -60,6 +60,15 @@ export class CoinsComponent implements OnInit {
           }
         })
         .catch(this.handleError);
+    this.userService
+      .getRequestedCoins()
+      .then(result => {
+        console.log('RequestedCoins' + result);
+        console.log('Hallo');
+        this.requestedCoinsListItems = result;
+        console.log(this.requestedCoinsListItems);
+      })
+      .catch(this.handleError);
   }
 
   private handleError(error: any): Promise<any> {
