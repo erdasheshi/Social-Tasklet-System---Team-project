@@ -18,6 +18,7 @@ export class UserService {
 
   private apiURLRegister =  serverURL + ':8001/register/';
   private apiURLLogin =  serverURL + ':8001/login/';
+  private apiURLLogout =  serverURL + ':8001/logout/';
   private apiURLNetwork =  serverURL + ':8001/user/?all=X';
   private apiURLFriendships =  serverURL + ':8001/sfbuserinfo/';
   private apiURLAddFriend =  serverURL + ':8001/friendship/';
