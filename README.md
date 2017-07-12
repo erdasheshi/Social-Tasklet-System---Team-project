@@ -24,7 +24,10 @@ Prerequisite: Installation of docker and docker-compose
 
 ## Starting the Teamproject with Docker on our Digital Ocean Server once you are logged-in
 
-1. cd SocialTaskletsgit pull
-2. cd Teamproject 
-3. docker-compose build
-4. docker-compose up -d
+1. ssh -i .ssh/XXX root@46.101.198.127 (MAC)
+2. cd SocialTasklets
+3. git pull
+4. cd Teamproject 
+5. docker-compose build
+6. docker-compose up -d
+7. docker ps
