@@ -8,22 +8,24 @@ import {Friendship} from '../model/friendship';
 import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
+import {RequestedCoinsList} from '../model/requestedCoinsList';
 
 var conf = require('../../../../config.json');
-var awsURL = 'http://ec2-35-162-119-6.us-west-2.compute.amazonaws.com'
-awsURL = 'http://localhost';
+var serverURL = 'http://46.101.198.127';
 
 @Injectable()
 export class UserService {
 
-  private apiURLRegister = awsURL + ':8001/register/';
-  private apiURLLogin = awsURL + ':8001/login/';
-  private apiURLNetwork = awsURL + ':8001/user/?all=X';
-  private apiURLFriendships = awsURL + ':8001/sfbuserinfo/';
-  private apiURLAddFriend = awsURL + ':8001/friendship/';
-  private apiURLTransaction = awsURL + ':8001/acctransaction';
-  private apiURLUser = awsURL + ':8001/user';
-  private apiURLAddCoins = awsURL + ':8001/coinrequest/';
+  private apiURLRegister =  serverURL + ':8001/register/';
+  private apiURLLogin =  serverURL + ':8001/login/';
+  private apiURLLogout =  serverURL + ':8001/logout/';
+  private apiURLNetwork =  serverURL + ':8001/user/?all=X';
+  private apiURLFriendships =  serverURL + ':8001/sfbuserinfo/';
+  private apiURLAddFriend =  serverURL + ':8001/friendship/';
+  private apiURLTransaction =  serverURL + ':8001/acctransaction';
+  private apiURLUser =  serverURL + ':8001/user';
+  private apiURLAddCoins =  serverURL + ':8001/coinrequest/';
+  private apiURLRequestedCoins = serverURL + ':8001/requestedcoins/';
 
   constructor(private http: Http) {
   }
@@ -36,6 +38,12 @@ export class UserService {
 
   loginUser(newUser: User): Promise<any> {
     return this.http.post(this.apiURLLogin, newUser)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  logoutUser(): Promise<any> {
+    return this.http.get(this.apiURLLogout)
       .toPromise()
       .catch(this.handleError);
   }
@@ -65,6 +73,13 @@ export class UserService {
     return this.http.get(this.apiURLFriendships)
       .toPromise()
       .then((res: Response) => res.json().connections.map(obj => new Friendship(obj)))
+      .catch(this.handleError);
+  }
+
+  getRequestedCoins(): Promise<RequestedCoinsList[]> {
+    return this.http.get(this.apiURLRequestedCoins)
+      .toPromise()
+      .then((res: Response) => res.json().map(obj => new RequestedCoinsList(obj)))
       .catch(this.handleError);
   }
 
