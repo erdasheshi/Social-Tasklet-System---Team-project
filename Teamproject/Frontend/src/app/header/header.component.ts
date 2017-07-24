@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
+import {NetworkUser} from '../shared/model/networkuser'
 
 @Component({
   selector: 'app-header',
@@ -9,10 +10,21 @@ import { UserService } from '../shared/services/user.service'; //API Service
 })
 export class HeaderComponent implements OnInit {
 
+  networkUserForHeader: NetworkUser[];
+
   constructor(private userService: UserService) { }
 
   ngOnInit() {
-      }
+
+    this.userService
+      .getNetwork()
+      .then(result => {
+        console.log('Network' + result);
+        this.networkUserForHeader = result;
+      })
+      .catch(this.handleError);
+
+  }
 
   logoutFunction(){
 
@@ -21,11 +33,17 @@ export class HeaderComponent implements OnInit {
       .logoutUser()
       .then(result => {
         console.log('Tscchüüüsssiii');
+        window.location.reload();
       })
       .catch(this.handleError);
+
   }
 
   private handleError(error: any): Promise<any> {
     return Promise.reject(error.message || error);
+  }
+
+  getNetworkUserForHeader(): NetworkUser[] {
+    return this.networkUserForHeader;
   }
 }
