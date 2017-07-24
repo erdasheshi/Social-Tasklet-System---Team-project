@@ -78,6 +78,7 @@ io.sockets.on('connection', function (socket) {
 		// Step 1: Request sent for illustrating on website
 		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 		// Step 1: Request sent to Broker
+		console.log('Request sent');
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 	});
 

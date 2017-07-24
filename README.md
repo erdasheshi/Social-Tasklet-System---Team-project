@@ -1,7 +1,9 @@
 # SocialTasklets
 Repository for the Teamproject Social Distributed Systems (SDS)
-
 Server IP: 46.101.198.127
+
+# IMPORTANT: Current workaround for testing
+Current workaround for the whole project to work: Disable Web Security in Chrome or Firerfox to get it up running: open -a Google\ Chrome --args --disable-web-security --user-data-dir (MAC)
 
 ## Starting the Teamproject with Docker on your local machine
 The Teamproject consists of multiple modules that are contained in docker containers.
@@ -19,11 +21,15 @@ Prerequisite: Installation of docker and docker-compose
 - Client 1: 8080:8080
 - Client 2: 8081:8081
 - Frontend: 4200:80
-
+5. Refresh project each time you made changes `docker-compose up -d --build`
+6. Once you are done coding do: `docker-compose down`
 
 ## Starting the Teamproject with Docker on our Digital Ocean Server once you are logged-in
 
-1. cd SocialTaskletsgit pull
-2. cd Teamproject 
-3. docker-compose build
-4. docker-compose up -d
+1. ssh -i .ssh/XXX root@46.101.198.127 (MAC)
+2. cd SocialTasklets
+3. git pull
+4. cd Teamproject 
+5. docker-compose build
+6. docker-compose up -d
+7. docker ps
