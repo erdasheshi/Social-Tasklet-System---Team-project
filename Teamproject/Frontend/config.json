@@ -5,5 +5,31 @@
 		"broker": 8003,
 		"broker_socket": 8004,
 		"direct_access": 8009
-	}
+	},
+
+  "sfbroker": {
+    "ip": "46.101.198.127",
+    "port": 8001
+  },
+  "sfbroker_socket": {
+    "ip": "46.101.198.127",
+    "port": 8002
+  },
+  "broker": {
+    "ip": "46.101.198.127",
+    "port": 8003
+  },
+  "broker_socket": {
+    "ip": "46.101.198.127",
+    "port": 8004
+  },
+  "direct_access": {
+    "ip": "46.101.198.127",
+    "port": 8009
+  },
+  "mongoDB":{
+    "address": "mongodb",
+    "port": "27017",
+    "database": ""
+  }
 }

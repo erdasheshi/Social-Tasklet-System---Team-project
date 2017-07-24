@@ -1,6 +1,7 @@
 $(document).ready(function(){
     // WebSocket
-    var socket = io.connect('http://localhost:8003');
+    const conf = require('./../config.json');
+    var socket = io.connect('http://' + conf.broker.ip  + ':' + conf.broker.port + '/');
 
 
 	// Step 1: Illustrating the Tasklet request
