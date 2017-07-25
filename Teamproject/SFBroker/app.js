@@ -13,7 +13,8 @@ var cors = require('cors')
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 //mongoose.connect('127.0.0.1:27017/SFBroker');
-var mongodbAddress = conf.mongoDB.address + ':' + conf.mongoDB.port  + '/' + conf.mongoDB.database;
+var mongodbAddress = 'mongodb://' + conf.sfbroker.mongoDB.address + ':' + conf.sfbroker.mongoDB.port  + '/' + conf.sfbroker.mongoDB.database;
+//var mongodbAddress = 'mongodb://mongodb-sfbroker:' + conf.sfbroker.mongoDB.port;
 console.log(mongodbAddress);
 mongoose.connect(mongodbAddress);
 
