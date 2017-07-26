@@ -7,11 +7,15 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
 var conf = require('../config.json');
-var cors = require('cors')
+var cors = require('cors');
 
 // Prepare DB
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+
+// user schema/model
+var User = require('./models/Users.js');
+
 //mongoose.connect('127.0.0.1:27017/SFBroker');
 var mongodbAddress = 'mongodb://' + conf.sfbroker.mongoDB.address + ':' + conf.sfbroker.mongoDB.port  + '/' + conf.sfbroker.mongoDB.database;
 console.log(mongodbAddress);
@@ -23,9 +27,6 @@ db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", function(callback){
     console.log("DB Connection Succeeded."); /* Once the database connection has succeeded, the code in db.once is executed. */
 });
-
-// user schema/model
-var User = require('./models/Users.js');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -55,6 +56,7 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // configure passport
 passport.use(new localStrategy(User.authenticate()));
@@ -86,3 +88,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+console.log('SFBroker runs on http://' + conf.sfbroker.ip  + ':' + conf.sfbroker.port + '/');

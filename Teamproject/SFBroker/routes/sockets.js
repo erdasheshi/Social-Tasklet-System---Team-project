@@ -1,19 +1,21 @@
+//Socket calls with the Broker
 var express = require('express')
 , app = express();
+
+var constants = require('../constants');
+var dbAccess = require('./dbAccess');
+var logic = require('./logic');
+var log = require('./log');
+
+var user = require('../classes/User');
+var accountingTransaction = require('../classes/AccountingTransaction');
+var coinTransaction = require('../classes/CoinTransaction');
 
 // websocket
 var server = require('http').createServer(app)
     , io = require('socket.io').listen(server)
     , conf = require('../config.json');
 
-var dbAccess = require('./dbAccess');
-var accountingTransaction = require('../classes/AccountingTransaction');
-var coinTransaction = require('../classes/CoinTransaction');
-
-var user = require('../classes/User');
-var logic = require('./logic');
-
-var constants = require('../constants');
 server.listen(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
@@ -67,94 +69,82 @@ socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
-    var username = data.name;
-    var taskletid = data.taskletid;
-    var cost = data.cost;
-    var reliability = data.reliability;
-    var speed = data.speed;
-    var qoc_privacy = data.privacy;
-	// Setting the required minimum balance
+    var  balance, further;
+    var key = 'Updates';
     var min_balance = 1;
+    var username = data.username;
+    var broker = data.broker;
+    var taskletid = data.taskletid;
 
-    // Check Balance >= min_balance
-    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
-        var balance = data.balance;
+ console.log(data + " get brokers request data --- sockets ");
+ console.log(username + " Username");
+ console.log(taskletid + " taasklet id ");
+ console.log(broker + " broker");
 
-        if(balance >= min_balance) {
-            logic.find({
-                type: constants.PotentialProvider,
-                username: username,
-                privacy: qoc_privacy
-            }, function (e, res) {
-                //builds the string that will be sent via socket.emit
-                var response = '{ \"username\": \"' + username + '\", \"taskletid\": \"' + taskletid + '\", \"cost\": \"' + cost + '\", \"reliability\": \"' + reliability + '\", \"speed\": \"' + speed + '\", \"potentialprovider\": ' + res + '}';
-                socket_c.emit('SFInformation', JSON.parse(response.toString()));
-            });
+    // Check if the user has enough money in his account
+    dbAccess.find({type: constants.User, username: username}).exec(function (e, user_data) {
+        balance = user_data.balance;
+        console.log(user_data.balance);
 
+        //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
+          if(balance >= min_balance) {
+             further = 'yes';
             // create dummy transaction
             var accTransaction = new accountingTransaction({
-                consumer: username,
-                computation: 0,
-                coins: min_balance,
-                status: constants.AccountingStatusBlocked,
-                taskletid: taskletid
-            });
+                                                    consumer: username,
+                                                    coins: min_balance,
+                                                    status: constants.AccountingStatusBlocked,
+                                                    taskletid: taskletid,
+                                                    time: new Date()
+                                                    });
             accTransaction.save();
-
             var difference = -1 * min_balance;
             logic.updateBalance(difference, username);
-
-        }
-        else{
-            socket_c.emit('SFInformation', {balance_check: false, username : username, taskletid : taskletid, min_balance : min_balance});
-        }
-
+            }
+            else{
+             further = 'no';
+            }
+         });
+  var updates = logic.updateBroker(broker);
+  console.log(updates.length + " the update log  that will be sent to the broker ---socket sfbroker");
+   //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
+ //the socket call that will return the results and the updates to the broker
+socket_c.emit('SFInformation', {further: further, username: username, taskletid: taskletid, updates: updates});
     });
 
-});
+
+
+
+////*********** not changed
 
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
+console.log(" socket tasklet cycle return at the sfbroker sockets " + data.cost + " the cost sent by the broker")
     //add security check that the computation is really a number
-    var computation = data.computation;
-    var cost;
-    var price;
+    var cost = data.cost;
     var taskletid = data.taskletid;
-    var provider = data.provider;
-
+    var provider = data.provider;    //***here we get the username of the provider, not the device anymore
     dbAccess.find({type: constants.Accounting, taskletid: taskletid}).exec(function (e, res) {
 
         var initial_coins = res.coins;
         var consumer = res.consumer;
+        var difference = initial_coins - cost;
 
-        dbAccess.find({type: constants.User, username: provider}).exec(function (e, udata) {
+        var accTransaction = new accountingTransaction({
+            consumer: consumer,
+            provider: provider,
+            coins: cost,
+            status: constants.AccountingStatusConfirmed
+        });
+        accTransaction.update();
 
-            price = udata.price;
+        //transferring money to the provider
+        logic.updateBalance(cost, provider);
 
-            cost = computation * price;
-            console.log('computation  ' + computation);
-            console.log('cost ' + cost);
-            var difference = initial_coins - cost;
+        // fixing the balance of the consumer, based on the real cost
+        logic.updateBalance(difference, consumer);
 
-            var accTransaction = new accountingTransaction({
-                consumer: consumer,
-                provider: provider,
-                computation: computation,
-                coins: cost,
-                status: constants.AccountingStatusConfirmed,
-                taskletid: taskletid
-            });
-            accTransaction.save();
-
-            // function call for the updatebalanc function
-            logic.updateBalance(cost, provider);
-
-            // function call for the updatebalanc function
-            logic.updateBalance(difference, consumer);
-
-            console.log(cost + ' after update cost');
-            console.log('Tasklet ' + res.taskletid + ' confirmed!');
+        console.log(cost + ' after update cost');
+        console.log('Tasklet ' + res.taskletid + ' confirmed!');
         });
     });
-});
-
