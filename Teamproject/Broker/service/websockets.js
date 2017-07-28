@@ -22,30 +22,11 @@
         socket.on('event', function (data) {
             console.log('New Entity online');
         });
-
-<<<<<<< HEAD
-// Step 1: Handle Tasklet request
-socket.on('TaskletSendBroker', function (tasklet_data) {
- // Creating Tasklet ID
-   taskletid = uuidV1();
-
-console.log(tasklet_data.username + "  username  " +  taskletid + " id " + tasklet_data.cost + " tasklet request info");
-
-        // Step 1: Illustrating the Tasklet request
-        io.sockets.emit('ShowTaskletRequest', {
-            zeit: new Date(),
-            username: tasklet_data.username,
-            taskletid: taskletid,
-            cost: tasklet_data.cost,
-            privacy: tasklet_data.privacy,
-            speed: tasklet_data.speed,
-            reliability: tasklet_data.reliability
-=======
         // Step 1: Handle Tasklet request
         socket.on('TaskletSendBroker', function (data) {
             // Creating Tasklet ID
             var taskletid = uuidV1();
-            console.log('I am here!');
+            console.log(data.name + "  username  " +  taskletid + " id " + data.cost + " tasklet request info");
 
             // Step 1: Illustrating the Tasklet request
             io.sockets.emit('ShowTaskletRequest', {
@@ -68,12 +49,10 @@ console.log(tasklet_data.username + "  username  " +  taskletid + " id " + taskl
                 speed: data.speed,
                 reliability: data.reliability
             });
->>>>>>> master
-        });
 
          // Step 2: Information request to SFBroker
          io.sockets.emit('SFInformation', {
-            username:  tasklet_data.username,
+            username:  data.username,
             broker:   broker_id,
             taskletid: taskletid
          });
