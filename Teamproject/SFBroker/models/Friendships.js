@@ -5,8 +5,7 @@ var friendshipSchema = new Schema({
     ID:      Number,
     user_1:  String,
     user_2:  String,
-    status:  String,
-	version: Number
+    status:  String
 });
 
 module.exports.friendshipSchema = friendshipSchema; //Export accountingSchema so that models.js can access it.

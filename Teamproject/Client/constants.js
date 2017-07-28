@@ -3,6 +3,9 @@ const Friendship                = 'Friendship';
 const User                      = 'User';
 const Friends                   = 'Friends';
 const AllTransactions           = 'AllTransactions';
+const Device                    = 'Device';
+const Broker                    = 'Broker';
+const Updates                    = 'Updates';
 
 const AccountingStatusComputed  = 'Computed';
 const AccountingStatusBlocked   = 'Blocked';
@@ -21,6 +24,9 @@ module.exports = {
     Friends: Friends,
     AllTransactions: AllTransactions,
     CoinReq: CoinReq,
+    Device:  Device,
+    Broker:  Broker,
+    Updates: Updates,
 
     AccountingStatusComputed: AccountingStatusComputed,
     AccountingStatusBlocked: AccountingStatusBlocked,

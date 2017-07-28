@@ -1,16 +1,20 @@
-/**
- * Created by alexb on 7/7/2017.
- */
-var io, uuidV1, constants;
+ express = require('express');
+ app = express();
 
-module.exports = function (server) {
-    io = require('socket.io').listen(server);
-    uuidV1 = require('uuid/v1');
-    constants = require('./../constants');
+ var dbAccess = require('./dbAccess');
+ var logic = require('./logic');
+ var uuidV1 = require('uuid/v1');
+ var constants = require('./../constants');
 
-// Websocket
-    io.sockets.on('connection', function (socket) {
+ //websocket
+ server = require('http').createServer(app);
 
+ module.exports = function (server) {
+ var io = require('socket.io').listen(server);
+
+ io.sockets.on('connection', function (socket) {
+        var taskletid, username;
+        var broker_id = 3;    //important in case of distributed - multiple brokers
         var address = socket.request.connection;
         console.log('New connection from ' + address.remoteAddress + ':' + address.remotePort);
 
@@ -19,6 +23,24 @@ module.exports = function (server) {
             console.log('New Entity online');
         });
 
+<<<<<<< HEAD
+// Step 1: Handle Tasklet request
+socket.on('TaskletSendBroker', function (tasklet_data) {
+ // Creating Tasklet ID
+   taskletid = uuidV1();
+
+console.log(tasklet_data.username + "  username  " +  taskletid + " id " + tasklet_data.cost + " tasklet request info");
+
+        // Step 1: Illustrating the Tasklet request
+        io.sockets.emit('ShowTaskletRequest', {
+            zeit: new Date(),
+            username: tasklet_data.username,
+            taskletid: taskletid,
+            cost: tasklet_data.cost,
+            privacy: tasklet_data.privacy,
+            speed: tasklet_data.speed,
+            reliability: tasklet_data.reliability
+=======
         // Step 1: Handle Tasklet request
         socket.on('TaskletSendBroker', function (data) {
             // Creating Tasklet ID
@@ -46,62 +68,81 @@ module.exports = function (server) {
                 speed: data.speed,
                 reliability: data.reliability
             });
+>>>>>>> master
         });
 
-        // Step 3: Receiving potential provider information from SFBroker
-        socket.on('SFInformation', function (data) {
+         // Step 2: Information request to SFBroker
+         io.sockets.emit('SFInformation', {
+            username:  tasklet_data.username,
+            broker:   broker_id,
+            taskletid: taskletid
+         });
+}); //?????????
+ /////********************* working until here
 
-            if (typeof data.balance_check == 'undefined') {
 
-                // Illustrating the Provider informations
-                io.sockets.emit('ShowProviderInformation', {
-                    zeit: new Date(),
-                    username: data.username,
-                    taskletid: data.taskletid,
-                    potentialprovider: data.potentialprovider
-                });
+  socket.on('SFInformation', function (data) {
+  var username = data.username;
+ console.log(data + " the SFInformation socket call reaches the broker");
+console.log(data.updates.length + "the updates sent to the function");
 
-                // Including the speed and reliability informations
-                addInformations(data.potentialprovider);
+ //store the updates before proceeding
+ logic.find({ type: constants.Updates, data: data.updates})
+   if (data.further == 'yes') {
+      //find potential provider ---------------------- base the search on devices (restricted by users)
+      providers = logic.find({ type: constants.PotentialProvider, username: data.username, privacy: tasklet_data.privacy});  //***needs to be  changed
+      console.log(providers + "providers");
 
-                //Step 4: Finding most suitable provider
-                var provider = scheduling(data.potentialprovider, data.cost, data.reliability, data.speed);
-                var consumer = data.username;
+       // Illustrating the Provider informations
+       io.sockets.emit('ShowProviderInformation', {
+           zeit: new Date(),
+           username: data.username,
+           taskletid: data.taskletid,
+           potentialprovider: providers
+       });
+       console.log(providers + "the potential providers");
 
-                // Step 5: Informing consumer
-                io.sockets.emit('CoinsBlock', {consumer: consumer, provider: provider, taskletid: data.taskletid});
-            }
+       // Including the speed and reliability information
+       addInformation(providers);                                           //***needs to be  changed
 
-            else {
-                // If balance not sufficient, inform the Consumer about the cancelation
-                io.sockets.emit('CancelTasklet', {
-                    zeit: new Date(),
-                    balance_check: data.balance_check,
-                    consumer: data.username,
-                    taskletid: data.taskletid,
-                    min_balance: data.min_balance
-                });
-            }
+       //Step 4: Finding most suitable provider                           //***update if needed (based on the whole scheduling idea)
+       var provider = logic.scheduling(providers, tasklet_data.cost, tasklet_data.reliability, tasklet_data.speed);
+       var consumer = data.username;
+   }
+   else {
+        // If balance not sufficient, inform the Consumer about the cancellation
+        io.sockets.emit('CancelTasklet', { consumer: data.username,  taskletid: data.taskletid,
+        });
+        }
         });
 
-        // Steps 9 & 10: Receiving notification including the consumed time from Provider and sending this to the SFBroker
-        socket.on('TaskletCyclesReturn', function (data) {
-            io.sockets.emit('SendTaskletResultToConsumer', data);
 
-            io.sockets.emit('TaskletCyclesReturn', data);
+////////******from this point on is related to the scehculing and to the provider info
+
+
+        // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker
+        socket.on('TaskletCyclesReturn', function (data) {   // it will capture the information
+            io.sockets.emit('SendTaskletResultToConsumer', data);   //****needs to be removed...consumer send data directly to provider
+          var computation = data.computation;
+          var device = data.device;
+//get the price of the provider's device and calculate the computation cost
+    dbAccess.find({type: constants.device, device: device, key: 'device'}).exec(function (e, d_data) {
+     var price = d_data.price;
+
+     var cost =  computation * price;
+                 console.log('computation  ' + computation);
+                 console.log('cost ' + cost);
+            io.sockets.emit('TaskletCyclesReturn', { cost: cost, taskletid: data.taskletid, device: device});
         });
-
+        });
         // Step 6: Provider gets Tasklets
         socket.on('SendingTaskletToProvider', function (data) {
             io.sockets.emit('SendingTaskletToProvider', data);
         });
-
     });
 
-};
-
-// Used for adding the speed and reliability informations
-function addInformations(potentialprovider) {
+// Used for adding the speed and reliability information
+function addInformation(potentialprovider) { ////**************** update this so it works on devices and not on users
 
     for (var i = 0; i < potentialprovider.length; i++) {
         potentialprovider.splice(i, 1, {
@@ -112,43 +153,5 @@ function addInformations(potentialprovider) {
         });
     }
     return potentialprovider;
-
 }
-
-// Step 4: Scheduler chooses based on QoC the most suitable provider
-// Assuming price range is 1-10 and for reliability and speed 1 is best, 10 is worst
-function scheduling(potentialprovider, cost, reliability, speed) {
-
-    //Converting QoC high and low to 9 and 1
-    cost = cost === 'low' ? 9 : 1;
-    reliability = reliability === 'high' ? 9 : 1;
-    speed = speed === 'high' ? 9 : 1;
-
-    // Calculating the weights based on QoC high and low
-    var total = cost + reliability + speed;
-
-    var weightcost = cost / total;
-    var weightreliability = reliability / total;
-    var weightspeed = speed / total;
-
-    var provider = '';
-    var score = 11;
-
-    // Calculating the score (1-10) for every potential provider
-    for (var i = 0; i < potentialprovider.length; i++) {
-
-        if (potentialprovider[i].price > 10) {
-            console.log('Price is more than 10 ! Please revise');
-        }
-
-        var newscore = (weightcost * potentialprovider[i].price) + (weightreliability * potentialprovider[i].actualreliability) + (weightspeed * potentialprovider[i].actualspeed);
-
-        if (newscore < score) {
-            score = newscore;
-            provider = potentialprovider[i].username;
-        }
-    }
-
-    return provider;
-
 }
