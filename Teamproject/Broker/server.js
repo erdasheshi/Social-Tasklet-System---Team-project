@@ -22,6 +22,7 @@ app.get('/', function (req, res) {
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 //mongoose.connect('127.0.0.1:27018/Broker');
+//var mongodbAddress = 'mongodb://mongodb-broker:' + conf.broker.mongoDB.port;
 var mongodbAddress = 'mongodb://' + conf.broker.mongoDB.address + ':' + conf.broker.mongoDB.port  + '/' + conf.broker.mongoDB.database;
 console.log(mongodbAddress);
 mongoose.connect(mongodbAddress);

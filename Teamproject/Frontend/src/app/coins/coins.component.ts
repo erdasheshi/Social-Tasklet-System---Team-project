@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { NetworkUser } from '../shared/model/networkuser';
 import { coinsRequest }    from '../shared/model/coinsRequest';
+import { RequestedCoinsList } from '../shared/model/requestedCoinsList';
 
 var conf = require('../../../config.json');
 
@@ -11,10 +12,12 @@ var conf = require('../../../config.json');
   styleUrls: ['./coins.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
   providers: [UserService] //API Service
 })
+
 export class CoinsComponent implements OnInit {
 
+  requestedCoinsListItems: RequestedCoinsList[];
   NetworkUserItems: NetworkUser;
-  balance = 101;
+  balance = 0;
   coinsReq = new coinsRequest (0);
 
   constructor(private userService: UserService) { }
@@ -33,6 +36,17 @@ export class CoinsComponent implements OnInit {
         })
         .catch(this.handleError);
 
+        //get all coin requests
+        this.userService
+            .getRequestedCoins()
+            .then(result => {
+                console.log('RequestedCoins' + result);
+                console.log('Hallo');
+                this.requestedCoinsListItems = result;
+                console.log(this.requestedCoinsListItems);
+            })
+            .catch(this.handleError);
+
   }
 
   onSubmit(user: coinsRequest) {
@@ -46,10 +60,23 @@ export class CoinsComponent implements OnInit {
           }
         })
         .catch(this.handleError);
+    this.userService
+      .getRequestedCoins()
+      .then(result => {
+        console.log('RequestedCoins' + result);
+        console.log('Hallo');
+        this.requestedCoinsListItems = result;
+        console.log(this.requestedCoinsListItems);
+      })
+      .catch(this.handleError);
   }
 
   private handleError(error: any): Promise<any> {
       return Promise.reject(error.message || error);
+  }
+
+  getRequestedCoins(): RequestedCoinsList[] {
+    return this.requestedCoinsListItems;
   }
 
   getUser(): NetworkUser{

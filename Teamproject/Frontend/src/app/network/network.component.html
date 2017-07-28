@@ -2,10 +2,10 @@
   <div class="grid">
 
     <div class="grid__col grid__col--2-of-2">
-
+<div ></div>
+      <div *ngIf="friendships != null">
         <div style="  margin-top: 40px;" class="welcomeMessage">Pending Friendships</div>
-
-        <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
+      <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
             <div (click)="confirmFriend(friendship.name)" class="friend__name">
                 {{ friendship.name }} (Confirm)
             </div>
@@ -40,6 +40,8 @@
                 </div>
             </div>
         </div>
+        </div>
+
 
       <div style="  margin-top: 40px;" class="welcomeMessage">Requested Friendships</div>
 

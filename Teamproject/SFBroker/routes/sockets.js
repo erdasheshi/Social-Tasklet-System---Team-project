@@ -17,12 +17,14 @@ var server = require('http').createServer(app)
     , conf = require('../config.json');
 
 server.listen(conf.sfbroker_socket.port);
+console.log(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
         var username = data.username;
+        console.log('Request received!');
         dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
             console.log(data);
             io.sockets.emit('Requested_Coins', data);

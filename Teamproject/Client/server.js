@@ -78,7 +78,8 @@ io.sockets.on('connection', function (socket) {
 		// Step 1: Request sent for illustrating on website
 		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 		// Step 1: Request sent to Broker
-		socket_c.emit('TaskletSendBroker', {zeit: new Date(), username: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
+		console.log('Request sent');
+		socket_c.emit('TaskletSendBroker', {zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 	});
 
 	// Step 6: Consumer sends Tasklet to Provider
@@ -87,8 +88,8 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	// Step 8: Sending Tasklet cycles to Broker
-    socket.on('TaskletCycles', function (data) {                                                       //*** the info of the device should be sent
-        socket_c.emit('TaskletCyclesReturn', { computation: data.computation, taskletid: data.taskletid, device: username , consumer: data.consumer } );
+    socket.on('TaskletCycles', function (data) {
+        socket_c.emit('TaskletCyclesReturn', { computation: data.computation, taskletid: data.taskletid, provider: username , consumer: data.consumer } );
     });
 
 });
