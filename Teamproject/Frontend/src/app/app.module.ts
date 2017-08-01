@@ -54,6 +54,16 @@ import { RegisterdeviceComponent } from './registerdevice/registerdevice.compone
         'pathMatch': 'full'
       },
       {
+        'path': 'devices',
+        'component': DevicemanagementComponent,
+        'pathMatch': 'full'
+      },
+      {
+        'path': 'adddevice',
+        'component': RegisterdeviceComponent,
+        'pathMatch': 'full'
+      },
+      {
         'path': 'coins',
         'component': CoinsComponent,
         'pathMatch': 'full'
