@@ -74,7 +74,7 @@ socket_c.on('SFInformation', function (data) {
     var  balance, further;
     var key = 'Updates';
     var min_balance = 1;
-    var username = data.username;
+    var username = data.name;
     var broker = data.broker;
     var taskletid = data.taskletid;
 

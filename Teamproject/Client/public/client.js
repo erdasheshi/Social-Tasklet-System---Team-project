@@ -25,9 +25,15 @@ $(document).ready(function(){
 	
 	// Step 3: Balance was not sufficient
     socket.on('CancelTasklet', function (data) {
+        var zeit = new Date(data.zeit);
         $('#content').append(
             $('<li></li>').append(
-
+                $('<span>').text('[' +
+                    (zeit.getHours() < 10 ? '0' + zeit.getHours() : zeit.getHours())
+                    + ':' +
+                    (zeit.getMinutes() < 10 ? '0' + zeit.getMinutes() : zeit.getMinutes())
+                    + '] '
+                ),
                 $('<b>').text('Broker: '),
                 $('<span>').text('You have sent a Tasklet request with TaskletID' + data.taskletid),
                 $('<span>').text(' but you have not enough money in your account! To change your current balance, please proceed with a coin request.'))

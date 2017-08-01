@@ -47,15 +47,10 @@
                 cost: data.cost,
                 privacy: data.privacy,
                 speed: data.speed,
-                reliability: data.reliability
+                reliability: data.reliability,
+                broker:   broker_id
             });
 
-         // Step 2: Information request to SFBroker
-         io.sockets.emit('SFInformation', {
-            username:  data.username,
-            broker:   broker_id,
-            taskletid: taskletid
-         });
 }); //?????????
  /////********************* working until here
 
