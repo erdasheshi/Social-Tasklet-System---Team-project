@@ -33,6 +33,7 @@ export class RegisterComponent implements OnInit {
           console.log(JSON.stringify(res));
           if (res.status === 200){
             this.router.navigate(['/transactions']);
+            window.location.reload();
           }
         })
         .catch(this.handleError);

@@ -31,7 +31,8 @@ export class LoginComponent implements OnInit {
         .then(res => {
             console.log(res.status);
             if (res.status === 200){
-                this.router.navigate(['/transactions']);
+              this.router.navigate(['/transactions']);
+              window.location.reload();
             }
           console.log(JSON.stringify(res));
         })

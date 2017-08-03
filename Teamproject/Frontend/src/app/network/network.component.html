@@ -6,9 +6,9 @@
       <div *ngIf="friendships != null">
         <div style="  margin-top: 40px;" class="welcomeMessage">Pending Friendships</div>
       <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
-            <div (click)="confirmFriend(friendship.name)" class="friend__name">
+            <button (click)="confirmFriend(friendship.name)" class="friend__name">
                 {{ friendship.name }} (Confirm)
-            </div>
+            </button>
             <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
                 <div class="friend__image">
                 </div>
@@ -84,9 +84,9 @@
         <div style="  margin-top: 40px;" class="welcomeMessage">Friends</div>
 
         <div *ngFor="let friendship of getFriends()" class="friend__tile">
-            <div (click)="deleteFriend(friendship.name)" class="friend__name">
+            <button (click)="deleteFriend(friendship.name)" class="friend__name">
                 {{ friendship.name }} (Delete)
-            </div>
+            </button>
             <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
                 <div class="friend__image">
                 </div>
@@ -122,9 +122,9 @@
         <div style="  margin-top: 40px;" class="welcomeMessage">Network</div>
 
         <div *ngFor="let networkUsers of getNetwork()" class="friend__tile">
-            <div (click)="addFriend(networkUsers.username)" class="friend__name">
+            <button (click)="addFriend(networkUsers.username)" class="friend__name">
                 {{ networkUsers.username }} (Add)
-            </div>
+            </button>
 
             <div class="friend__innerTile">
                 <div class="friend__image">

@@ -124,9 +124,27 @@ export class NetworkComponent implements OnInit {
   }
 
   deleteFriend(user) {
-    if (this.friendships) {
-      this.friendships = this.updateFriendship(this.friendships, user, 'none');
-    }
+    //if (this.friendships) {
+      //this.friendships = this.updateFriendship(this.friendships, user, 'none');
+    //}
+
+    var tmp = {name: user, status: "none"};
+    var newFriendship = new Friendship(tmp);
+
+    this.userService
+      .addFriend(newFriendship)
+      .then(res => {
+        console.log(res.status);
+        if (res.status === 200) {
+          console.log('friend successfully deleted');
+          window.location.reload();
+        }
+        console.log(JSON.stringify(res));
+      })
+      .catch(this.handleError);
+
+    this.friendships.push(newFriendship);
+
   }
 
 }
