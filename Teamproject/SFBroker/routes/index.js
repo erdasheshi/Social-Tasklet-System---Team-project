@@ -257,7 +257,7 @@ router.post('/register', function(req, res) {
                 });
             }
             var broker = new brokerTransaction({    username: req.body.username,
-                                                    broker:   1 });
+                                                    broker:   5 });
             broker.save(function (err, post) {
                 if (err) {
                     return res.status(500).json({
