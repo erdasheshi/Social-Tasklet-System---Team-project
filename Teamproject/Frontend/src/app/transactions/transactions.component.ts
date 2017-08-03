@@ -15,7 +15,7 @@ export class TransactionsComponent implements OnInit {
 
   transactionListItems: TransactionList[];
   NetworkUserItems: NetworkUser;
-  balance = 101;
+  balance = 0;
 
   constructor(private userService: UserService,) { }
 

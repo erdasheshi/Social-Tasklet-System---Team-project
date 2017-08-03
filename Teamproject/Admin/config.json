@@ -1,22 +1,48 @@
 {
 	"sfbroker": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
-		"port": 8001
+		"ip": "127.0.0.1",
+		"port": 8001,
+		"mongoDB":{
+			"address": "127.0.0.1",
+			"port": "27017",
+			"database": "SFBroker"
+		}
 	},
 	"sfbroker_socket": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8002
 	},
 	"broker": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
-		"port": 8003
+		"ip": "127.0.0.1",
+		"port": 8003,
+		"mongoDB":{
+			"address": "127.0.0.1",
+			"port": "27018",
+			"database": "Broker"
+		}
 	},
 	"broker_socket": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+		"ip": "127.0.0.1",
 		"port": 8004
 	},
-	"direct_access": {
-		"ip": "ec2-52-11-156-237.us-west-2.compute.amazonaws.com",
+	"admin": {
+		"ip": "127.0.0.1",
 		"port": 8009
+	},
+	"tasklet":{
+		"ip": "0.0.0.0",
+		"port": 49129
+	},
+	"heartbeat":{
+		"ip": "0.0.0.0",
+		"port": 34123
+	},
+	"direct_access": {
+		"ip": "127.0.0.1",
+		"port": 8009
+	},
+"vmup":{
+		"ip": "0.0.0.0",
+		"port": 63667
 	}
 }
