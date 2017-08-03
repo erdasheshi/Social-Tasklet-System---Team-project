@@ -8,3 +8,5 @@ data/
 *.wt
 .idea/
 *.iml
+Default/
+Debug/
