@@ -53,7 +53,7 @@ socket_c.on('SendTaskletResultToConsumer', function (data){
 // Step 3: Balance was not sufficient
 socket_c.on('CancelTasklet', function(data){
 	if(username == data.consumer){
-	io.sockets.emit('CancelTasklet', data);
+	io.sockets.emit('CancelTasklet', { zeit: new Date(), taskletid: data.taskletid } );
 	}
 });
 

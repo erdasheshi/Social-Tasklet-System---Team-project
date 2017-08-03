@@ -1,7 +1,4 @@
 //keeps track of every change that happens in SF_Broker's side
-var express = require('express');
-var router = express.Router();
-
 let updates = [];
 
 module.exports = {

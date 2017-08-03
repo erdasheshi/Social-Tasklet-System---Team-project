@@ -23,31 +23,37 @@
             console.log('New Entity online');
         });
 
-// Step 1: Handle Tasklet request
-socket.on('TaskletSendBroker', function (tasklet_data) {
- // Creating Tasklet ID
-   taskletid = uuidV1();
+        // Step 1: Handle Tasklet request
+        socket.on('TaskletSendBroker', function (data) {
+            // Creating Tasklet ID
+            var taskletid = uuidV1();
+            console.log(data.name + "  username  " +  taskletid + " id " + data.cost + " tasklet request info");
 
-console.log(tasklet_data.username + "  username  " +  taskletid + " id " + tasklet_data.cost + " tasklet request info");
+            // Step 1: Illustrating the Tasklet request
+            io.sockets.emit('ShowTaskletRequest', {
+                zeit: new Date(),
+                name: data.name,
+                taskletid: taskletid,
+                cost: data.cost,
+                privacy: data.privacy,
+                speed: data.speed,
+                reliability: data.reliability
+            });
 
-        // Step 1: Illustrating the Tasklet request
-        io.sockets.emit('ShowTaskletRequest', {
-            zeit: new Date(),
-            username: tasklet_data.username,
-            taskletid: taskletid,
-            cost: tasklet_data.cost,
-            privacy: tasklet_data.privacy,
-            speed: tasklet_data.speed,
-            reliability: tasklet_data.reliability
-        });
+            // Step 2: Information request to SFBroker
+            io.sockets.emit('SFInformation', {
+                zeit: new Date(),
+                name: data.name,
+                taskletid: taskletid,
+                cost: data.cost,
+                privacy: data.privacy,
+                speed: data.speed,
+                reliability: data.reliability,
+                broker:   broker_id
+            });
 
-         // Step 2: Information request to SFBroker
-         io.sockets.emit('SFInformation', {
-            username:  tasklet_data.username,
-            broker:   broker_id,
-            taskletid: taskletid
-         });
-});
+}); //?????????
+ /////********************* working until here
 
   socket.on('SFInformation', function (data) {
   var username = data.username;
