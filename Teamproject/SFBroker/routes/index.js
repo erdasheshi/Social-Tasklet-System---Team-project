@@ -323,8 +323,8 @@ router.delete('/device', loggedIn, function(req, res, next) {
     res.json('true');  //change it: needs to catch the response of the function  call
 
     //Store in the log the added device
-    var x = 'd_device';
-    logic. CollectUpdates(req, device, key);
+    var log_key = 'd_device';
+    logic.CollectUpdates(req, device, log_key);
 });
                                                      //********************** everything is tested ***************//
 /****************************************************************************************************************************************************

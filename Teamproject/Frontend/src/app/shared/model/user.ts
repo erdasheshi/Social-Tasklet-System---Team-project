@@ -1,4 +1,4 @@
-export class User { //used for post
+export class User {
     constructor(
 
         public username: string,

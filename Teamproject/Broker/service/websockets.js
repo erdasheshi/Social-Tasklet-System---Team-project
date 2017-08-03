@@ -23,7 +23,6 @@
             console.log('New Entity online');
         });
 
-<<<<<<< HEAD
 // Step 1: Handle Tasklet request
 socket.on('TaskletSendBroker', function (tasklet_data) {
  // Creating Tasklet ID
@@ -40,35 +39,6 @@ console.log(tasklet_data.username + "  username  " +  taskletid + " id " + taskl
             privacy: tasklet_data.privacy,
             speed: tasklet_data.speed,
             reliability: tasklet_data.reliability
-=======
-        // Step 1: Handle Tasklet request
-        socket.on('TaskletSendBroker', function (data) {
-            // Creating Tasklet ID
-            var taskletid = uuidV1();
-            console.log('I am here!');
-
-            // Step 1: Illustrating the Tasklet request
-            io.sockets.emit('ShowTaskletRequest', {
-                zeit: new Date(),
-                name: data.name,
-                taskletid: taskletid,
-                cost: data.cost,
-                privacy: data.privacy,
-                speed: data.speed,
-                reliability: data.reliability
-            });
-
-            // Step 2: Information request to SFBroker
-            io.sockets.emit('SFInformation', {
-                zeit: new Date(),
-                name: data.name,
-                taskletid: taskletid,
-                cost: data.cost,
-                privacy: data.privacy,
-                speed: data.speed,
-                reliability: data.reliability
-            });
->>>>>>> master
         });
 
          // Step 2: Information request to SFBroker
@@ -77,19 +47,21 @@ console.log(tasklet_data.username + "  username  " +  taskletid + " id " + taskl
             broker:   broker_id,
             taskletid: taskletid
          });
-}); //?????????
- /////********************* working until here
-
+});
 
   socket.on('SFInformation', function (data) {
   var username = data.username;
  console.log(data + " the SFInformation socket call reaches the broker");
-console.log(data.updates.length + "the updates sent to the function");
+console.log(data.updates.length + " the updates sent to the function");
+console.log(data.updates.length + " the updates sent to the function " +  data.updates);
 
  //store the updates before proceeding
- logic.find({ type: constants.Updates, data: data.updates})
+ logic.setUpdates(data.updates);
+
+ /////********************* tested and working until here
+
    if (data.further == 'yes') {
-      //find potential provider ---------------------- base the search on devices (restricted by users)
+      //*** find potential provider ---------------------- base the search on devices (restricted by users)
       providers = logic.find({ type: constants.PotentialProvider, username: data.username, privacy: tasklet_data.privacy});  //***needs to be  changed
       console.log(providers + "providers");
 
@@ -115,9 +87,6 @@ console.log(data.updates.length + "the updates sent to the function");
         });
         }
         });
-
-
-////////******from this point on is related to the scehculing and to the provider info
 
 
         // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker

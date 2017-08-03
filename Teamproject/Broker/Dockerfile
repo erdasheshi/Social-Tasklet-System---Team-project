@@ -8,7 +8,7 @@ RUN npm install
 COPY . /usr/src/app
 COPY ./config.json /usr/src
 
-EXPOSE 8001-8010
+EXPOSE 8003
 EXPOSE 34123
 EXPOSE 63667
 EXPOSE 49129
