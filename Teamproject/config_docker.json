@@ -3,9 +3,9 @@
 		"ip": "127.0.0.1",
 		"port": 8001,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-sfbroker",
 			"port": "27017",
-			"database": "SFBroker"
+			"database": ""
 		}
 	},
 	"sfbroker_socket": {
@@ -16,14 +16,18 @@
 		"ip": "127.0.0.1",
 		"port": 8003,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-broker",
 			"port": "27018",
-			"database": "Broker"
+			"database": ""
 		}
 	},
 	"broker_socket": {
 		"ip": "127.0.0.1",
 		"port": 8004
+	},
+	"admin": {
+		"ip": "127.0.0.1",
+		"port": 8009
 	},
 	"tasklet":{
 		"ip": "0.0.0.0",
@@ -33,11 +37,7 @@
 		"ip": "0.0.0.0",
 		"port": 34123
 	},
-	"direct_access": {
-		"ip": "127.0.0.1",
-		"port": 8009
-	},
-"vmup":{
+	"vmup":{
 		"ip": "0.0.0.0",
 		"port": 63667
 	}

@@ -153,7 +153,7 @@ router.post('/acctransaction', loggedIn, function(req, res, next) {
     });
 });
 
-//********* just for testing purposes ***********//
+//********* just for testing purposes ***********// ---- DEPRECATED ----
 router.post('/broker', loggedIn, function(req, res, next) {
     var username = req.body.username;
     var broker = req.body.broker;

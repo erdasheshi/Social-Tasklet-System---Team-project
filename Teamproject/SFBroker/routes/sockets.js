@@ -72,13 +72,8 @@ socket_c.on('SFInformation', function (data) {
     var  balance, further;
     var key = 'Updates';
     var min_balance = 1;
-<<<<<<< HEAD
     var username = data.username;
-    var broker = 5;   //*** needs to be send by the broker with the information request
-=======
-    var username = data.name;
-    var broker = data.broker;
->>>>>>> refs/remotes/origin/master
+    var broker = 1;   //*** needs to be send by the broker with the information request
     var taskletid = data.taskletid;
 
  console.log(data + " get brokers request data --- sockets ");
