@@ -11,7 +11,6 @@ function friendshipTransaction(data, callback) {
     this.user_2 = data.user_2;
 }
 
-
 /*The broker either creates friendship when they are set as updates from the SFBroker and they do not exist in the database
 or it deletes them when they do exist and are set as updates from the SFBroker*/
 
@@ -28,8 +27,5 @@ friendshipTransaction.prototype.save =  function(callback) {
         if(callback) callback(null, true);
     });
 };
-
-// write a delete function for the friendships that are part of the update
-//the ones that exist and are set as updated are moved to deleted
 
 module.exports  = friendshipTransaction;

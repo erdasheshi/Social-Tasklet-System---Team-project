@@ -121,7 +121,7 @@ function CollectUpdates(data, id, key){
 
                 dbAccess.find({type: constants.Broker, username: username}).exec(function (e, data) { if(e) return next(e); broker_1 = data.broker;
                 dbAccess.find({type: constants.Broker, username: user_2}).exec(function (e, data) { if(e) return next(e); broker_2 = data.broker;
-                update = '{ "broker_1": "' + broker_1 + '", "broker_1": "' + broker_2  + '", "type": "Friendship", "ID": "' + id + '", "user_1": "' + username + '", "user_2": "' + user_2 + '", "status": "' + status +'" }';
+                update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + broker_2  + '", "type": "Friendship", "ID": "' + id + '", "user_1": "' + username + '", "user_2": "' + user_2 + '", "status": "' + status +'" }';
                 log.add(JSON.parse(JSON.stringify(update)));
                 })
                 })
@@ -133,7 +133,7 @@ function CollectUpdates(data, id, key){
 
                 dbAccess.find({type: constants.Broker, username: username}).exec(function (e, data) { if(e) return next(e); broker_1 = data.broker;
                 dbAccess.find({type: constants.Broker, username: user_2}).exec(function (e, data) { if(e) return next(e); broker_2 = data.broker;
-                update = '{ "broker_1": "' + broker_1 + '", "broker_1": "' + broker_2  + '", "type": "Friendship", "ID": "' + id + '", "key": "Deleted" }';
+                update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + broker_2  + '", "type": "Friendship", "ID": "' + id + '", "key": "Deleted" }';
                 log.add(JSON.stringify(update) );
                 console.log(JSON.parse( JSON.stringify(update)));
                 })
@@ -165,19 +165,19 @@ while( i > broker_version ) {
 
         if ( temp_element.type == 'Friendship' ){
         if (temp_element.broker_1 == broker || temp_element.broker_2 == broker)
-           { broker_updates.concat(JSON.parse( JSON.stringify(temp_element )));
+           { broker_updates = broker_updates.concat(JSON.stringify(temp_element ));
            }
         }
         else {
           if (temp_element.broker == broker)
-             {  broker_updates.concat(JSON.parse( JSON.stringify(temp_element ))); }
+             {  broker_updates = broker_updates.concat(JSON.stringify(temp_element ));
+        }
         }
         i--;
    }
    syncBroker(broker, log_version);
    return broker_updates;
 }
-
 //********************** tested ***************//
 //update the sync version of the broker
 function syncBroker(broker, version){

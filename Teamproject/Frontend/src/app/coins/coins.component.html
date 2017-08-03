@@ -19,22 +19,27 @@
       </div>
     </div>
 
-    <div class="grid__col grid__col--4-of-4" id="1">
+    <div class="grid__col grid__col--4-of-4">
       <div class="transaction__tile">
         <div class="transaction__tile__header">
           <div class="transaction__tile__header__id">
             <div>
               1 coin costs 1€
             </div>
+
           </div>
+
         </div>
+
         <table class="transaction__table">
-          <tbody>
-            <form (ngSubmit)="onSubmit()" class="searchform">
-              Coins
-              <input type="number" [(ngModel)]="coinsReq.requestedCoins" name="requestedCoins" placeholder="Coins"><br>
-              <button type="submit" id="request">Request</button>
-            </form>
+	<tbody>
+
+
+    <form (ngSubmit)="onSubmit()" class="searchform">
+      Coins
+      <input type="number" [(ngModel)]="coinsReq.requestedCoins" name="requestedCoins" placeholder="Coins"><br>
+      <button type="submit" id="request">Request</button>
+    </form>
 
 <!--
   <tr>
@@ -43,33 +48,35 @@
 	</tr>
     <button>Charge</button>
 -->
+	</tbody>
 
-          </tbody>
-        </table>
+</table>
+
+
+
+
       </div>
     </div>
 
-    <div class="grid__col grid__col--2-of-2" id="2">
-      <div class="transaction__tile">
-        <table class="transaction__table">
-          <tbody>
-            <tr class="transaction__table__row__first">
-              <td>ID</td>
-              <td>RequestID</td>
-              <td>Username</td>
-              <td>RequestedCoins</td>
-              <td>Approval</td>
-            </tr>
-            <tr *ngFor="let requestedCoinsListItem of getRequestedCoins()" class="transaction__table__row">
-              <td>{{ requestedCoinsListItem.id }}</td>
-              <td>{{ requestedCoinsListItem.requestid }}</td>
-              <td>{{ requestedCoinsListItem.username }}</td>
-              <td>{{ requestedCoinsListItem.requestedCoins }}</td>
-              <td>{{ requestedCoinsListItem.approval }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </div>
 </div>

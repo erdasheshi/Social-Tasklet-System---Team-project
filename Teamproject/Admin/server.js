@@ -5,8 +5,13 @@ var express = require('express')
 ,   conf = require('./config.json')
 , 	constants = require('./constants');
 
-var port = conf.admin.port;
-
+// Processing the stated port number
+if (process.argv.length <= 2) {
+    console.log("Port number needed");
+    process.exit(-1);
+}
+ 
+var port = process.argv[2];
 console.log('Port: ' + port);
 
 // Webserver
@@ -14,7 +19,6 @@ server.listen(port);
 
 // Connect to SFbroker
 var socket_sf = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
-console.log('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
 // static files
 app.use(express.static(__dirname + '/public'));

@@ -17,14 +17,12 @@ var server = require('http').createServer(app)
     , conf = require('../config.json');
 
 server.listen(conf.sfbroker_socket.port);
-console.log(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
         var username = data.username;
-        console.log('Request received!');
         dbAccess.find({type: constants.CoinReq, username: username}).exec(function (e, data) {
             console.log(data);
             io.sockets.emit('Requested_Coins', data);
@@ -74,8 +72,13 @@ socket_c.on('SFInformation', function (data) {
     var  balance, further;
     var key = 'Updates';
     var min_balance = 1;
+<<<<<<< HEAD
+    var username = data.username;
+    var broker = 5;   //*** needs to be send by the broker with the information request
+=======
     var username = data.name;
     var broker = data.broker;
+>>>>>>> refs/remotes/origin/master
     var taskletid = data.taskletid;
 
  console.log(data + " get brokers request data --- sockets ");
@@ -108,16 +111,16 @@ socket_c.on('SFInformation', function (data) {
             }
          });
   var updates = logic.updateBroker(broker);
-  console.log(updates.length + " the update log  that will be sent to the broker ---socket sfbroker");
    //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
  //the socket call that will return the results and the updates to the broker
 socket_c.emit('SFInformation', {further: further, username: username, taskletid: taskletid, updates: updates});
     });
 
+//************************************ tested until here
 
 
 
-////*********** not changed
+////*********** the part below is not changed
 
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {

@@ -14,6 +14,14 @@ var server_heartbeat = net.createServer(function(socket) {
     });
 
     socket.on('data', function(data) {
+
+        console.log(data.toString());
+        console.log(socket.remoteAddress + ":" +socket.remotePort);
+
+        socket.write(socket.remoteAddress + ":" +socket.remotePort);
+        socket.pipe(socket);
+
+        socket.end();
         
 		var messageType = pH.readProtocolHeader(data);
 		
@@ -53,7 +61,7 @@ var server_heartbeat = net.createServer(function(socket) {
 		else if(messageType != constants.bHeartbeatMessage && messageType != constants.benchmarkMessage){
 			console.log('Received a wrong message type in heartbeat data');
 		}
-		
+
     });
 
     socket.on('close', function(data) {

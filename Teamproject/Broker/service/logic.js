@@ -94,25 +94,28 @@ function scheduling(providers, cost, reliability, speed) {
 }
 
 //stores the updates in the database
-function findUpdates( updates, callback)
-{  console.log( "the function is called");
+function setUpdates( updates, callback)
+{ console.log( "the function is called");
   console.log( "the function is called " + updates.length);
 for (var i = 0; i < updates.length; i++) {
   var data =  JSON.parse(updates[i]);
-  var username = data.username;
+
 console.log( "the function is called");
+console.log( "the updates" + JSON.stringify(data));
        switch(data.type) {         //the data structure for friendships is different from the one for devices, therefore its tested the type before proceeding
              case 'Friendship':
                    if (data.status == "Confirmed"){        //create a new friendship transaction
                    console.log("adding an new frindship");
+                   console.log("adding an new frindship u1" + data.user_1);
+                   console.log("adding an new frindship u2" + data.user_2);
+
                              var friendship = new friendships({
                                   ID: data.ID,
-                                  user_1: username,        //*** check that is send only information related to the friend an not the user itself (its defined in the useername section)
+                                  user_1: data.user_1,        //*** check that is sent only information related to the friend an not the user itself (its defined in the useername section)
                                   user_2: data.user_2,
                                   });
                             friendship.save(function (err, post) {
                                   if (err) return next(err);
-                                  res.json(post);
                                   });
                             }
                             else if (data.status == "Delete"){    //delete the existing transaction
@@ -121,6 +124,7 @@ console.log( "the function is called");
                             }
              break;
              case 'Device':
+                   var username = data.username;
                    if (data.key == "New"){       //create new transaction
                              var device = new devices({
                                   username: username,
@@ -130,7 +134,6 @@ console.log( "the function is called");
                                   });
                              device.save(function (err, post) {
                                   if (err) return next(err);
-                                  res.json(post);
                                   });
                                                               console.log("add device");
 
@@ -144,7 +147,6 @@ console.log( "the function is called");
                                            });
                                   device.update(function (err, post) {
                                      if (err) return next(err);
-                                     res.json(post);
                                      });
                             }
                             else if (data.key == "Deleted") {  //delete the transaction
@@ -160,8 +162,6 @@ module.exports = {
     find: function (data, callback) {
         if (data.type == constants.PotentialProvider) {
             return findPotentialProvider(data, callback);
-        }else if (data.type == constants.Updates) {
-            return findUpdates(data, callback);
         }else if (data.type == constants.Friends) {
            return findFriends(data, callback);
         }
@@ -169,5 +169,7 @@ module.exports = {
     scheduling: function(providers, cost, reliability, speed) {
        return scheduling(providers, cost, reliability, speed)
    },
-
+    setUpdates: function(updates, callback) {
+       return setUpdates(updates, callback);
+   },
 };

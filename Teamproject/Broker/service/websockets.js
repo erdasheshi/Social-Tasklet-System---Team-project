@@ -22,6 +22,7 @@
         socket.on('event', function (data) {
             console.log('New Entity online');
         });
+
         // Step 1: Handle Tasklet request
         socket.on('TaskletSendBroker', function (data) {
             // Creating Tasklet ID
@@ -54,16 +55,19 @@
 }); //?????????
  /////********************* working until here
 
-
   socket.on('SFInformation', function (data) {
   var username = data.username;
  console.log(data + " the SFInformation socket call reaches the broker");
-console.log(data.updates.length + "the updates sent to the function");
+console.log(data.updates.length + " the updates sent to the function");
+console.log(data.updates.length + " the updates sent to the function " +  data.updates);
 
  //store the updates before proceeding
- logic.find({ type: constants.Updates, data: data.updates})
+ logic.setUpdates(data.updates);
+
+ /////********************* tested and working until here
+
    if (data.further == 'yes') {
-      //find potential provider ---------------------- base the search on devices (restricted by users)
+      //*** find potential provider ---------------------- base the search on devices (restricted by users)
       providers = logic.find({ type: constants.PotentialProvider, username: data.username, privacy: tasklet_data.privacy});  //***needs to be  changed
       console.log(providers + "providers");
 
@@ -89,9 +93,6 @@ console.log(data.updates.length + "the updates sent to the function");
         });
         }
         });
-
-
-////////******from this point on is related to the scehculing and to the provider info
 
 
         // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker
