@@ -14,23 +14,23 @@ var server_vmup = net.createServer(function(socket) {
     });
 
     socket.on('data', function(data) {
-		
-		var messageType = pH.readProtocolHeader(data);
+
+        var protocolHeader = pH.readProtocolHeader(data);
 		var address = socket.remoteAddress;
 		
-		if(messageType < 0){
+		if(protocolHeader.MessageType < 0){
 			console.log('Invalid message');
 		}
 		
-		if(messageType == constants.vmUpMessage){
+		if(protocolHeader.MessageType == constants.vmUpMessage){
 			providerList.increaseAvailableVMs(address);
 		}
 		
-		if(messageType == constants.vmDownMessage){
+		if(protocolHeader.MessageType == constants.vmDownMessage){
 			providerList.decreaseAvailableVMs(address);
 		}
 		
-		else if(messageType != constants.vmUpMessage && messageType != constants.vmDownMessage){
+		else if(protocolHeader.MessageType != constants.vmUpMessage && protocolHeader.MessageType != constants.vmDownMessage){
 			console.log('Received a wrong message type in vmup data');
 		}
 		

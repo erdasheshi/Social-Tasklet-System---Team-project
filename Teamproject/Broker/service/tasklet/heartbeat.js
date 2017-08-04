@@ -19,24 +19,28 @@ var server_heartbeat = net.createServer(function(socket) {
         console.log(socket.remoteAddress + ":" +socket.remotePort);
 
         socket.write(socket.remoteAddress + ":" +socket.remotePort);
+
         socket.pipe(socket);
 
-        socket.end();
-        
-		var messageType = pH.readProtocolHeader(data);
-		
-		if(messageType < 0){
+		var protocolHeader = pH.readProtocolHeader(data);
+
+
+
+		if(protocolHeader.MessageType < 0){
 			console.log('Invalid message');
 		}
 		
-		if(messageType == constants.bHeartbeatMessage){
+		if(protocolHeader.MessageType == constants.bHeartbeatMessage){
 			console.log('Heartbeat from: ' + socket.remoteAddress + ":" + socket.remotePort);
 			
 			//Adding the new client if it is not yet in the list
 			//Otherwise just update the timestamp
 			providerList.insertProvider(socket.remoteAddress);
-			
-			var buf1 = pH.writeProtocolHeader(constants.bIPMessage);
+
+            var responseHeader = JSON.parse(JSON.stringify(protocolHeader));
+			responseHeader.MessageType = constants.bIPMessage;
+
+			var buf1 = pH.writeProtocolHeader(responseHeader);
 			
 			var buf2 = Buffer.alloc(4);
 			var address = socket.remoteAddress;
@@ -46,10 +50,12 @@ var server_heartbeat = net.createServer(function(socket) {
 			var buf = Buffer.concat([buf1,buf2],totalLength);
 			
 			socket.write(buf);
+            socket.pipe(socket);
+
 			
 		}
-		
-		if(messageType == constants.benchmarkMessage){
+		console.log(protocolHeader.MessageType);
+		if(protocolHeader.MessageType == constants.benchmarkMessage){
 			var address = socket.remoteAddress;
 			var benchmark = data.readFloatLE(12);
 			
@@ -58,9 +64,11 @@ var server_heartbeat = net.createServer(function(socket) {
 			providerList.decreaseAvailableVMs(address);
 		}
 		
-		else if(messageType != constants.bHeartbeatMessage && messageType != constants.benchmarkMessage){
+		else if(protocolHeader.MessageType != constants.bHeartbeatMessage && protocolHeader.MessageType != constants.benchmarkMessage){
 			console.log('Received a wrong message type in heartbeat data');
 		}
+
+        socket.end();
 
     });
 
