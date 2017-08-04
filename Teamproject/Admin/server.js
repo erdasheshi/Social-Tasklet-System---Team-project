@@ -4,14 +4,8 @@ var express = require('express')
 ,   io = require('socket.io').listen(server)
 ,   conf = require('./config.json')
 , 	constants = require('./constants');
-
-// Processing the stated port number
-if (process.argv.length <= 2) {
-    console.log("Port number needed");
-    process.exit(-1);
-}
  
-var port = process.argv[2];
+var port = process.argv[2] || 8009;
 console.log('Port: ' + port);
 
 // Webserver
