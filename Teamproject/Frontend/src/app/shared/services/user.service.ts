@@ -37,6 +37,7 @@ export class UserService {
   }
 
   loginUser(newUser: User): Promise<any> {
+    debugger;
     return this.http.post(this.apiURLLogin, newUser)
       .toPromise()
       .catch(this.handleError);
