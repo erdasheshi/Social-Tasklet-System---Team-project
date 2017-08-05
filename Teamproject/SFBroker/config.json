@@ -3,7 +3,7 @@
 		"ip": "127.0.0.1",
 		"port": 8001,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-sfbroker",
 			"port": "27017",
 			"database": "SFBroker"
 		}
@@ -16,7 +16,7 @@
 		"ip": "127.0.0.1",
 		"port": 8003,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-broker",
 			"port": "27018",
 			"database": "Broker"
 		}
