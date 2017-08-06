@@ -364,9 +364,10 @@ router.post('/update_device', loggedIn, function(req, res, next) {
      });
 
 function loggedIn(req, res, next) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         next();
-    } else {
+    }
+    else {
         res.status(401).json({
             status: 'LogIn'
         });
