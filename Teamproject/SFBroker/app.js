@@ -8,6 +8,7 @@ var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
 var conf = require('../config.json');
 var cors = require('cors');
+var session = require('express-session');
 
 // Prepare DB
 var mongoose = require('mongoose');
@@ -44,27 +45,39 @@ app.set('view engine', 'pug');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(require('express-session')({
+app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 // configure passport
-passport.use(new localStrategy(User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // allow CORS
-app.use(cors());
+var origin = conf.frontend.protocol + '://' + conf.frontend.ip + ':' + conf.frontend.port;
+var corsOptions = {
+    credentials: true,
+    headers: 'Content-Type, Authorization, Content-Length, X-Requested-With, X-HTTP-Method-Override',
+    preflightContinue: true,
+    origin: origin
+};
+
+// Enable CORS
+app.use(cors(corsOptions));
+// Enable CORS Pre-Flight
+app.options('*', cors(corsOptions));
 
 app.use('/', index);
 app.use('/users', users);
