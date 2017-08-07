@@ -257,7 +257,7 @@ router.post('/register', function(req, res) {
                 });
             }
             var broker = new brokerTransaction({    username: req.body.username,
-                                                    broker:   1 });
+                                                    broker:   5 });
             broker.save(function (err, post) {
                 if (err) {
                     return res.status(500).json({
@@ -364,9 +364,10 @@ router.post('/update_device', loggedIn, function(req, res, next) {
      });
 
 function loggedIn(req, res, next) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         next();
-    } else {
+    }
+    else {
         res.status(401).json({
             status: 'LogIn'
         });

@@ -1,3 +1,0 @@
-IP_Responder: 127.0.0.1
-Tasklet_Monitor: 127.0.0.1
-Number_of_TVMs: -1
