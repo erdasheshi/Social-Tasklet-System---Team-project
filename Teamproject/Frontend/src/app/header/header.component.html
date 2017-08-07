@@ -25,6 +25,9 @@
       <div *ngIf="networkUserForHeader != null">
         <li class="navigation__item">  <a (click)="logoutFunction()" href="#/">Logout</a></li>
       </div>
+      <div *ngIf="networkUserForHeader != null">
+        <li class="navigation__item">  <a (click)="deleteUserFunction()" href="#/">Delete User</a></li>
+      </div>
     </ul>
   </div>
 </div>

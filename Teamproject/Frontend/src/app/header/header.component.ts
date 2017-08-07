@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
+import { User }    from './user';
 import {NetworkUser} from '../shared/model/networkuser'
 
 @Component({
@@ -14,6 +15,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(private userService: UserService) { }
 
+  user = new User("", "", "", "", 0, "");
+
   ngOnInit() {
 
     this.userService
@@ -27,7 +30,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logoutFunction(){
-
     //logout
     this.userService
       .logoutUser()
@@ -38,6 +40,17 @@ export class HeaderComponent implements OnInit {
       .catch(this.handleError);
 
   }
+
+  deleteUserFunction(){
+
+    this.userService
+      .deleteUser(this.user)
+      .then(result => {
+        window.location.reload();
+      })
+      .catch(this.handleError);
+  }
+
 
   private handleError(error: any): Promise<any> {
     return Promise.reject(error.message || error);

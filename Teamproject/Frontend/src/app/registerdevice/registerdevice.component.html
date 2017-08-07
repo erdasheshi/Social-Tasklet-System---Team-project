@@ -1,3 +1,21 @@
-<p>
-  registerdevice works!
-</p>
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__col grid__col--2-of-2">
+      <div class="welcomeMessage">Register Device</div>
+    </div>
+    <div class="grid__col grid__col--2-of-2">
+      <form (ngSubmit)="onSubmit()" class="searchform">
+
+        Device Name
+        <input type="text" [(ngModel)]="deviceNew.name" name="firstname" placeholder="First Name"><br>
+
+        Price
+        <input type="number" [(ngModel)]="deviceNew.price" name="price" placeholder="Price"><br>
+
+        <button type="submit" id="register">Register</button>
+
+      </form>
+
+    </div>
+  </div>
+</div>

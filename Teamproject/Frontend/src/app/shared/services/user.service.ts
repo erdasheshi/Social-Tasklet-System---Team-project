@@ -9,9 +9,11 @@ import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 import {RequestedCoinsList} from '../model/requestedCoinsList';
+import {Device} from '../model/device';
 
 var conf = require('../../../../config.json');
-var serverURL = 'http://46.101.198.127';
+// var serverURL = 'http://46.101.198.127';
+var serverURL = 'http://localhost';
 
 @Injectable()
 export class UserService {
@@ -26,6 +28,7 @@ export class UserService {
   private apiURLUser =  serverURL + ':8001/user';
   private apiURLAddCoins =  serverURL + ':8001/coinrequest/';
   private apiURLRequestedCoins = serverURL + ':8001/requestedcoins/';
+  private apiURLDevice = serverURL + ':8001/device/';
 
   constructor(private http: Http) {
   }
@@ -37,7 +40,6 @@ export class UserService {
   }
 
   loginUser(newUser: User): Promise<any> {
-    debugger;
     return this.http.post(this.apiURLLogin, newUser)
       .toPromise()
       .catch(this.handleError);
@@ -96,6 +98,30 @@ export class UserService {
       .catch(this.handleError);
   }
 
+  deleteUser(newUser: User): Promise<any> {
+    return this.http.delete(this.apiURLUser, newUser)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  addDevice(addDevice: Device): Promise<any> {
+    return this.http.post(this.apiURLDevice, addDevice)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  getDevices(): Promise<Device[]> {
+    return this.http.get(this.apiURLDevice)
+      .toPromise()
+      .then((res: Response) => res.json().map(obj => new Device(obj)))
+      .catch(this.handleError);
+  }
+
+  deleteDevice(addDevice: Device): Promise<any> {
+    return this.http.delete(this.apiURLDevice, addDevice)
+      .toPromise()
+      .catch(this.handleError);
+  }
 
   private handleError(error: any): Promise<any> {
     return Promise.reject(error.message || error);

@@ -1,3 +1,37 @@
-<p>
-  devicemanagement works!
-</p>
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__col grid__col--2-of-2">
+      <div class="welcomeMessage">Device Management</div>
+    </div>
+
+    <div class="grid__col grid__col--2-of-2" id="2">
+      <div *ngIf="registeredDevices != null">
+        <div *ngFor="let registeredDevice of getregisteredDevices()" class="friend__tile">
+          <button (click)="removeDevice(registeredDevice)" class="friend__name">
+            {{ registeredDevice.name }} (Delete Device)
+          </button>
+          <div class="friend__innerTile">
+            <div class="friend__stats">
+              <div class="statsSection__tile">
+                <div class="statsSection__tile__value">
+                  {{ registeredDevice.name }}
+                </div>
+                <div class="statsSection__tile__description">
+                  Device
+                </div>
+              </div>
+              <div class="statsSection__tile">
+                <div class="statsSection__tile__value">
+                  {{ registeredDevice.price }}
+                </div>
+                <div class="statsSection__tile__description">
+                  Price
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
