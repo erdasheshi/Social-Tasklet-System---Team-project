@@ -5,7 +5,7 @@ var express = require('express')
 var constants = require('../constants');
 var dbAccess = require('./dbAccess');
 var logic = require('./logic');
-var log = require('./log');
+var log = require('./../replication/log');
 
 var user = require('../classes/User');
 var accountingTransaction = require('../classes/AccountingTransaction');

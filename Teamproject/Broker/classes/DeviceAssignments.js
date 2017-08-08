@@ -1,5 +1,5 @@
 var constants = require('../constants');
-var Models = require("../server"); //Instantiate a Models object so you can access the models.js module.
+//var Models = require("../server"); //Instantiate a Models object so you can access the models.js module. ???????????????????????????????
 var mongoose = require('mongoose');
 
 // device schema/model

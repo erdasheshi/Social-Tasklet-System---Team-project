@@ -9,4 +9,4 @@ var deviceSchema = new Schema({
      price    : Number
 });
 
-module.exports.deviceSchema = deviceSchema; //Export deviceSchem
+module.exports.deviceSchema = deviceSchema; //Export deviceSchema

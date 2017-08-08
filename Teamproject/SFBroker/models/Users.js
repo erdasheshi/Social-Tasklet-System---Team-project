@@ -1,6 +1,8 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
+var mongoose, passportLocalMongoose, Schema;
+
+mongoose = require("mongoose");
+passportLocalMongoose = require('passport-local-mongoose');
+Schema = mongoose.Schema;
 
 var userSchema = new Schema({ //This is where accountingSchema is defined.
     username: String,
@@ -9,7 +11,6 @@ var userSchema = new Schema({ //This is where accountingSchema is defined.
     firstname: String,
     lastname: String,
     balance: Number
- //   broker: Number
 });
 
 userSchema.plugin(passportLocalMongoose);

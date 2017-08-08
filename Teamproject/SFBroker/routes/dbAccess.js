@@ -15,8 +15,6 @@ var user = mongoose.model("users", Users.userSchema);
 var broker = mongoose.model("brokers", Brokers.brokerSchema);
 var device     = mongoose.model("Device", Devices.deviceSchema);
 
-
-                           //********************** everything is tested ***************//
 /***************************************************************************************************************************
                                                          Find
 ****************************************************************************************************************************/

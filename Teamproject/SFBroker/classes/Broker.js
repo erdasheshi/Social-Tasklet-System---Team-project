@@ -6,36 +6,66 @@ var mongoose = require('mongoose');
 var Broker = require('../models/Brokers.js');
 
 function broker(data) {
-        this.username = data.username,
+    this.username = data.username,
         this.broker = data.broker
 }
 
-broker.prototype.save =  function(callback) {
+broker.prototype.save = function (callback) {
     var transaction = new Broker({
-            username: this.username,
-            broker: this.broker,
+        username: this.username,
+        broker: this.broker,
 
     });
-    transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-        if(error){
-            callback(error, false);
+    Broker.findOne({'username': this.username}, function (err, doc) {
+        if (doc) {
+            doc.broker = transaction.broker
+            doc.save({}, function (error, data) {
+                if (error) {
+                    console.error(error.stack || error.message);
+                    return;
+                }
+
+            });
         }
-        if(callback) callback(null, true);
+        else {
+            transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
+                if (error) {
+                    callback(error, false);
+                }
+                if (callback) callback(null, true);
+            });
+        }
+    });
+
+}
+
+function findAll(callback) {
+    Broker.find({}, function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
     });
 }
 
-broker.prototype.update =  function(){
-    var transaction = this;
-    console.log(transaction);
-
-    Broker.findOne({ 'username' : this.username }, function (err, doc) {
-        doc.broker   = transaction.broker
-        doc.save({}, function (error, data) {
-           if (error) {
-                console.error(error.stack || error.message);
-                return;
-            }
-        });
+function findByUser(data, callback) {
+    Broker.findOne({'username': data.username}, function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
     });
 }
-module.exports = broker;
+
+
+module.exports = {
+    broker: broker,
+
+    get: function (data) {
+        return new AccountingTransaction(data);
+    },
+
+    findAll: function (data, callback) {
+        return findAll(data, callback);
+    },
+
+    findByUser: function (data, callback) {
+        return findByUser(data, callback);
+    }
+};
