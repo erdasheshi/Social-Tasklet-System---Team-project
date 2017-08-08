@@ -112,13 +112,13 @@ export class UserService {
   }
 
   addDevice(addDevice: Device): Promise<any> {
-    return this.http.post(this.apiURLDevice, addDevice)
+    return this.http.post(this.apiURLDevice, addDevice, options)
       .toPromise()
       .catch(this.handleError);
   }
 
   getDevices(): Promise<Device[]> {
-    return this.http.get(this.apiURLDevice)
+    return this.http.get(this.apiURLDevice, options)
       .toPromise()
       .then((res: Response) => res.json().map(obj => new Device(obj)))
       .catch(this.handleError);
