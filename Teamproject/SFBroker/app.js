@@ -20,7 +20,9 @@ var User = require('./models/Users.js');
 //mongoose.connect('127.0.0.1:27017/SFBroker');
 var mongodbAddress = 'mongodb://' + conf.sfbroker.mongoDB.address + ':' + conf.sfbroker.mongoDB.port  + '/' + conf.sfbroker.mongoDB.database;
 console.log(mongodbAddress);
-mongoose.connect(mongodbAddress);
+mongoose.connect(mongodbAddress, {
+    useMongoClient: true
+});
 
 var db = mongoose.connection;
 
@@ -30,7 +32,6 @@ db.once("open", function(callback){
 });
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 var socket = require('./routes/sockets');
 
 var app = express();
@@ -80,7 +81,6 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

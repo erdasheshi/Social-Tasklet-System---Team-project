@@ -76,7 +76,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('TaskletRequest', function (data) {
 		var name = username;
 		// Step 1: Request sent for illustrating on website
-		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), name: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
+		io.sockets.emit('ShowTaskletRequest', { zeit: new Date(), username: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 		// Step 1: Request sent to Broker
 		socket_c.emit('TaskletSendBroker', {zeit: new Date(), username: name, cost: data.cost, privacy: data.privacy, speed: data.speed, reliability: data.reliability });
 	});

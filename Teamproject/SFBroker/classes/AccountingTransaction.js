@@ -14,7 +14,7 @@ function AccountingTransaction(data) {
     this.time = data.time;
 }
 
-AccountingTransaction.prototype.save =  function(callback){
+AccountingTransaction.prototype.save =  function(callback) {
     var transaction = new Accounting({ //You're entering a new transaction here
         consumer: this.consumer,
         provider: this.provider,
@@ -25,14 +25,14 @@ AccountingTransaction.prototype.save =  function(callback){
         });
 
     transaction.save({}, function (error, data) {
-        if(error){
+        if (error){
             callback(error, false);
         }
-        if(callback) callback(null, true);
+        if (callback) callback(null, true);
     });
 }
 
-AccountingTransaction.prototype.update =  function(){
+AccountingTransaction.prototype.update =  function() {
     var transaction = this;
     accounting.findOne({ 'taskletid' : this.taskletid }, function (err, doc) {
         doc.consumer = transaction.consumer;
@@ -48,4 +48,44 @@ AccountingTransaction.prototype.update =  function(){
         });
     });
 }
-module.exports = AccountingTransaction;
+
+function findAll(callback) {
+    Accounting.find({}, function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
+    });
+}
+
+function findByUser(data, callback) {
+    Accounting.find().or([ { 'consumer': data.username }, { 'provider': data.username } ]).exec( function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
+    });
+}
+
+function findByID(data, callback) {
+    Accounting.find({ 'taskletid': data.taskletid }, function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
+    });
+}
+
+module.exports = {
+    AccountingTransaction : AccountingTransaction,
+
+    get : function(data){
+        return new AccountingTransaction(data);
+    },
+
+    findAll : function(data, callback) {
+        return findAll(data, callback);
+    },
+
+    findByUser : function(data, callback) {
+        return findByUser(data, callback);
+    },
+
+    findByID : function(data, callback) {
+        return findByID(data, callback);
+    }
+};
