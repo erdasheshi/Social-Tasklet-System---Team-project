@@ -60,6 +60,10 @@ function decreaseAvailableVMs(address){
 	console.log(provider.toObject());
 }
 
+function getProviderList(data) {
+	return provider;
+}
+
 module.exports = {
 	
 	insertProvider: function(address){
@@ -80,6 +84,10 @@ module.exports = {
 	
 	decreaseAvailableVMs: function(address){
 		return decreaseAvailableVMs(address)
-	}
+	},
+
+	getProviderList: function(data) {
+        return getProviderList(data);
+    }
 	
 };
