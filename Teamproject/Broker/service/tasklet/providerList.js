@@ -2,7 +2,7 @@ var Map = require("collections/map");
 
 var provider = new Map();
 
-function insertProvider(address){
+function insertProvider(address, deviceID){
 	var lastHeartbeat = Math.round(new Date().getTime() / 1000);
 
 	//IP was found in the collection
@@ -18,7 +18,7 @@ function insertProvider(address){
 		var availableVMs = 0;
 		var benchmark = 999;
 		
-		provider.add({lastHeartbeat: lastHeartbeat, availableVMs: availableVMs, benchmark: benchmark},address);
+		provider.add({deviceID: deviceID, lastHeartbeat: lastHeartbeat, availableVMs: availableVMs, benchmark: benchmark},address);
 		// Demonstrating purposes
 		console.log(provider.toObject());
 	}
@@ -60,14 +60,11 @@ function decreaseAvailableVMs(address){
 	console.log(provider.toObject());
 }
 
-function getProviderList(data) {
-	return provider;
-}
 
 module.exports = {
 	
-	insertProvider: function(address){
-		return insertProvider(address);
+	insertProvider: function(address, deviceID){
+		return insertProvider(address, deviceID);
 	},
 	
 	updateBenchmark: function(address, benchmark){
@@ -84,10 +81,5 @@ module.exports = {
 	
 	decreaseAvailableVMs: function(address){
 		return decreaseAvailableVMs(address)
-	},
-
-	getProviderList: function(data) {
-        return getProviderList(data);
-    }
-	
+	}
 };
