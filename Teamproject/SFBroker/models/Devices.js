@@ -5,7 +5,7 @@ var deviceSchema = new Schema({
      username : String,
      name     : String,
      device   : String,
-     status   : String,  //??? Not sure if needed
+     status   : String,
      price    : Number
 });
 

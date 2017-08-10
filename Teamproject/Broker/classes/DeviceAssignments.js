@@ -1,13 +1,10 @@
 var constants = require('../constants');
-var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
 var mongoose = require('mongoose');
 var uuidV1 = require('uuid/v1');
 
 // device schema/model
 var Devices = require('../models/Devices.js');
 var Device = mongoose.model("Device", Devices.deviceSchema); //This creates a Device model.
-
-var replicationManager = require('./../replication/replicationManager');
 
 //Initializing a transaction
 function DeviceAssignments(data) {
@@ -70,7 +67,14 @@ function findByID(data, callback) {
     Device.find({'device': device}, function (err, obj) {
         if (err) callback(err, null);
         if (callback) callback(null, obj);
+    });
+}
 
+function findByStatus(data, callback) {
+    var status = data.status;
+    Device.find({'status': status}, function (err, obj) {
+        if (err) callback(err, null);
+        if (callback) callback(null, obj);
     });
 }
 

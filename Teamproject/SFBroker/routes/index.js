@@ -225,8 +225,9 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
 /*DELETE /Device*/
 router.delete('/device', authService.loggedIn, function (req, res, next) {
     var device = req.query.device;
+    var username = req.user.username;
 
-    friendshipTransaction.deleteByID({ device: device }, function (err, data) {
+    deviceAssignment.deleteByID({ device: device, username: username}, function (err, data) {
         if (err) return next(err);
         res.json('true');
     })
@@ -235,47 +236,22 @@ router.delete('/device', authService.loggedIn, function (req, res, next) {
 /*DELETE /user*/
 router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
+    console.log(username + "the delete");
 
-    authService.logout(req, res, function() {
-        user.deleteByUsername({ username : username }, function (err, data) {
-            if (err) return next(err);
-            res.json('true');
-        });
-    });
+ user.deleteByUsername({ username : username }, function (err, data) {
+     console.log(username + "it entered inside the delete");
+
+           if (err) return next(err);
+           res.json('true');
+       });
+
+//    authService.logout(req, res, function() {
+//        user.deleteByUsername({ username : username }, function (err, data) {
+//            if (err) return next(err);
+//            res.json('true');
+//        });
+//    });
 
 });
-
-
-
-/****************************************************************************************************************************************************
- Update
- *****************************************************************************************************************************************************/
-
-
-// --> Neccessary????
-/*POST /update_device*/
-/*
- router.post('/update_device', authService.loggedIn, function(req, res, next) {
- var username = req.user.username;
- var name = req.body.name;
- var device = req.body.device;
- var price = req.body.price;
- var status = req.body.status;
-
- var device = new deviceAssignment({ name:     name,
- username: username,
- device:   device,
- status:   status,
- price:    price });
- device.update(function (err, post) {
- if (err) return next(err);
- res.json(post);
- });
- //Store in the log the updated device
- var key = 'u_device';
- logic. CollectUpdates(req, device, key);
-
- });
- */
 
 module.exports = router;
