@@ -70,7 +70,7 @@ function findAll(callback) {
     });
 }
 
-function findByUser(callback) {
+function findByUser(data, callback) {
     User.findOne({ 'username' : data.username }, function (e, data) {
         if (e) callback(e, null);
         callback(null, data);
@@ -78,14 +78,21 @@ function findByUser(callback) {
 }
 
 function deleteByUsername(data, callback){
-    var user = data.username;
-    friendship.deleteByUser({ username : user }, function(e, data){
+console.log("entered the user delete " + data.username);
+    var username = data.username;
+    friendship.deleteByUser({ username : username }, function(e, data){
+    console.log("it deleted the frindships");
         if (e) callback(e, null);
-        device.deleteByUser({ username : user }, function(e, data) {
+        device.deleteByUser({ username : username }, function(e, data) {
+            console.log("it deleted the device");
+
             if (e) callback(e, null);
-            coins.deleteByUser({ username : user }, function(e, data) {
+            coins.deleteByUser({ username : username }, function(e, data) {
+                console.log("it deleted the coins");
                 if (e) callback(e, null);
-                User.remove({ 'username': user }, function (err, data) {
+                User.remove({ 'username': username }, function (err, data) {
+                    console.log("it deleted the user itself");
+
                     if (err) callback(err, null);
                     if (callback) callback(null, true);
                 });

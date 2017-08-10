@@ -11,7 +11,7 @@ var constants = require('../constants');
 function CollectUpdates(data) {
     var logData = data;
     var update;
-
+console.log(logData.username + "the username");
     brokerTransaction.findByUser({ username: logData.username }, function (e, data) {
         if (e) return next(e);
         switch (logData.key) {
@@ -32,7 +32,8 @@ function CollectUpdates(data) {
 
             case constants.Friendship: //keeping track of added/updated friendship transactions
                 var broker_1 = data.broker;
-                brokerTransaction.findByUser({ username: logData.username }, function (e, data) {
+                console.log(logData.user_2 + "user2");
+                brokerTransaction.findByUser({ username: logData.user_2}, function (e, data) {
                     if (e) return next(e);
                         update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "status": "' + logData.status + '" }';
                         log.add(JSON.parse(JSON.stringify(update)));
@@ -40,7 +41,7 @@ function CollectUpdates(data) {
                 break;
             case 'd_friendship':   //keeping track of deleted friendship transactions
                 var broker_1 = data.broker;
-                brokerTransaction.findByUser({ username: logData.username }, function (e, data) {
+                brokerTransaction.findByUser({ username: logData.user_2 }, function (e, data) {
                     if (e) return next(e);
                         update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
                         log.add(JSON.stringify(update));

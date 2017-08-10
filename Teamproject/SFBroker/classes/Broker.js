@@ -58,7 +58,7 @@ module.exports = {
     broker: broker,
 
     get: function (data) {
-        return new AccountingTransaction(data);
+        return new broker(data);
     },
 
     findAll: function (data, callback) {
