@@ -42,6 +42,8 @@ qocDetails* initQocDetails() {
 	newdetails->qocRedundancy = NULL;
 	newdetails->qocReplication = NULL;
 	newdetails->qocMigration = NULL;
+	newdetails->qocCost = NULL;
+	newdetails->qocPrivacy = NULL;
 
 	return newdetails;
 }
@@ -1148,7 +1150,6 @@ protocolHeader createProtocolHeader(messageType messageType) {
 	pHeader.magic = MAGIC;
 	pHeader.version = protocolVersion;
 	pHeader.messageType = messageType;
-	pHeader.device	= deviceID;
 
 	return pHeader;
 }
@@ -1359,6 +1360,20 @@ void resolveQocArray(tasklet* taskletWithQocs) {
 			taskletWithQocs->qocParameter->qocMigration->length = 10;
 			taskletWithQocs->qocParameter->qocMigration->parameters = &qocs[i];
 			i += taskletWithQocs->qocParameter->qocMigration->length;
+			break;
+		case cost:
+			taskletWithQocs->qocParameter->qocCost = initSingleQoC();
+			i += 4;
+			taskletWithQocs->qocParameter->qocCost->length = 5;
+			taskletWithQocs->qocParameter->qocCost->parameters = &qocs[i];
+			i += taskletWithQocs->qocParameter->qocCost->length;
+			break;
+		case privacy:
+			taskletWithQocs->qocParameter->qocPrivacy = initSingleQoC();
+			i += 4;
+			taskletWithQocs->qocParameter->qocPrivacy->length = 5;
+			taskletWithQocs->qocParameter->qocPrivacy->parameters = &qocs[i];
+			i += taskletWithQocs->qocParameter->qocPrivacy->length;
 			break;
 		default:
 			printf("ERROR. Wrong qoc type detected: %d\n", type);

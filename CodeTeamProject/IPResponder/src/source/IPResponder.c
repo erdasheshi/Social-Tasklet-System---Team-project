@@ -26,6 +26,13 @@ void heartBeatThread() {
 			continue;
 		}
 		if (mType == bHeartbeatMessage) {
+
+			int deviceID;
+			tcpreceive(connectedSocket, (char*) &deviceID, sizeof(int), 0);
+
+			printf("DeviceID: %d", deviceID);
+			fflush(stdout);
+
 			u_long remoteIP = getRemoteIPAddress(connectedSocket);
 //			if(strcmp(u_longToCharIP(remoteIP),"127.0.0.1")==0)
 //				remoteIP = inet_addr("134.155.51.5");
@@ -66,6 +73,10 @@ void bRequestThread() {
 		if (mType == bRequestMessage) {
 			numberOfReq++;
 			requestDetails details = receiveBRequestMessage(connectedSocket);
+
+			printf("QoC Cost: %d\n", details.cost);
+			printf("QoC Privacy: %d\n", details.privacy);
+			fflush(stdout);
 
 			pi_lock_mutex(blistMutex);
 			details.requestingIP = getRemoteIPAddress(connectedSocket);
