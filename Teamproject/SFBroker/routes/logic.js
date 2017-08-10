@@ -76,7 +76,6 @@ function findFriends(user, callback) {
     });
 }
 
-//********************** tested ***************//
 //update user's balance
 function updateBalance(difference, username) {
     dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
@@ -85,11 +84,13 @@ function updateBalance(difference, username) {
         if (isNaN(difference)){
             difference = 0; }
         balance = balance + difference;
-        var userb = new user({
+          var userb = user.get({
             username: username,
             balance: balance,
-        });
-        userb.update();
+          });
+          userb.save(function (err, post) {
+              if (err) return next(err);
+          });
     });
 };
 
@@ -98,6 +99,8 @@ module.exports = {
             return CollectUpdates(data, id, key) ; },
     updateBroker: function(broker) {
             return updateBroker(broker); },
+    updateBalance: function(difference, username) {
+            return updateBalance(difference, username); },
     syncBroker: function(broker, version) {             //*********** its a local function, no need to export
              return syncBroker(broker, version); },
     readBroker: function(broker) {

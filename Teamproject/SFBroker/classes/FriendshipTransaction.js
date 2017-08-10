@@ -22,7 +22,7 @@ friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
-    Friendship.findOne({ 'user_1': this.user_1, 'user_2': this.user_2 }).exec(function (e, udata) {
+    Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
         if (udata == null) {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
                 if (data == null) {
@@ -38,10 +38,10 @@ friendshipTransaction.prototype.save = function (callback) {
                         if (callback) {
                             //Store in the log the confirmed friendships
                             if (status == constants.AccountingStatusConfirmed) {
-                                logic.CollectUpdates({
-                                    username: this.user_1,
-                                    user_2: this.user_2,
-                                    status: this.status,
+                                replicationManager.CollectUpdates({
+                                    username: user_1,
+                                    user_2: user_2,
+                                    status: status,
                                     key: constants.Friendship
                                 });
                             }
@@ -58,9 +58,9 @@ friendshipTransaction.prototype.save = function (callback) {
                             //Store in the log the confirmed friendships
                             if (status == constants.AccountingStatusConfirmed) {
                                 replicationManager.CollectUpdates({
-                                    username: this.user_1,
-                                    user_2: this.user_2,
-                                    status: this.status,
+                                    username: user_1,
+                                    user_2: user_2,
+                                    status: status,
                                     key: constants.Friendship
                                 });
                             }
@@ -80,9 +80,9 @@ friendshipTransaction.prototype.save = function (callback) {
                     //Store in the log the confirmed friendships
                     if (status == constants.AccountingStatusConfirmed) {
                         replicationManager.CollectUpdates({
-                            username: this.user_1,
-                            user_2: this.user_2,
-                            status: this.status,
+                            username: user_1,
+                            user_2: user_2,
+                            status: status,
                             key: constants.Friendship
                         });
                     }
@@ -120,7 +120,7 @@ function findFriends(data, callback) {
 
 function deleteByID(data, callback) {
     var id = data.id;
-    friendship.remove({ 'id': data.id }, function (err, obj) {
+    Friendship.remove({ 'id': data.id }, function (err, obj) {
         if (err) callback(err, null);
         else {
             replicationManager.CollectUpdates({
@@ -129,7 +129,6 @@ function deleteByID(data, callback) {
             });
             if (callback) callback(null, true);
         }
-
     });
 }
 
@@ -137,7 +136,7 @@ function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
 
-    friendship.remove({
+    Friendship.remove({
         $or: [ { 'user_1': data.user_1, 'user_2': user_2 }, {
             'user_2': user_1, 'user_1': user_2
         } ]
@@ -153,27 +152,19 @@ function deleteByUsers(data, callback) {
                 callback(null, true);
             }
         }
-
     });
 }
 
 function deleteByUser(data, callback) {
-    var user_1 = data.username;
-
-    friendship.remove({
-        $or: [ { 'user_1': data.user_1 }, { 'user_2': user_1 } ] }, function (err, data) {
-        if (err) callback(err, null);
-        else {
-            replicationManager.CollectUpdates({
-                username: 'DUMMY',
-                key: 'd_friendship'
-            });
-            if (callback) {
-                callback(null, true);
-            }
-        }
-
+ console.log("it deleted the frindships   in the frindship");
+var user_1 = data.username;
+Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){
+res.forEach(function (data, index, array) {
+console.log("in the friendship loop");
+var id = data.id;
+    friendship.deleteByID({ id: id, username: user_1 });
     });
+});
 }
 
 
@@ -201,10 +192,10 @@ module.exports = {
     },
 
     deleteByUsers: function (data, callback) {
-        return deleteByUsers(data, calback);
+        return deleteByUsers(data, callback);
     },
 
     deleteByUser: function (data, callback) {
-        return deleteByUser(data, calback);
+        return deleteByUser(data, callback);
     },
 }

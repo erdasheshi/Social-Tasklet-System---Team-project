@@ -1,12 +1,9 @@
 var constants = require('../constants');
-var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
 var uuidV1 = require('uuid/v1');
 
 var mongoose = require('mongoose');
 var Friendships = require("../models/Friendships");
 var Friendship = mongoose.model("Friendship", Friendships.friendshipSchema);
-
-var replicationManager = require('./../replication/replicationManager');
 
 function friendshipTransaction(data) {
     this.id = data.id;

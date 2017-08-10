@@ -77,34 +77,42 @@ function findByUser(data, callback) {
     });
 }
 
+function findByID(data, callback) {
+    var device = data.device;
+    Device.find({'device': device}, function (err, obj) {
+        if (err) callback(err, null);
+        if (callback) callback(null, obj);
+    });
+}
+
 function deleteByID(data, callback) {
     var device = data.device;
+    var username = data.username;
+console.log(username + "the username");
     Device.remove({ 'device': device }, function (err, obj) {
         if (err) callback(err, null);
         else {
+        console.log(username + "the user name in the delete function");
             replicationManager.CollectUpdates({
                 device: device,
-                key: 'd_device'
+                key: 'd_device',
+                username: username
             });
             if (callback) callback(null, true);
         }
-
     });
 }
 
 function deleteByUser(data, callback) {
-    var username = data.username;
-    Device.remove({ 'username': username }, function (err, obj) {
-        if (err) callback(err, null);
-        else {
-            replicationManager.CollectUpdates({
-                device: 'DUMMY',
-                key: 'd_device'
-            });
-            if (callback) callback(null, true);
-        }
+ console.log("it deleted the device  in the device");
 
-    });
+ var username = data.username;
+ Device.find({ 'username': username }, function (e, res) {
+  res.forEach(function (data, index, array) {
+  var device = data.device;
+  deleteByID({ device: device, username: username });
+      });
+});
 }
 
 module.exports = {
@@ -120,6 +128,10 @@ module.exports = {
 
     findAll: function (callback) {
         return findAll(callback);
+    },
+
+    findByID: function (data, callback) {
+        return findByID(data, callback);
     },
 
     deleteByID: function (data, callback) {

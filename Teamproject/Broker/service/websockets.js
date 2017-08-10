@@ -83,7 +83,6 @@ module.exports = function (server) {
                         potentialProvider: data.potentialProvider
                     });
                 });
-
             }
             else {
                 // If balance not sufficient, inform the Consumer about the cancellation
@@ -92,7 +91,6 @@ module.exports = function (server) {
                 });
             }
         });
-
 
         // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker
         socket.on('TaskletCyclesReturn', function (data) {   // it will capture the information
@@ -111,21 +109,20 @@ module.exports = function (server) {
         socket.on('SendingTaskletToProvider', function (data) {
             io.sockets.emit('SendingTaskletToProvider', data);
         });
-    });
 
-// Used for adding the speed and reliability information
-    /*
-    function addInformation(potentialprovider) { ////**************** update this so it works on devices and not on users
+      /*        device.findByStatus({status: 'inactive'}, function (err, data) {
 
-        for (var i = 0; i < potentialprovider.length; i++) {
-            potentialprovider.splice(i, 1, {
-                username: potentialprovider[i].username,
-                price: potentialprovider[i].price,
-                actualreliability: 5,
-                actualspeed: 5
-            });
-        }
-        return potentialprovider;
-    }
-    */
+
+        data.forEach(function (data, index, array) {
+           //****relate to the heartbeat--- check device
+           if(){
+           io.sockets.emit('ActivateDevice', {
+                device: device,
+                status: 'active'
+           });
+           }
+        });
+        });
+    });*/
+});
 }
