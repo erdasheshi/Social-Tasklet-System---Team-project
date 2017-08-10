@@ -5,9 +5,9 @@ var router = express.Router();
 var dbAccess = require('./dbAccess');  //*** This is should not be required here
 var constants = require('../constants');
 var logic = require('./logic');
-var authService = require('./../service/authenticationService.js');
 
-var passport = require('passport');
+var authService = require('./../service/authenticationService.js');
+var downloadManager = require('./../service/downloadManager.js');
 
 var accountingTransaction = require('../classes/AccountingTransaction');
 var friendshipTransaction = require('../classes/FriendshipTransaction');
@@ -39,7 +39,7 @@ router.get('/acctransaction', authService.loggedIn, function (req, res, next) {
             res.json(data);
         });
     } else {
-        accountingTransaction.findByUser({ username: req.user.username }, function (e, data) {
+        accountingTransaction.findByUser({username: req.user.username}, function (e, data) {
             if (e) return next(e);
             res.json(data);
         });
@@ -56,7 +56,7 @@ router.get('/friendship', authService.loggedIn, function (req, res, next) {
         });
     }
     else {
-        friendshipTransaction.findNetwork({ username: req.user.username }, function (e, data) {
+        friendshipTransaction.findNetwork({username: req.user.username}, function (e, data) {
             if (e) return next(e);
             res.json(data);
         });
@@ -81,7 +81,7 @@ router.get('/user', authService.loggedIn, function (req, res, next) {
 /* GET sfbuserinfo. -- Same as friendship???? */
 router.get('/sfbuserinfo', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
-    logic.find({ type: constants.Friends, username: username, key: 'Network' }, function (e, data) {
+    logic.find({type: constants.Friends, username: username, key: 'Network'}, function (e, data) {
         if (e) return next(e);
         var response = '{ "username": "' + username + '", "connections": ' + data + '}';
         console.log(response);
@@ -92,10 +92,10 @@ router.get('/sfbuserinfo', authService.loggedIn, function (req, res, next) {
 /* GET sfbusertransactions.  Not used in the frontend yet???*/
 router.get('/sfbusertransactions', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
-    logic.find({ type: constants.AllTransactions, username: username }, function (e, result) {
+    logic.find({type: constants.AllTransactions, username: username}, function (e, result) {
         if (e) return next(e);
         var fin_result = result;
-        dbAccess.find({ type: constants.User, username: username }).exec(function (e, data) {
+        dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
             if (e) return next(e);
             var response = '{ "username": "' + username + '", "balance": ' + data.balance + ', "transactions": ' + fin_result + '}';
             res.json(JSON.parse(response.toString()));
@@ -107,7 +107,7 @@ router.get('/sfbusertransactions', authService.loggedIn, function (req, res, nex
 /* GET requestedcoins. */
 router.get('/requestedcoins', authService.loggedIn, function (req, res, next) {
 
-    coinTransaction.findByUser({ username: req.user.username }, function (e, data) {
+    coinTransaction.findByUser({username: req.user.username}, function (e, data) {
         if (e) return next(e);
         res.json(data);
     });
@@ -123,7 +123,7 @@ router.get('/device', authService.loggedIn, function (req, res, next) {
         });
     }
     else {
-        deviceAssignment.findByUser({ username: req.user.username }, function (e, data) {
+        deviceAssignment.findByUser({username: req.user.username}, function (e, data) {
             if (e) return next(e);
             res.json(data);
         });
@@ -200,9 +200,16 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         status: constants.DeviceStatusInactive,
         price: req.body.price
     });
+    var id = device.device;
+
     device.save(function (err, post) {
         if (err) return next(err);
-        res.json(post);
+
+        downloadManager.provideDownload({ id: id } , function (err, data) {
+            if (err) return next(err);
+            res.download(data.destination);
+        });
+
     });
 });
 
@@ -215,7 +222,7 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
     var user_1 = req.user.username;
     var user_2 = req.query.user;
 
-    friendshipTransaction.deleteByUsers({ user_1: user_1, user_2: user_2 }, function (err, data) {
+    friendshipTransaction.deleteByUsers({user_1: user_1, user_2: user_2}, function (err, data) {
         if (err) return next(err);
         res.json('true');
     });
@@ -226,7 +233,7 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
 router.delete('/device', authService.loggedIn, function (req, res, next) {
     var device = req.query.device;
 
-    friendshipTransaction.deleteByID({ device: device }, function (err, data) {
+    friendshipTransaction.deleteByID({device: device}, function (err, data) {
         if (err) return next(err);
         res.json('true');
     })
@@ -236,15 +243,14 @@ router.delete('/device', authService.loggedIn, function (req, res, next) {
 router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 
-    authService.logout(req, res, function() {
-        user.deleteByUsername({ username : username }, function (err, data) {
+    authService.logout(req, res, function () {
+        user.deleteByUsername({username: username}, function (err, data) {
             if (err) return next(err);
             res.json('true');
         });
     });
 
 });
-
 
 
 /****************************************************************************************************************************************************

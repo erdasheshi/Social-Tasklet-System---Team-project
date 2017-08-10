@@ -1,25 +1,29 @@
 const fs = require('fs-extra');
+const source = '../SFBroker/download/config.txt';
+const destination = '../SFBroker/download/MiddlewareExecutable/config.txt';
 
-function downloadManager(data) {
-    this.source = '../SFBroker/download/config.txt';
-    this.destination = '../SFBroker/download/MiddlewareExecutable/config.txt';
-}
 
-downloadManager.prototype.provideDownload = function(data, callback){
-    copyFile(this.source, this.destination);
-    fs.appendFileSync(this.destination, data.append);
-    return this.destination;
+function provideDownload(data, callback) {
+    copyFile(source, destination);
+    var line = '\nDevice: ' + data.id;
+    fs.appendFileSync(destination, line);
+    callback(null, { destination : destination } );
 }
 
 
 function copyFile(src, dest, callback) {
-
-    fs.copy(src, dest, err => {
-        if(err){
+    console.log(src);
+    console.log(dest);
+    fs.copy(src, dest, function (err, data) {
+        if (err) {
             callback(err, false);
         }
-        if(callback) callback(null, true);
-})
+        if (callback) callback(null, destination);
+    })
 }
 
-module.exports = downloadManager;
+module.exports = {
+    provideDownload: function (data, callback) {
+        return provideDownload(data, callback);
+    }
+}
