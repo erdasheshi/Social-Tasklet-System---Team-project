@@ -15,6 +15,9 @@ const FriendshipStatusRequested     = 'Requested';
 const FriendshipStatusConfirmed     = 'Confirmed';
 const FriendshipStatusPending       = 'Pending';
 
+const DeviceStatusActive            = "Active";
+const DeviceStatusInactive          = "Inactive";
+
 const CoinReq = 'CoinReq';
 
 const Magic	= 12345;
@@ -74,6 +77,9 @@ module.exports = {
     FriendshipStatusRequested: FriendshipStatusRequested,
     FriendshipStatusConfirmed: FriendshipStatusConfirmed,
     FriendshipStatusPending: FriendshipStatusPending,
+
+    DeviceStatusActive: DeviceStatusActive,
+    DeviceStatusInactive: DeviceStatusInactive,
 
     Magic: Magic,
     Version: Version,
