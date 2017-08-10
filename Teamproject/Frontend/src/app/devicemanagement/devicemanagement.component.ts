@@ -48,6 +48,10 @@ export class DevicemanagementComponent implements OnInit {
       .catch(this.handleError);
   }
 
+  changeDevice(name){
+
+  }
+
   private handleError(error: any): Promise<any> {
     return Promise.reject(error.message || error);
   }

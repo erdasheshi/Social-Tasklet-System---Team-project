@@ -15,6 +15,7 @@ import { HeaderComponent } from './header/header.component';
 import { UserService } from './shared/services/user.service';
 import { DevicemanagementComponent } from './devicemanagement/devicemanagement.component';
 import { RegisterdeviceComponent } from './registerdevice/registerdevice.component';
+import { ChangedeviceComponent } from './changedevice/changedevice.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { RegisterdeviceComponent } from './registerdevice/registerdevice.compone
     NetworkComponent,
     HeaderComponent,
     DevicemanagementComponent,
-    RegisterdeviceComponent
+    RegisterdeviceComponent,
+    ChangedeviceComponent
   ],
   imports: [
     BrowserModule,
@@ -61,6 +63,11 @@ import { RegisterdeviceComponent } from './registerdevice/registerdevice.compone
       {
         'path': 'adddevice',
         'component': RegisterdeviceComponent,
+        'pathMatch': 'full'
+      },
+      {
+        'path': 'changedevice',
+        'component': ChangedeviceComponent,
         'pathMatch': 'full'
       },
       {
