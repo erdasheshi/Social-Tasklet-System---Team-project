@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
-const source = '../SFBroker/download/config.txt';
-const destination = '../SFBroker/download/MiddlewareExecutable/config.txt';
+var conf = require('../config.json');
+const source = conf.sfbroker.download.source;
+const destination = conf.sfbroker.download.destination;
 
 
 function provideDownload(data, callback) {
