@@ -42,6 +42,8 @@ typedef struct requestDetails {
 	int requestedInstances;
 	float minimumSpeed;
 	u_long requestingIP;
+	int cost;
+	int privacy;
 
 } requestDetails;
 

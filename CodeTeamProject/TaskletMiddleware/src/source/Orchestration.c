@@ -110,6 +110,7 @@ void startBenchmark() {
 
 	freeTasklet(benchmarkTasklet);
 	benchmarkStartClock = clock();
+
 }
 
 void tHeartBeatThread() {

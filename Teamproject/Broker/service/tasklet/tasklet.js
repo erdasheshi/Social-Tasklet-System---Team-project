@@ -25,7 +25,7 @@ var server_request = net.createServer(function(socket) {
 		if(messageType == constants.bRequestMessage){
 			
 			//TODO: Changing the request informations!!
-			var isRemote = data.readInt32LE(12);
+			var isRemote = data.readInt32LE(16);
 			if(isRemote = 1){
 				isRemote = true;
 			}
@@ -33,11 +33,11 @@ var server_request = net.createServer(function(socket) {
 				isRemote = false;
 			}
 			
-			var requestedNumber = data.readInt32LE(16);
+			var requestedNumber = data.readInt32LE(20);
 			
-			var requestedInstances = data.readInt32LE(20);
+			var requestedInstances = data.readInt32LE(24);
 			
-			var minimumSpeed = data.readFloatLE(24);
+			var minimumSpeed = data.readFloatLE(28);
 			
 			console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Speed: ' + minimumSpeed);
 			

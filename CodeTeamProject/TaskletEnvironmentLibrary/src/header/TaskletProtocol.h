@@ -95,7 +95,6 @@ typedef struct protocolHeader {
 	int magic;
 	int version;
 	messageType messageType;
-	int device;
 } protocolHeader;
 
 typedef struct monitorMessage {
@@ -253,7 +252,9 @@ typedef enum qocCategory {
 	proxy,
 	redundancy,
 	replication,
-	migration
+	migration,
+	cost,
+	privacy
 } qocCategory;
 
 typedef struct singleQoc {
@@ -271,6 +272,8 @@ typedef struct qocDetails {
 	singleQoc* qocRedundancy;
 	singleQoc* qocReplication;
 	singleQoc* qocMigration;
+	singleQoc* qocCost;
+	singleQoc* qocPrivacy;
 } qocDetails;
 
 //With or without header?

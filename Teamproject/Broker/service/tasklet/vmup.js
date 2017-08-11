@@ -15,22 +15,22 @@ var server_vmup = net.createServer(function(socket) {
 
     socket.on('data', function(data) {
 
-        var protocolHeader = pH.readProtocolHeader(data);
+        var messageType = pH.readProtocolHeader(data);
 		var address = socket.remoteAddress;
 		
-		if(protocolHeader.MessageType < 0){
+		if(messageType < 0){
 			console.log('Invalid message');
 		}
 		
-		if(protocolHeader.MessageType == constants.vmUpMessage){
+		if(messageType == constants.vmUpMessage){
 			providerList.increaseAvailableVMs(address);
 		}
 		
-		if(protocolHeader.MessageType == constants.vmDownMessage){
+		if(messageType == constants.vmDownMessage){
 			providerList.decreaseAvailableVMs(address);
 		}
 		
-		else if(protocolHeader.MessageType != constants.vmUpMessage && protocolHeader.MessageType != constants.vmDownMessage){
+		else if(messageType != constants.vmUpMessage && messageType != constants.vmDownMessage){
 			console.log('Received a wrong message type in vmup data');
 		}
 		

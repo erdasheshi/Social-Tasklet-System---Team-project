@@ -249,6 +249,22 @@ requestDetails readDetails(tasklet *taskletWithDetails) {
 	} else {
 		details.requestedNumber = 1;
 	}
+
+	if (taskletWithDetails->qocParameter->qocCost != NULL) {
+		details.cost =
+				arrayToInt(
+						&taskletWithDetails->qocParameter->qocCost->parameters[1]);
+	} else {
+		details.cost = -1;
+	}
+	if (taskletWithDetails->qocParameter->qocPrivacy != NULL) {
+			details.privacy =
+					arrayToInt(
+							&taskletWithDetails->qocParameter->qocPrivacy->parameters[1]);
+		} else {
+			details.privacy = -1;
+		}
+
 	return details;
 
 }

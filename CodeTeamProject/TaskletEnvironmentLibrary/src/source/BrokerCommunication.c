@@ -50,9 +50,10 @@ void sendBHeartbeatMessage(SOCKET connectedIPSocket) {
 	pHeader.magic = MAGIC;
 	pHeader.version = protocolVersion;
 	pHeader.messageType = bHeartbeatMessage;
-	pHeader.device	= deviceID;
 
 	tcpsend(connectedIPSocket, (char*) &pHeader, sizeof(protocolHeader), 0);
+
+	tcpsend(connectedIPSocket, (char*) &deviceID, sizeof(int), 0);
 }
 
 messageType receiveBHeartbeatMessage(SOCKET connectedSocket) {
@@ -136,7 +137,9 @@ requestDetails receiveBRequestMessage(SOCKET connectedSocket) {
 
 	requestDetails details;
 
+
 	tcpreceive(connectedSocket, (char*) &details, sizeof(requestDetails), 0);
+
 
 	return details;
 }
