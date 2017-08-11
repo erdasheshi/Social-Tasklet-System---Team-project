@@ -11,7 +11,6 @@ var constants = require('../constants');
 function CollectUpdates(data) {
     var logData = data;
     var update;
-console.log(logData.username + "the username");
     brokerTransaction.findByUser({ username: logData.username }, function (e, data) {
         if (e) return next(e);
         switch (logData.key) {

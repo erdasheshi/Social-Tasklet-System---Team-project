@@ -6,6 +6,10 @@
 			"address": "mongodb-sfbroker",
 			"port": "27017",
 			"database": ""
+		},
+		"download" :{
+			"source": "/usr/src/app/download/config.txt",
+			"destination": "/usr/src/app/download/MiddlewareExecutable/config.txt"
 		}
 	},
 	"sfbroker_socket": {
