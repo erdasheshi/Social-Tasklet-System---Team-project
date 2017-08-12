@@ -50,21 +50,21 @@ coinTransaction.prototype.update =  function(){
 function findAll(callback) {
     Coins.find({}, function (e, data) {
         if (e) callback(e, null);
-        callback(null, data);
+        if (callback) callback(null, data);
     });
 }
 
 function findByUser(data, callback) {
     Coins.find({ 'username' : data.username }, function (e, data) {
         if (e) callback(e, null);
-        callback(null, data);
+        if (callback) callback(null, data);
     });
 }
 
 function findByApproval(data, callback) {
     Coins.find({ 'approval' : data.approval }, function (e, data) {
         if (e) callback(e, null);
-        callback(null, data);
+        if(callback) callback(null, data);
     });
 }
 

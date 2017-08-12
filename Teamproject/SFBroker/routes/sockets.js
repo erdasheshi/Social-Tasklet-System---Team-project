@@ -24,10 +24,9 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        var username = data.username;
-        coinTransaction.findByUser({ username: username }), function (e, data) {
+        coinTransaction.findByApproval({ approval: 'false' }, function (e, data) {
             io.sockets.emit('Requested_Coins', data);
-        }
+        });
     });
 
    //Store the request as approved and updates the balance for the user

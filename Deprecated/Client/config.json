@@ -6,6 +6,10 @@
 			"address": "mongodb-sfbroker",
 			"port": "27017",
 			"database": ""
+		},
+		"download" :{
+			"source": "/usr/src/app/download/config.txt",
+			"destination": "/usr/src/app/download/MiddlewareExecutable/config.txt"
 		}
 	},
 	"sfbroker_socket": {
@@ -31,7 +35,7 @@
 	},
     "frontend": {
 		"protocol" : "http",
-		"ip": "localhost",
+		"ip": "192.168.99.100",
 		"port": 4200
 	},
 	"tasklet":{
