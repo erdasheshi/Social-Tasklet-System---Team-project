@@ -148,8 +148,8 @@ function deleteByUsers(data, callback) {
                 id: data.id,
                 key: 'd_friendship'
             });
-+             });
-+            if (callback)  callback(null, true);
+            });
+           if (callback)  callback(null, true);
             }
     });
 }

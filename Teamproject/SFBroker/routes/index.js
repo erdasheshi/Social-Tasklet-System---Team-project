@@ -98,7 +98,7 @@ router.get('/sfbusertransactions', authService.loggedIn, function (req, res, nex
             if (e) return next(e);
             var response = '{ "username": "' + username + '", "balance": ' + data.balance + ', "transactions": ' + fin_result + '}';
             res.json(JSON.parse(response.toString()));
-        });
+        };
     });
 });
 
