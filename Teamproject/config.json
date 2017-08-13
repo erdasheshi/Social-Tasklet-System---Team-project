@@ -8,8 +8,8 @@
 			"database": "SFBroker"
 		},
 		"download" :{
-			"source": "../SFBroker/download/config.txt",
-			"destination": "../SFBroker/download/MiddlewareExecutable/config.txt"
+			"source": "../SFBroker/download/",
+			"destination": "../SFBroker/download/MiddlewareExecutable/"
 		}
 	},
 	"sfbroker_socket": {

@@ -1,14 +1,14 @@
 const fs = require('fs-extra');
 var conf = require('../config.json');
-const source = conf.sfbroker.download.source;
-const destination = conf.sfbroker.download.destination;
+const source = conf.sfbroker.download.source + "config.txt";
+const destination = conf.sfbroker.download.destination + "config.txt";
 
 
 function provideDownload(data, callback) {
     copyFile(source, destination);
-    var line = '\nDevice: ' + data.id;
+    var line = '\nDevice_ID: ' + data.id;
     fs.appendFileSync(destination, line);
-    callback(null, { destination : destination } );
+    callback(null, { destination : conf.sfbroker.download.destination } );
 }
 
 

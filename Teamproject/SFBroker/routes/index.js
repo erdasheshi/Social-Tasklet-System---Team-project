@@ -210,7 +210,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         if (download) {
             downloadManager.provideDownload({id: id}, function (err, data) {
                 if (err) return next(err);
-                res.download(data.destination);
+                res.download(data.destination + "MiddlewareExecutable.zip");
             });
         }
         else {
