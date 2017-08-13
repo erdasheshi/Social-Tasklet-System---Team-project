@@ -3,7 +3,6 @@ var express = require('express')
 , app = express();
 
 var constants = require('../constants');
-var dbAccess = require('./dbAccess');
 var logic = require('./logic');
 var log = require('./../replication/log');
 

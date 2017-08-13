@@ -46,13 +46,12 @@ function findAll(callback) {
     });
 }
 
-function findByUser(data, callback) {
-    Broker.findOne({'username': data.username}, function (e, data) {
-        if (e) callback(e, null);
-        callback(null, data);
-    });
+ function findByUser(data, callback) {
+   Broker.findOne({'username': data.username}).exec(function (e, data) {
+         if (e) callback(e, null);
+         callback(null, data);
+     });
 }
-
 
 module.exports = {
     broker: broker,
