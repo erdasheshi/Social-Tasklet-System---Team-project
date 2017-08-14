@@ -82,7 +82,11 @@ export class UserService {
   getFriends(): Promise<Friendship[]> {
     return this.http.get(this.apiURLAddFriend, options)
       .toPromise()
-      .then((res: Response) => res.json().connections.map(obj => new Friendship(obj)))
+      .then((res: Response) => {
+        const response = res.json();
+        const username = response.username;
+        return response.connections.map(obj => new Friendship(username, obj));
+      })
       .catch(this.handleError);
   }
 
@@ -94,6 +98,7 @@ export class UserService {
   }
 
   addFriend(friendship: Friendship): Promise<any> {
+    debugger;
     return this.http.post(this.apiURLAddFriend, friendship, options)
       .toPromise()
       .catch(this.handleError);

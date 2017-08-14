@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Friendship} from '../shared/model/friendship';
 import {UserService} from '../shared/services/user.service'; //API Service
 import {NetworkUser} from '../shared/model/networkuser'
-import {AddFriendship} from "../shared/model/addFriendship";
 
 const conf = require('../../../config.json');
 
@@ -17,6 +16,7 @@ export class NetworkComponent implements OnInit {
 
   networkUsers: NetworkUser[];
   friendships: Friendship[];
+  requester: string;
 
   constructor(private userService: UserService,) {
   }
@@ -38,6 +38,13 @@ export class NetworkComponent implements OnInit {
         this.friendships = result;
       })
       .catch(this.handleError);
+
+    this.userService
+      .getUser()
+      .then(res => {
+        this.requester = res.username;
+      })
+      .catch(this.handleError);
   }
 
   private handleError(error: any): Promise<any> {
@@ -47,9 +54,9 @@ export class NetworkComponent implements OnInit {
   getPendingFriends(): Friendship[] {
     if (this.friendships) {
       console.log(this.friendships.length);
-      return this.friendships.filter(friendship => friendship.status === 'Pending');
+      return this.friendships.filter(friendship => friendship.status === 'pending');
     }
-    else{
+    else {
       console.log(this.friendships.length);
       return [];
     }
@@ -57,13 +64,13 @@ export class NetworkComponent implements OnInit {
 
   getRequestedFriends(): Friendship[] {
     if (this.friendships) {
-      return this.friendships.filter(friendship => friendship.status === 'Requested');
+      return this.friendships.filter(friendship => friendship.status === 'requested');
     }
   }
 
   getFriends(): Friendship[] {
     if (this.friendships) {
-      return this.friendships.filter(friendship => friendship.status === 'Confirmed');
+      return this.friendships.filter(friendship => friendship.status === 'confirmed');
     }
   }
 
@@ -88,8 +95,8 @@ export class NetworkComponent implements OnInit {
   }
 
   confirmFriend(user) {
-    var tmp = {name: user, status: "Confirmed"};
-    var newFriendship = new Friendship(tmp);
+    var tmp = {name: user, status: "confirmed"};
+    var newFriendship = new Friendship(user, tmp);
 
     this.userService
       .addFriend(newFriendship)
@@ -102,12 +109,16 @@ export class NetworkComponent implements OnInit {
       })
       .catch(this.handleError);
 
-    this.friendships = this.updateFriendship(this.friendships, user, 'Confirmed');
+    this.friendships = this.updateFriendship(this.friendships, user, 'confirmed');
   }
 
   addFriend(user) {
-    var tmp = {name: user, status: "Requested"};
-    var newFriendship = new Friendship(tmp);
+    const friend = {
+      status: 'requested',
+      user_1: this.requester,
+      user_2: user,
+    };
+    var newFriendship = new Friendship(this.requester, friend);
 
     this.userService
       .addFriend(newFriendship)
@@ -125,11 +136,11 @@ export class NetworkComponent implements OnInit {
 
   deleteFriend(user) {
     //if (this.friendships) {
-      //this.friendships = this.updateFriendship(this.friendships, user, 'none');
+    //this.friendships = this.updateFriendship(this.friendships, user, 'none');
     //}
 
     var tmp = {name: user, status: "none"};
-    var newFriendship = new Friendship(tmp);
+    var newFriendship = new Friendship(user, tmp);
 
     this.userService
       .addFriend(newFriendship)
