@@ -61,7 +61,7 @@ export class UserService {
   getNetwork(): Promise<NetworkUser[]> {
     return this.http.get(this.apiURLNetwork, options)
       .toPromise()
-      .then((res: Response) => res.json()[0].map(obj => new NetworkUser(obj)))
+      .then((res: Response) => res.json().map(obj => new NetworkUser(obj)))
       .catch(this.handleError);
   }
 
@@ -125,7 +125,7 @@ export class UserService {
   }
 
   deleteDevice(addDevice: Device): Promise<any> {
-    return this.http.delete(this.apiURLDevice, addDevice)
+    return this.http.delete(this.apiURLDevice + "?device=" + addDevice)
       .toPromise()
       .catch(this.handleError);
   }

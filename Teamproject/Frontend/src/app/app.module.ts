@@ -66,9 +66,8 @@ import { ChangedeviceComponent } from './changedevice/changedevice.component';
         'pathMatch': 'full'
       },
       {
-        'path': 'changedevice',
-        'component': ChangedeviceComponent,
-        'pathMatch': 'full'
+        'path': 'changeDevice/:deviceID',
+        'component': ChangedeviceComponent
       },
       {
         'path': 'coins',

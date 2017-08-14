@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/services/user.service'; //API Service
 import { Router } from '@angular/router';
 import { Device } from '../shared/model/device';
+import { ChangeDevice } from '../shared/model/ChangeDevice';
 
 @Component({
   selector: 'app-devicemanagement',
@@ -13,10 +14,12 @@ import { Device } from '../shared/model/device';
 export class DevicemanagementComponent implements OnInit {
 
   registeredDevices: Device[];
+  device: Device;
 
   constructor(
+    public changeDevice: ChangeDevice,
     private userService: UserService, //API Service
-    private router: Router,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -46,10 +49,12 @@ export class DevicemanagementComponent implements OnInit {
     this.userService
       .deleteDevice(name.device)
       .catch(this.handleError);
+    window.location.reload();
   }
 
-  changeDevice(name){
-
+  changeDeviceNav(name){
+    this.changeDevice.device = name;
+    this.router.navigate(['/changeDevice', name.device]);
   }
 
   private handleError(error: any): Promise<any> {
