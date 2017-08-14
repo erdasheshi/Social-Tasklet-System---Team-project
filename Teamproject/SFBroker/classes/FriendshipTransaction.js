@@ -1,6 +1,7 @@
 var constants = require('../constants');
 var Models = require("../app"); //Instantiate a Models object so you can access the models.js module.
 var uuidV1 = require('uuid/v1');
+var logic = require('../routes/logic');
 
 var mongoose = require('mongoose');
 var Friendships = require("../models/Friendships");
@@ -100,11 +101,9 @@ function findAll(callback) {
 function findNetwork(data, callback) {
     var username = data.username;
     Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
-        if (e) return next(e, null);
-        var response = '{ "username": "' + username + '", "connections": ' + JSON.stringify(data) + '}';
-        callback(null, JSON.parse(response.toString()));
-
-    });
+       if (e) return next(e, null);
+       callback(null, data);
+});
 }
 
 function findFriends(data, callback) {

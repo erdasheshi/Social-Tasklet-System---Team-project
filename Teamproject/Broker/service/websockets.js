@@ -110,6 +110,8 @@ module.exports = function (server) {
             io.sockets.emit('SendingTaskletToProvider', data);
         });
 
+
+
       /*        device.findByStatus({status: 'inactive'}, function (err, data) {
 
 
