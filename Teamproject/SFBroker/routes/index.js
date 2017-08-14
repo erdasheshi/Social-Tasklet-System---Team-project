@@ -44,7 +44,6 @@ router.get('/acctransaction', authService.loggedIn, function (req, res, next) {
         });
     }
 });
-/******************
 
  /* GET friend transactions. */
 router.get('/friendship', authService.loggedIn, function (req, res, next) {
@@ -195,13 +194,10 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
 
         if (download) {
             downloadManager.provideDownload({id: id}, function (err, data) {
-<<<<<<< HEAD
                 if (err) return next(err);
                 res.download(data.destination + "MiddlewareExecutable.zip");
-=======
                 if (err) return res.status(500).json({err: 'Action not successful!'} );
                 res.download(data.destination);
->>>>>>> refs/remotes/origin/master
             });
         }
         else {
