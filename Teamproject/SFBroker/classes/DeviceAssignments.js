@@ -12,9 +12,6 @@ var replicationManager = require('./../replication/replicationManager');
 //Initializing a transaction
 function DeviceAssignments(data) {
     this.device = data.device;
-    if (!this.device) {
-        this.device = uuidV1();
-    }
     this.name = data.name,
     this.username = data.username,
     this.price = data.price,
@@ -25,22 +22,45 @@ DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
     Device.findOne({'device': this.device}, function (e, udata) {
         if (udata == null) {
-            var device = new Device(tmpDevice);
-            device.save({}, function (error, data) {
-                if (error) {
-                    console.error(error);
-                }
-                if (callback) {
-                    replicationManager.CollectUpdates({
-                        username: tmpDevice.username,
-                        device: tmpDevice.device,
-                        status: tmpDevice.status,
-                        price: tmpDevice.price,
-                        key: constants.Device
+            if (tmpDevice.device) {
+                var device = new Device(tmpDevice);
+                device.save({}, function (error, data) {
+                    if (error) {
+                        console.error(error);
+                    }
+                    if (callback) {
+                        replicationManager.CollectUpdates({
+                            username: tmpDevice.username,
+                            device: tmpDevice.device,
+                            status: tmpDevice.status,
+                            price: tmpDevice.price,
+                            key: constants.Device
+                        });
+                        callback(null, tmpDevice);
+                    }
+                });
+            }
+            else {
+                generateDeviceID({}, function (e, data) {
+                    tmpDevice.device = data;
+                    var device = new Device(tmpDevice);
+                    device.save({}, function (error, data) {
+                        if (error) {
+                            console.error(error);
+                        }
+                        if (callback) {
+                            replicationManager.CollectUpdates({
+                                username: tmpDevice.username,
+                                device: tmpDevice.device,
+                                status: tmpDevice.status,
+                                price: tmpDevice.price,
+                                key: constants.Device
+                            });
+                            callback(null, tmpDevice);
+                        }
                     });
-                    callback(null, true);
-                }
-            });
+                });
+            }
         }
         else {
             Device.update({'device': tmpDevice.device},
@@ -57,7 +77,7 @@ DeviceAssignments.prototype.save = function (callback) {
                             price: tmpDevice.price,
                             key: constants.Device
                         });
-                        callback(null, true);
+                        callback(null, tmpDevice);
                     }
                 });
         }
@@ -116,6 +136,20 @@ function deleteByUser(data, callback) {
     });
 }
 
+function generateDeviceID(data, callback) {
+    Device.findOne()
+        .sort('-device')
+        .exec(function (err, doc) {
+            if (doc) {
+                var result = doc.device + 1;
+                callback(null, result);
+            }
+            else {
+                callback(null, 1);
+            }
+        });
+}
+
 module.exports = {
     DeviceAssignments: DeviceAssignments,
 
@@ -141,6 +175,10 @@ module.exports = {
 
     deleteByUser: function (data, callback) {
         return deleteByUser(data, callback);
+    },
+
+    generateDeviceID: function (data, callback) {
+        return generateDeviceID(data, callback);
     }
 
 }
