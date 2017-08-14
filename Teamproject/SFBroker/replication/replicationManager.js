@@ -13,7 +13,6 @@ function CollectUpdates(data) {
         if (e) return next(e);
         switch (logData.key) {
             case constants.Device:    //keeping track of added device transactions
-            console.log(logData.price + "the price");
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
                 log.add(JSON.parse(JSON.stringify(update)));
                 break;
