@@ -9,13 +9,10 @@ var Device = mongoose.model("Device", Devices.deviceSchema); //This creates a De
 //Initializing a transaction
 function DeviceAssignments(data) {
     this.device = data.device;
-    if (!this.device) {
-        this.device = uuidV1();
-    }
     this.name = data.name,
-        this.username = data.username,
-        this.price = data.price,
-        this.status = data.status
+    this.username = data.username,
+    this.price = data.price,
+    this.status = data.status
 }
 
 DeviceAssignments.prototype.save = function (callback) {
