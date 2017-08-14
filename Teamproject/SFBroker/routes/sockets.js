@@ -74,10 +74,14 @@ socket_c.on('SFInformation', function (data) {
     var balance, further;
     var key = 'Updates';
     var min_balance = 1;
-    var username = data.username;
-    var broker = 5;   //*** needs to be send by the broker with the information request
+    var device = data.device;
+	var broker = 5;   //*** needs to be send by the broker with the information request
     var taskletid = data.taskletid;
-
+	
+	deviceAssignment.findByID({device: device}, function(error, data){
+					
+				var username = data.username;
+		
     console.log("Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
 
     // Check if the user has enough money in his account
@@ -87,7 +91,7 @@ socket_c.on('SFInformation', function (data) {
 
         //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
         if (balance >= min_balance) {
-            further = 'yes';
+            further = true;
             // create dummy transaction
             var accTransaction = accountingTransaction.get({
                 consumer: username,
@@ -103,13 +107,17 @@ socket_c.on('SFInformation', function (data) {
             logic.updateBalance(difference, username);
         }
         else {
-            further = 'no';
+            further = false;
         }
-    });
-    var updates = replicationManager.updateBroker(broker);
+		
+		var updates = replicationManager.updateBroker(broker);
     //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
     //the socket call that will return the results and the updates to the broker
     socket_c.emit('SFInformation', {further: further, username: username, taskletid: taskletid, updates: updates});
+	});
+	
+    });
+  
 });
 
 // Step 11: Tasklet finished + Tasklet cycles known

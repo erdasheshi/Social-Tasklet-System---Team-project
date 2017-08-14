@@ -3,9 +3,13 @@ var net = require('net');
 var conf  = require('./../../config.json');
 var pH 	= require('./protocolHeader');
 var providerList 	= require('./providerList');
+var taskletList 	= require('./taskletList');
 var constants = require('./../../constants');
 var uuidV1 = require('uuid/v1');
 
+var devices = require('./../../classes/DeviceAssignments');
+var web = require('./../websockets');
+var taskletManager = require('./../taskletManager');
 
 // Socket Request
 var server_request = net.createServer(function(socket) {
@@ -26,10 +30,8 @@ var server_request = net.createServer(function(socket) {
 		if(messageType == constants.bRequestMessage){
 			
 			var taskletid = uuidV1();
-			var broker_id = 3; //important in case of distributed - multiple brokers
+			var broker_id = 5; //important in case of distributed - multiple brokers
 
-			// TODO: Get the username
-			
 			var isRemote = data.readInt32LE(12);
 			var requestedNumber = data.readInt32LE(16);
 			var requestedInstances = data.readInt32LE(20);
@@ -41,16 +43,27 @@ var server_request = net.createServer(function(socket) {
 			requestingIP = socket.remoteAddress;
 			var deviceID = providerList.getDeviceID(requestingIP);
 			
-			console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Minimum Speed: ' + minimumSpeed + ' Requesting IP: ' + requestingIP + ' Cost: ' + cost + ' Privacy: ' + privacy);
+			taskletList.insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy);
+							
 			//Step 2: Sending information request to SFBroker
-			//sendSFInformation(username, taskletid, broker_id);
+			web.sendSFInformation(deviceID, taskletid, broker_id);
 			
-			// Step 4: Finding most suitable provider
-			//var selectedProvider = scheduling(XXX);
+			console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Minimum Speed: ' + minimumSpeed + ' Requesting IP: ' + requestingIP + ' Cost: ' + cost + ' Privacy: ' + privacy);
 			
 			// Step 5: Informing the consumer
 			var buf1 = pH.writeProtocolHeader(constants.bResponseMessage);
 			
+			
+			//var buf2 = Buffer.alloc(length + 1);
+			//buf2.writeIntLE('bla',0,
+			
+				
+			//var totalLength = buf1.length + buf2.length;
+			//var buf = Buffer.concat([buf1,buf2],totalLength);	
+			
+			//socket.write(buf);
+			
+			//socket.end();
 			
 		}
 		
@@ -65,4 +78,22 @@ var server_request = net.createServer(function(socket) {
     });
 });
 
+function prepareScheduling(data){
+	
+	var informations = tasklet.getTasklet(data.taskletid);
+	
+	 //Step 4: Finding most suitable provider
+    taskletManager.scheduling(informations, function (error, data) {
+                    if (error) console.error(error);
+                    
+                });
+	
+};
+
 server_request.listen(conf.tasklet.port, conf.tasklet.ip);
+
+module.exports = {
+    prepareScheduling: function (data) {
+        return prepareScheduling(data);
+    }
+}

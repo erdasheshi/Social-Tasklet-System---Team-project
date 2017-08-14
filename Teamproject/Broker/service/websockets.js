@@ -7,6 +7,8 @@ var uuidV1 = require('uuid/v1');
 var constants = require('./../constants');
 var devices = require('../classes/DeviceAssignments');
 
+var tasklet = require('./tasklet/tasklet');
+
 var io;
 
 //websocket
@@ -20,22 +22,6 @@ function initialize(server) {
         var broker_id = 3;    //important in case of distributed - multiple brokers
         var address = socket.request.connection;
 
-        // Step 1: Handle Tasklet request
-        socket.on('TaskletSendBroker', function (data) {
-            // Creating Tasklet ID
-            var taskletid = uuidV1();
-            console.log(data.name + "  username  " + taskletid + " id " + data.cost + " tasklet request info");
-
-            // Step 2: Information request to SFBroker
-            io.sockets.emit('SFInformation', {
-                zeit: new Date(),
-                username: data.username,
-                taskletid: taskletid,
-                broker: broker_id
-            });
-
-        });
-
         socket.on('SFInformation', function (data) {
             var username = data.username;
             var taskletid = data.taskletid;
@@ -43,31 +29,14 @@ function initialize(server) {
             //store the updates before proceeding
             repClient.setUpdates(data.updates);
 
-            if (data.further == 'yes') { // Check if the user has enough money
-
-                //Step 4: Finding most suitable provider                           //***update if needed (based on the whole scheduling idea)
-                taskletManager.scheduling({
-                    username: username,
-                    cost: tasklet_data.cost,
-                    reliability: tasklet_data.reliability,
-                    speed: tasklet_data.speed,
-                    privacy: data.privacy
-                }, function (error, data) {
-                    if (error) console.error(error);
-                    io.sockets.emit('ShowProviderInformation', {
-                        zeit: new Date(),
-                        username: username,
-                        taskletid: taskletid,
-                        provider: data.provider,
-                        potentialProvider: data.potentialProvider
-                    });
-                });
+            if (data.further == true) { // Check if the user has enough money
+				
+				tasklet.prepareScheduling(data);
+				
             }
             else {
                 // If balance not sufficient, inform the Consumer about the cancellation
-                io.sockets.emit('CancelTasklet', {
-                    consumer: data.username, taskletid: data.taskletid
-                });
+               
             }
         });
 
@@ -100,6 +69,15 @@ function activateDevice(data) {
     });
 }
 
+function sendSFInformation(deviceID, taskletid, broker_id){
+	  io.sockets.emit('SFInformation', {
+                device: deviceID,
+                taskletid: taskletid,
+                broker: broker_id
+            });
+
+}
+
 module.exports = {
     initialize: function (server) {
         return initialize(server);
@@ -107,5 +85,9 @@ module.exports = {
 
     activateDevice: function (data) {
         return activateDevice(data);
-    }
+    },
+	
+	sendSFInformation: function(deviceID, taskletid, broker_id){
+		return sendSFInformation(deviceID, taskletid, broker_id)
+	}
 }
