@@ -186,21 +186,19 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         status: constants.DeviceStatusInactive,
         price: req.body.price
     });
-    var id = device.device;
 
     var download = req.body.download;
 
-    device.save(function (err, post) {
+    device.save(function (err, data) {
         if (err) return next(err);
-
         if (download) {
-            downloadManager.provideDownload({id: id}, function (err, data) {
-                if (err) return res.status(500).json({err: 'Action not successful!'} );
+            downloadManager.provideDownload({ id: data.device }, function (err, data) {
+                if (err) return res.status(500).json({ err: 'Action not successful!' } );
                 res.download(data.destination);
             });
         }
         else {
-             res.json('Device successfully registered!');
+            res.json('Device successfully registered!');
         }
     });
 });

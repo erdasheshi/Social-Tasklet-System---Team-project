@@ -1,0 +1,128 @@
+int[42] a;
+int value;
+
+
+procedure int horizontalWin(){
+int x, y;
+x := 0;
+y := 0;
+
+
+	while(y < 6){
+		x:=0;
+		while(x < 4){
+			if(a[(x*6)+y] > 0){
+				if(a[x*6+y] = a[(x+1)*6+y]){
+					if(a[(x+1)*6+y] = a[(x+2)*6+y]){
+						if(a[(x+2)*6+y] = a[(x+3)*6+y]){
+							return a[(x*6)+y];
+						}
+					}
+				}
+			}
+		x := x+1;
+		}
+	y := y +1;
+	}
+
+	<<0;
+	return 5;
+
+}
+
+procedure int verticalWin(){
+int x, y;
+x := 0;
+y := 0;
+
+
+
+	while(y < 7){
+		x := 0;
+		while(x < 3){
+			if(a[(y*6)+x] > 0){
+				if(a[(y*6)+x] = a[(y*6)+x+1]){
+					if(a[(y*6)+x+1] = a[(y*6)+x+2]){
+						if(a[(y*6)+x+1] = a[(y*6)+x+2]){
+							return a[(y*6)+x];
+						} 			
+					} 			
+				} 			
+			}
+		x++;
+		}
+	y++;
+	}
+
+
+
+	return 5;
+
+}
+
+
+
+procedure int diagonalWin(){
+int x, y;
+x := 3;
+y := 0;
+
+	while(y < 4){
+		x := 3;
+		while(x < 6){
+			if(a[x+(y*6)] > 0){
+				if(a[x+(y*6)] = a[x+(y*6)+(1*5)]){
+					if(a[x+(y*6)+(1*5)] = a[x+(y*6)+(2*5)]){
+						if(a[x+(y*6)+(2*5)] = a[x+(y*6)+(3*5)]){
+							return a[x+(y*6)];
+						}
+					}
+				}
+			}
+		x++;
+		}
+	y++;
+	}
+
+	<<6;
+	
+	y := 0;
+	x := 0;
+	
+	while(y < 4){
+		x := 0;
+		while(x < 3){
+			if(a[x+(y*6)] > 0){
+				if(a[x+(y*6)] = a[x+(y*6)+(1*7)]){
+					if(a[x+(y*6)+(1*7)] = a[x+(y*6)+(2*7)]){
+						if(a[x+(y*6)+(2*7)] = a[x+(y*6)+(3*7)]){
+							<<7;
+							return a[x+(y*6)];
+						}
+					}
+				}
+			}
+		x++;
+		}
+	y++;
+	}
+	
+	<<8;
+	return 5;
+
+}
+
+procedure int isWinner(){
+
+
+	return 1;
+}
+
+>>a;
+
+a[5] := 2;
+a[10] := 2;
+a[15] := 2;
+a[20] := 2;
+
+<<isWinner();
