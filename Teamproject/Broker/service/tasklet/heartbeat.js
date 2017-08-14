@@ -14,6 +14,7 @@ var server_heartbeat = net.createServer(function(socket) {
     });
 
     socket.on('data', function(data) {
+		
 
         var messageType = pH.readProtocolHeader(data);
 
@@ -24,12 +25,13 @@ var server_heartbeat = net.createServer(function(socket) {
 		if(messageType == constants.bHeartbeatMessage){
 			console.log('Heartbeat from: ' + socket.remoteAddress + ":" + socket.remotePort);
 			var address = socket.remoteAddress;
+			
 			var deviceID = data.readInt32LE(12);
 			
 			//Adding the new client if it is not yet in the list
 			//Otherwise just update the timestamp
 			providerList.insertProvider(address, deviceID);
-			
+	
 			var buf1 = pH.writeProtocolHeader(constants.bIPMessage);
 			var buf2 = Buffer.alloc(4);
 			buf2.writeInt32LE(address,0);
@@ -39,11 +41,13 @@ var server_heartbeat = net.createServer(function(socket) {
 			
 			socket.write(buf);
 			
+			socket.end();
+			
 		}
 		
 		if(messageType == constants.benchmarkMessage){
 			var address = socket.remoteAddress;
-			var benchmark = data.readFloatLE(16);
+			var benchmark = data.readFloatLE(12);
 			
 			//Replace the default benchmark with the actual one
 			providerList.updateBenchmark(address, benchmark);
@@ -54,7 +58,7 @@ var server_heartbeat = net.createServer(function(socket) {
 			console.log('Received a wrong message type in heartbeat data');
 		}
 	
-
+		
     });
 
     socket.on('close', function(data) {

@@ -60,6 +60,12 @@ function decreaseAvailableVMs(address){
 	console.log(provider.toObject());
 }
 
+function getDeviceID(address){
+	var infos = provider.get(address);
+	var deviceID = infos.deviceID;
+	
+	return deviceID;
+}
 
 module.exports = {
 	
@@ -81,5 +87,9 @@ module.exports = {
 	
 	decreaseAvailableVMs: function(address){
 		return decreaseAvailableVMs(address)
+	},
+	
+	getDeviceID: function(address){
+		return getDeviceID(address)
 	}
 };
