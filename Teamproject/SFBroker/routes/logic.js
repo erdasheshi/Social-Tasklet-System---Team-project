@@ -1,17 +1,17 @@
 //the functions that are used in the APIs with the Broker
-
-var dbAccess = require('./dbAccess');
 var constants = require('../constants');
-var user = require('../classes/User');
-var log = require('./../replication/log');
-var broker_log = require('./../replication/broker_log');
 
-//********************** tested ***************//
+var mongoose = require('mongoose');
+var Friendships = require("../models/Friendships");
+var accountingTransaction = require('../classes/AccountingTransaction');
+var friendshipTransaction = require('../classes/FriendshipTransaction');
+var user = require('../classes/User');
+
 function findAllTransactions(user, callback) {
     var user = user.username;
     var transactionsProcessed = 0;
     var transactionList = '[';
-    dbAccess.find({type: constants.Accounting, username: user}).exec(function (e, res) {
+    accountingTransaction.findByUser({ username: user }, function (e, res) {
         if (e) callback(e, null);
         res.forEach(function (data, index, array) {
             transactionList = transactionList.concat('{ "consumer": "' + data.consumer +
@@ -33,14 +33,13 @@ function findAllTransactions(user, callback) {
     });
 }
 
-function findFriends(user, callback) {
+function findFriendships(data, callback) {
+console.log("in the findfriendship function");
     var F_List = '[';
-    var user = user.username;
-    var friend;
-    var key = 'Network';
-    var status;
+    var user = data.username;
+    var friend, status;
     var userProcessed = 0;
-    dbAccess.find({type: constants.Friendship, username: user, key: key}).exec(function (e, res) {
+    friendshipTransaction.findNetwork({username: user}, function (e, res) {
         if (e) callback(e, null);
         res.forEach(function (data, index, array) {
             if (data.status == constants.FriendshipStatusRequested) {
@@ -50,8 +49,6 @@ function findFriends(user, callback) {
                 } else if (data.user_2 == user) {
                     friend = data.user_1;
                     status = constants.FriendshipStatusPending;
-                    console.log('HIER' + status);
-                    console.log('HIER' + status);
                 }
             }
             else if (data.status == constants.FriendshipStatusConfirmed) {
@@ -67,18 +64,19 @@ function findFriends(user, callback) {
             if (userProcessed == array.length) {
                 F_List = F_List.concat(']');
                 F_List = F_List.replace('}{', '},{');
-                callback(null, F_List);
             }
             else{
                 F_List = F_List.replace('}{', '},{');
             }
         });
+         callback(null, F_List);
     });
-}
+    }
+
 
 //update user's balance
 function updateBalance(difference, username) {
-    dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+    user.findByUser({ username: username}, function (e, data) {
         var balance = data.balance;
 
         if (isNaN(difference)){
@@ -95,15 +93,12 @@ function updateBalance(difference, username) {
 };
 
 module.exports = {
-    CollectUpdates: function(data, id, key){
-            return CollectUpdates(data, id, key) ; },
-    updateBroker: function(broker) {
-            return updateBroker(broker); },
+    findFriendships : function( data, callback)  {
+             return findFriendships( data, callback) ; },
+
+    findAllTransactions : function(user, callback)  {
+             return findAllTransactions(user, callback) ; },
+
     updateBalance: function(difference, username) {
-            return updateBalance(difference, username); },
-    syncBroker: function(broker, version) {             //*********** its a local function, no need to export
-             return syncBroker(broker, version); },
-    readBroker: function(broker) {
-            return readBroker(broker);
-    }
+            return updateBalance(difference, username); }
 };

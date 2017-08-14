@@ -9,6 +9,8 @@ var log = require('./../replication/log');
 var user = require('../classes/User');
 var accountingTransaction = require('../classes/AccountingTransaction');
 var coinTransaction = require('../classes/CoinTransaction');
+var deviceAssignment = require('../classes/DeviceAssignments');
+
 
 var replicationManager = require('./../replication/replicationManager');
 
@@ -138,3 +140,20 @@ var accTransaction = accountingTransaction.get({
         console.log('Tasklet ' + res.taskletid + ' confirmed!');
         });
     });
+ //Activate device when recieved the first heartbeat
+socket_c.on('ActivateDevice', function (data) {
+if (data.status == 'Active'){
+deviceAssignment.findByID( { device:data.device }, function (e, data) {
+    var device = deviceAssignment.get({
+                 username: data.username,
+                 name: data.name,
+                 device: data.device,
+                 price: data.price ,
+                 status: data.status
+    });
+    device.save(function (err, post) {
+        if (err) return next(err);
+    });
+});
+}
+});
