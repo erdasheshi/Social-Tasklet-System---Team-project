@@ -1,30 +1,24 @@
-express = require('express');
-app = express();
+//express = require('express');
+//app = express();
 
 var taskletManager = require('./taskletManager');
 var repClient = require('./replicationClient');
 var uuidV1 = require('uuid/v1');
 var constants = require('./../constants');
-
-
 var devices = require('../classes/DeviceAssignments');
 
-//websocket
-server = require('http').createServer(app);
+var io;
 
-module.exports = function (server) {
-    var io = require('socket.io').listen(server);
+//websocket
+//server = require('http').createServer(app);
+
+function initialize(server) {
+    io = require('socket.io').listen(server);
 
     io.sockets.on('connection', function (socket) {
         var taskletid, username;
         var broker_id = 3;    //important in case of distributed - multiple brokers
         var address = socket.request.connection;
-        console.log('New connection from ' + address.remoteAddress + ':' + address.remotePort);
-
-        //Connecting new Consumer/Provider with Broker
-        socket.on('event', function (data) {
-            console.log('New Entity online');
-        });
 
         // Step 1: Handle Tasklet request
         socket.on('TaskletSendBroker', function (data) {
@@ -32,26 +26,11 @@ module.exports = function (server) {
             var taskletid = uuidV1();
             console.log(data.name + "  username  " + taskletid + " id " + data.cost + " tasklet request info");
 
-            // Step 1: Illustrating the Tasklet request
-            io.sockets.emit('ShowTaskletRequest', {
-                zeit: new Date(),
-                username: data.username,
-                taskletid: taskletid,
-                cost: data.cost,
-                privacy: data.privacy,
-                speed: data.speed,
-                reliability: data.reliability
-            });
-
             // Step 2: Information request to SFBroker
             io.sockets.emit('SFInformation', {
                 zeit: new Date(),
                 username: data.username,
                 taskletid: taskletid,
-                cost: data.cost,
-                privacy: data.privacy,
-                speed: data.speed,
-                reliability: data.reliability,
                 broker: broker_id
             });
 
@@ -74,7 +53,7 @@ module.exports = function (server) {
                     speed: tasklet_data.speed,
                     privacy: data.privacy
                 }, function (error, data) {
-                    if(error) console.error(error);
+                    if (error) console.error(error);
                     io.sockets.emit('ShowProviderInformation', {
                         zeit: new Date(),
                         username: username,
@@ -110,21 +89,23 @@ module.exports = function (server) {
             io.sockets.emit('SendingTaskletToProvider', data);
         });
 
+    });
+}
 
+function activateDevice(data) {
+    var device = data.device;
+    io.sockets.emit('ActivateDevice', {
+        device: device,
+        status: constants.DeviceStatusActive
+    });
+}
 
-      /*        device.findByStatus({status: 'inactive'}, function (err, data) {
+module.exports = {
+    initialize: function (server) {
+        return initialize(server);
+    },
 
-
-        data.forEach(function (data, index, array) {
-           //****relate to the heartbeat--- check device
-           if(){
-           io.sockets.emit('ActivateDevice', {
-                device: device,
-                status: 'active'
-           });
-           }
-        });
-        });
-    });*/
-});
+    activateDevice: function (data) {
+        return activateDevice(data);
+    }
 }

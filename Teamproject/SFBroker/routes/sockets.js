@@ -1,6 +1,6 @@
 //Socket calls with the Broker
 var express = require('express')
-, app = express();
+    , app = express();
 
 var constants = require('../constants');
 var logic = require('./logic');
@@ -25,30 +25,30 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        coinTransaction.findByApproval({ approval: 'false' }, function (e, data) {
+        coinTransaction.findByApproval({approval: 'false'}, function (e, data) {
             io.sockets.emit('Requested_Coins', data);
         });
     });
 
-   //Store the request as approved and updates the balance for the user
+    //Store the request as approved and updates the balance for the user
     socket.on('CoinsApproval', function (data) {
-      var username = data.username;
-      var coins = parseInt( data.requestedCoins);
-        new_balance = 0 ;
-         var coinTr = coinTransaction.get({
-             requestid: data.requestid,
-             approval: data.approval,
-             username: username,
-             requestedCoins: coins
-         });
-         coinTr.save(function (err, post) {
-             if (err) return next(err);
-         });
+        var username = data.username;
+        var coins = parseInt(data.requestedCoins);
+        new_balance = 0;
+        var coinTr = coinTransaction.get({
+            requestid: data.requestid,
+            approval: data.approval,
+            username: username,
+            requestedCoins: coins
+        });
+        coinTr.save(function (err, post) {
+            if (err) return next(err);
+        });
         user.findByUser({username: username}, function (e, data) {
-            if (data.balance == undefined){
-           var old_balance = 5;
-               }
-           else {
+            if (data.balance == undefined) {
+                var old_balance = 5;
+            }
+            else {
                 var old_balance = parseInt(data.balance);
             }
             new_balance = coins + old_balance;
@@ -62,7 +62,7 @@ io.sockets.on('connection', function (socket) {
             console.log(new_balance + ": the new balance of the consumer");
             user_balance.update();
         });
-     })
+    })
 });
 
 // Connect to Broker
@@ -71,46 +71,46 @@ socket_c.emit('event', {connection: 'I want to connect'});
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
-    var  balance, further;
+    var balance, further;
     var key = 'Updates';
     var min_balance = 1;
     var username = data.username;
     var broker = 5;   //*** needs to be send by the broker with the information request
     var taskletid = data.taskletid;
 
- console.log( "Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
+    console.log("Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
 
     // Check if the user has enough money in his account
-   user.findByUser({username: username}, function (e, user_data) {
+    user.findByUser({username: username}, function (e, user_data) {
         balance = user_data.balance;
         console.log(user_data.balance + ": user's balance");
 
         //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
-          if(balance >= min_balance) {
-             further = 'yes';
+        if (balance >= min_balance) {
+            further = 'yes';
             // create dummy transaction
             var accTransaction = accountingTransaction.get({
-                   consumer: username,
-                   coins: min_balance,
-                   status: constants.AccountingStatusBlocked,
-                   taskletid: taskletid,
-                   time: new Date()
-                });
-                accTransaction.save(function (err, post) {
-                    if (err) return next(err);
-                });
+                consumer: username,
+                coins: min_balance,
+                status: constants.AccountingStatusBlocked,
+                taskletid: taskletid,
+                time: new Date()
+            });
+            accTransaction.save(function (err, post) {
+                if (err) return next(err);
+            });
             var difference = -1 * min_balance;
             logic.updateBalance(difference, username);
-            }
-            else{
-             further = 'no';
-            }
-         });
-  var updates = replicationManager.updateBroker(broker);
-   //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
- //the socket call that will return the results and the updates to the broker
-socket_c.emit('SFInformation', {further: further, username: username, taskletid: taskletid, updates: updates});
+        }
+        else {
+            further = 'no';
+        }
     });
+    var updates = replicationManager.updateBroker(broker);
+    //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
+    //the socket call that will return the results and the updates to the broker
+    socket_c.emit('SFInformation', {further: further, username: username, taskletid: taskletid, updates: updates});
+});
 
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
@@ -118,42 +118,43 @@ socket_c.on('TaskletCyclesReturn', function (data) {
     var cost = data.cost;
     var taskletid = data.taskletid;
     var provider = data.provider;    //***here we get the username of the provider, not the device anymore
-     accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
+    accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
         var initial_coins = res.coins;
         var consumer = res.consumer;
         var difference = initial_coins - cost;
 
-var accTransaction = accountingTransaction.get({
-       consumer: consumer,
-       provider: provider,
-       coins: cost,
-       status: constants.AccountingStatusConfirmed
-    });
-    accTransaction.save(function (err, post) {
-        if (err) return next(err);
-    });
+        var accTransaction = accountingTransaction.get({
+            consumer: consumer,
+            provider: provider,
+            coins: cost,
+            status: constants.AccountingStatusConfirmed
+        });
+        accTransaction.save(function (err, post) {
+            if (err) return next(err);
+        });
         //transferring money to the provider
         logic.updateBalance(cost, provider);
 
         // fixing the balance of the consumer, based on the real cost
         logic.updateBalance(difference, consumer);
         console.log('Tasklet ' + res.taskletid + ' confirmed!');
-        });
-    });
- //Activate device when recieved the first heartbeat
-socket_c.on('ActivateDevice', function (data) {
-if (data.status == 'Active'){
-deviceAssignment.findByID( { device:data.device }, function (e, data) {
-    var device = deviceAssignment.get({
-                 username: data.username,
-                 name: data.name,
-                 device: data.device,
-                 price: data.price ,
-                 status: data.status
-    });
-    device.save(function (err, post) {
-        if (err) return next(err);
     });
 });
-}
+//Activate device when recieved the first heartbeat
+socket_c.on('ActivateDevice', function (data) {
+    if (data.status == constants.DeviceStatusActive) {
+        deviceAssignment.findByID({device: data.device}, function (e, data) {
+            var device = deviceAssignment.get({
+                username: data.username,
+                name: data.name,
+                device: data.device,
+                price: data.price,
+                status: constants.DeviceStatusActive
+            });
+
+            device.save(function (err, post) {
+                if (err) return next(err);
+            });
+        });
+    }
 });

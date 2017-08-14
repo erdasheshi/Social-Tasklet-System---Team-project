@@ -64,7 +64,7 @@ function findByUser(data, callback) {
 
 function findByID(data, callback) {
     var device = data.device;
-    Device.find({'device': device}, function (err, obj) {
+    Device.findOne({'device': device}, function (err, obj) {
         if (err) callback(err, null);
         if (callback) callback(null, obj);
     });
