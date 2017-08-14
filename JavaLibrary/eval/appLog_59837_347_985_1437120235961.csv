@@ -1,0 +1,2 @@
+Type;Serial;Subserial;IP(long);IP(String);Port;AppIdentifier;Session;Trial;ResultSize;ExecutingHost(long);ExecutingHost(String);Info1;Info2;Time;SystemStart
+SYSTEM_START;0;0;0;0.0.0.0;59837;-730301509;347;985;0;0;0.0.0.0;-1;-1;1437120235962;1437120235961
