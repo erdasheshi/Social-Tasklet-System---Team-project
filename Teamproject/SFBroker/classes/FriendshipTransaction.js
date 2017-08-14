@@ -154,11 +154,9 @@ function deleteByUsers(data, callback) {
 }
 
 function deleteByUser(data, callback) {
- console.log("it deleted the frindships   in the frindship");
 var user_1 = data.username;
 Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){
 res.forEach(function (data, index, array) {
-console.log("in the friendship loop");
 var id = data.id;
   deleteByID({ id: id });
     });

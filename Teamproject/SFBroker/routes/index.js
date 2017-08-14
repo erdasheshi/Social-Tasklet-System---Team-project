@@ -75,7 +75,7 @@ router.get('/user', authService.loggedIn, function (req, res, next) {
     }
 });
 
-/* GET sfbusertransactions.  Not used in the frontend yet???*/
+/* GET sfbusertransactions.  Not used in the frontend yet???*/          //to be removed....not used and after the refactoring, not working anymore
 router.get('/sfbusertransactions', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
     logic.findAllTransactions({ username: username}, function (e, result) {
@@ -235,7 +235,6 @@ router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 
     user.deleteByUsername({username: username}, function (err, data) {
-      console.log("inside the function");
           if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
           res.json('User successfully deleted!');
  });

@@ -57,7 +57,6 @@ function scheduling(data, callback) {
     var username        = data.username;
 
     findPotentialProvider({ username: username, privacy: privacy}, function (error, data) {
-
         if(error) callback(error, null);
 
         //Converting QoC high and low to 9 and 1
@@ -89,9 +88,7 @@ function scheduling(data, callback) {
         }
         callback(null, { provider: provider, potentialProvider : data});
     })
-
 }
-
 
 module.exports = {
     find: function (data, callback) {

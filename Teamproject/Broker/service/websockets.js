@@ -30,7 +30,6 @@ module.exports = function (server) {
         socket.on('TaskletSendBroker', function (data) {
             // Creating Tasklet ID
             var taskletid = uuidV1();
-            console.log(data.name + "  username  " + taskletid + " id " + data.cost + " tasklet request info");
 
             // Step 1: Illustrating the Tasklet request
             io.sockets.emit('ShowTaskletRequest', {
