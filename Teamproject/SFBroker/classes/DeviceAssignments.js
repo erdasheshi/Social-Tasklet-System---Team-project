@@ -16,9 +16,9 @@ function DeviceAssignments(data) {
         this.device = uuidV1();
     }
     this.name = data.name,
-        this.username = data.username,
-        this.price = data.price,
-        this.status = data.status
+    this.username = data.username,
+    this.price = data.price,
+    this.status = data.status
 }
 
 DeviceAssignments.prototype.save = function (callback) {
@@ -33,8 +33,9 @@ DeviceAssignments.prototype.save = function (callback) {
                 if (callback) {
                     replicationManager.CollectUpdates({
                         username: tmpDevice.username,
-                        id: tmpDevice.device,
+                        device: tmpDevice.device,
                         status: tmpDevice.status,
+                        price: tmpDevice.price,
                         key: constants.Device
                     });
                     callback(null, true);
@@ -51,9 +52,10 @@ DeviceAssignments.prototype.save = function (callback) {
                     else if (callback) {
                         replicationManager.CollectUpdates({
                             username: tmpDevice.username,
-                            id: tmpDevice.device,
+                            devices: tmpDevice.device,
                             status: tmpDevice.status,
-                            key: 'u_device'
+                            price: tmpDevice.price,
+                            key: constants.Device
                         });
                         callback(null, true);
                     }
@@ -109,6 +111,8 @@ function deleteByUser(data, callback) {
             var device = data.device;
             deleteByID({device: device, username: username});
         });
+        if (e) callback(e, null);
+        callback(null, true);
     });
 }
 

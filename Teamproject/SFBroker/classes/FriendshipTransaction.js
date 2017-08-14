@@ -41,7 +41,6 @@ friendshipTransaction.prototype.save = function (callback) {
                                 replicationManager.CollectUpdates({
                                     username: user_1,
                                     user_2: user_2,
-                                    status: status,
                                     key: constants.Friendship
                                 });
                             }
@@ -60,7 +59,6 @@ friendshipTransaction.prototype.save = function (callback) {
                                 replicationManager.CollectUpdates({
                                     username: user_1,
                                     user_2: user_2,
-                                    status: status,
                                     key: constants.Friendship
                                 });
                             }
@@ -82,7 +80,6 @@ friendshipTransaction.prototype.save = function (callback) {
                         replicationManager.CollectUpdates({
                             username: user_1,
                             user_2: user_2,
-                            status: status,
                             key: constants.Friendship
                         });
                     }
@@ -123,9 +120,13 @@ function deleteByID(data, callback) {
     Friendship.remove({ 'id': data.id }, function (err, obj) {
         if (err) callback(err, null);
         else {
+        Friendship.find({ 'id': id }).exec(function (e, data) {
             replicationManager.CollectUpdates({
+                username : data.user_1,
+                user_2 : data.user_2,
                 id: id,
                 key: 'd_friendship'
+            });
             });
             if (callback) callback(null, true);
         }
@@ -136,22 +137,20 @@ function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
 
-    Friendship.remove({
-        $or: [ { 'user_1': data.user_1, 'user_2': user_2 }, {
-            'user_2': user_1, 'user_1': user_2
-        } ]
+  Friendship.remove({ $or: [ { 'user_1': data.user_1, 'user_2': user_2 }, { 'user_2': user_1, 'user_1': user_2  } ]
     }, function (err, data) {
-        if (err) callback(err, null);
+       if (err) console.error(err, null);
         else {
+            Friendship.find().or([ { 'user_1': user_1, 'user_2': user_2}, {'user_1': user_2, 'user_2': user_1 } ]).exec(function (e, data) {
             replicationManager.CollectUpdates({
                 username: user_1,
                 user_2: user_2,
+                id: data.id,
                 key: 'd_friendship'
             });
-            if (callback) {
-                callback(null, true);
+            });
+           if (callback)  callback(null, true);
             }
-        }
     });
 }
 
@@ -162,11 +161,12 @@ Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(functio
 res.forEach(function (data, index, array) {
 console.log("in the friendship loop");
 var id = data.id;
-    friendship.deleteByID({ id: id, username: user_1 });
+  deleteByID({ id: id });
     });
+  if (e) callback(e, null);
+  callback(null, true);
 });
 }
-
 
 module.exports = {
     friendshipTransaction: friendshipTransaction,

@@ -15,36 +15,35 @@ function CollectUpdates(data) {
         if (e) return next(e);
         switch (logData.key) {
             case constants.Device:    //keeping track of added device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.id + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
+            console.log(logData.price + "the price");
+                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
                 log.add(JSON.parse(JSON.stringify(update)));
                 break;
 
-            case 'u_device':    //keeping track of updated device transactions
+        /*    case 'u_device':    //keeping track of updated device transactions
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.id + +'", "key": "Update",  "status": "' + logData.status + '", "price": ' + logData.price + '}';
                 log.add(JSON.parse(JSON.stringify(update)));
                 break;
-
+*/
             case 'd_device':   //keeping track of deleted device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "Device": "' + logData.device + '", "key": "Deleted" }';
+                update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
                 log.add(JSON.parse(JSON.stringify(update)));
                 break;
 
             case constants.Friendship: //keeping track of added/updated friendship transactions
                 var broker_1 = data.broker;
-                console.log(logData.user_2 + "user2");
-                brokerTransaction.findByUser({ username: logData.user_2}, function (e, data) {
+                brokerTransaction.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "status": "' + logData.status + '" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
                         log.add(JSON.parse(JSON.stringify(update)));
                 })
                 break;
             case 'd_friendship':   //keeping track of deleted friendship transactions
                 var broker_1 = data.broker;
-                brokerTransaction.findByUser({ username: logData.user_2 }, function (e, data) {
+                       brokerTransaction.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
                         log.add(JSON.stringify(update));
-                        console.log(JSON.parse(JSON.stringify(update)));
                     })
                 break;
             default:
@@ -61,6 +60,7 @@ function globalUpdate() {
 //********************** tested ***************//
 //retrieve updates related to a specific broker
 function updateBroker(broker) {
+console.log("function entered");
     var log_updates = log.read();
     var log_version = log_updates.length - 1;  //the array index of the last committed change
     var broker_updates = [];
@@ -91,8 +91,8 @@ function updateBroker(broker) {
 //update the sync version of the broker
 function syncBroker(broker, version) {
     console.log(version + " the sync version of the broker")
-    var elem = '{"broker": "' + broker + '", "version": ' + version + '}';
-    broker_log.add(JSON.parse(JSON.stringify(elem)));
+    var elem = { broker:  broker, version: version };
+    broker_log.add(elem);
 }
 
 //********************** tested ***************//
