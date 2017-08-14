@@ -109,6 +109,8 @@ function deleteByUser(data, callback) {
             var device = data.device;
             deleteByID({device: device, username: username});
         });
+        if (e) callback(e, null);
+        callback(null, true);
     });
 }
 

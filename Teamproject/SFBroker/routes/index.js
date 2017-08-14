@@ -2,7 +2,6 @@
 
 var express = require('express');
 var router = express.Router();
-var dbAccess = require('./dbAccess');  //*** This is should not be required here
 var constants = require('../constants');
 var logic = require('./logic');
 
@@ -95,7 +94,7 @@ router.get('/sfbusertransactions', authService.loggedIn, function (req, res, nex
     logic.find({type: constants.AllTransactions, username: username}, function (e, result) {
         if (e) return next(e);
         var fin_result = result;
-        dbAccess.find({type: constants.User, username: username}).exec(function (e, data) {
+        user.findByUser({username: username}), function (e, data) {
             if (e) return next(e);
             var response = '{ "username": "' + username + '", "balance": ' + data.balance + ', "transactions": ' + fin_result + '}';
             res.json(JSON.parse(response.toString()));
@@ -156,8 +155,8 @@ router.post('/acctransaction', authService.loggedIn, function (req, res, next) {
     var accTransaction = accountingTransaction.get(req.body);
 
     accTransaction.save(function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+    if (err) return res.status(500).json( {err: 'Action not successful!'} );
+    res.json('Action successful!');
     });
 });
 
@@ -171,8 +170,8 @@ router.post('/friendship', authService.loggedIn, function (req, res, next) {
     });
 
     friendship.save(function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+    if (err) return res.status(500).json( {err: 'Action not successful!'} );
+    res.json('Action successful!');
     });
 });
 
@@ -185,8 +184,8 @@ router.post('/coinrequest', authService.loggedIn, function (req, res, next) {
         approval: 'false'
     });
     coin_Transaction.save(function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+    if (err) return res.status(500).json( {err: 'Action not successful!'} );
+    res.json('Coins successfully requested!');
     });
 });
 
@@ -209,12 +208,17 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
 
         if (download) {
             downloadManager.provideDownload({id: id}, function (err, data) {
+<<<<<<< HEAD
                 if (err) return next(err);
                 res.download(data.destination + "MiddlewareExecutable.zip");
+=======
+                if (err) return res.status(500).json({err: 'Action not successful!'} );
+                res.download(data.destination);
+>>>>>>> refs/remotes/origin/master
             });
         }
         else {
-            res.json(post);
+             res.json('Device successfully registered!');
         }
     });
 });
@@ -229,10 +233,9 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
     var user_2 = req.query.user;
 
     friendshipTransaction.deleteByUsers({user_1: user_1, user_2: user_2}, function (err, data) {
-        if (err) return next(err);
-        res.json('true');
+      if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
+      res.json('Successful deletion!');
     });
-
 });
 
 /*DELETE /Device*/
@@ -240,8 +243,8 @@ router.delete('/device', authService.loggedIn, function (req, res, next) {
     var device = req.query.device;
 
     deviceAssignment.deleteByID({device: device, username: req.user.username}, function (err, data) {
-        if (err) return next(err);
-        res.json('true');
+       if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
+       res.json(' Device successfully deleted!');
     });
 });
 
@@ -249,13 +252,18 @@ router.delete('/device', authService.loggedIn, function (req, res, next) {
 router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 
-    authService.logout(req, res, function () {
-        user.deleteByUsername({username: username}, function (err, data) {
-            if (err) return next(err);
-            res.json('true');
-        });
-    });
-
+    user.deleteByUsername({username: username}, function (err, data) {
+      console.log("inside the function");
+          if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
+          res.json('User successfully deleted!');
+ });
+ //   ***     authService.logout(req, res, function () {
+ //   ***         user.deleteByUsername({username: username}, function (err, data) {
+ //   ***         console.log("inside the function");
+ //   ***             if (err) return next(err);
+ //   ***             res.json('true');
+ //   ***         });
+ //   ***     });
 });
 
 module.exports = router;

@@ -31,20 +31,18 @@ function CollectUpdates(data) {
 
             case constants.Friendship: //keeping track of added/updated friendship transactions
                 var broker_1 = data.broker;
-                console.log(logData.user_2 + "user2");
-                brokerTransaction.findByUser({ username: logData.user_2}, function (e, data) {
+                brokerTransaction.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "status": "' + logData.status + '" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "status": "Confirmed" }';
                         log.add(JSON.parse(JSON.stringify(update)));
                 })
                 break;
             case 'd_friendship':   //keeping track of deleted friendship transactions
                 var broker_1 = data.broker;
-                brokerTransaction.findByUser({ username: logData.user_2 }, function (e, data) {
+                       brokerTransaction.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
                         log.add(JSON.stringify(update));
-                        console.log(JSON.parse(JSON.stringify(update)));
                     })
                 break;
             default:

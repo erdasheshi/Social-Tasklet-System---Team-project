@@ -9,7 +9,7 @@
 		},
 		"download" :{
 			"source": "../SFBroker/download/",
-			"destination": "../SFBroker/download/MiddlewareExecutable/"
+			"destination": "../SFBroker/download/Middleware/"
 		}
 	},
 	"sfbroker_socket": {

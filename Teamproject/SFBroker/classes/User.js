@@ -78,20 +78,16 @@ function findByUser(data, callback) {
 }
 
 function deleteByUsername(data, callback){
-console.log("entered the user delete " + data.username);
     var username = data.username;
     friendship.deleteByUser({ username : username }, function(e, data){
-    console.log("it deleted the frindships");
         if (e) callback(e, null);
         device.deleteByUser({ username : username }, function(e, data) {
-            console.log("it deleted the device");
 
             if (e) callback(e, null);
             coins.deleteByUser({ username : username }, function(e, data) {
-                console.log("it deleted the coins");
                 if (e) callback(e, null);
                 User.remove({ 'username': username }, function (err, data) {
-                    console.log("it deleted the user itself");
+                    console.log("The user is deleted!");
 
                     if (err) callback(err, null);
                     if (callback) callback(null, true);

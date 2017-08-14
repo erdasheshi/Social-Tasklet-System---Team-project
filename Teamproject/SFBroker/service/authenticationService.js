@@ -20,7 +20,7 @@ function login(req, res, next) {
         }
         if (!user) {
             return res.status(401).json({
-                err: info
+                err: 'Wrong Combination!'
             });
         }
         req.logIn(user, function (err) {
@@ -40,7 +40,7 @@ function logout(req, res) {
     req.logout();
     if (req.method != 'DELETE'){
         res.status(200).json({
-            status: 'Bye!'
+           status: 'Action successful! Bye!'
         });
     }
 }
@@ -57,7 +57,7 @@ function register(req, res, next) {
         req.body.password, function (err, account) {
             if (err) {
                 return res.status(500).json({
-                    err: err
+                err: 'Registration failed!You are either using an existing username, or not providing information for mandatory input fields.'
                 });
             }
             var broker = brokerTransaction.get({
