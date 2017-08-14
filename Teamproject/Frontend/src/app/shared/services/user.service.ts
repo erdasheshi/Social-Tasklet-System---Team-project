@@ -53,7 +53,7 @@ export class UserService {
   }
 
   logoutUser(): Promise<any> {
-    return this.http.get(this.apiURLLogout, options)
+    return this.http.post(this.apiURLLogout, options)
       .toPromise()
       .catch(this.handleError);
   }
