@@ -28,7 +28,6 @@ export class NetworkComponent implements OnInit {
     this.userService
       .getNetwork()
       .then(result => {
-        console.log('Network' + result);
         this.networkUsers = result;
       })
       .catch(err => this.handleError(err));
@@ -36,7 +35,6 @@ export class NetworkComponent implements OnInit {
     this.userService
       .getFriends()
       .then(result => {
-        console.log('Friends' + result);
         this.friendships = result;
       })
       .catch(err => this.handleError(err));
@@ -44,11 +42,9 @@ export class NetworkComponent implements OnInit {
 
   getPendingFriends(): Friendship[] {
     if (this.friendships) {
-      console.log(this.friendships.length);
       return this.friendships.filter(friendship => friendship.status === 'Pending');
     }
     else {
-      console.log(this.friendships.length);
       return [];
     }
   }
@@ -93,7 +89,7 @@ export class NetworkComponent implements OnInit {
       .addFriend(newFriendship)
       .then(res => {
         if (res.status === 200) {
-          console.log('success adding a friend');
+          this.toastr.success('Friend successfully added.');
         }
       })
       .catch(err => this.handleError(err));
@@ -112,7 +108,7 @@ export class NetworkComponent implements OnInit {
       .addFriend(newFriendship)
       .then(res => {
         if (res.status === 200) {
-          console.log('success adding a friend');
+          this.toastr.info('Friendship successfully requested.');
         }
         this.friendships.push(newFriendship);
         window.location.reload();
@@ -125,7 +121,6 @@ export class NetworkComponent implements OnInit {
       .deleteFriendship(user)
       .then(() => this.userService.getFriends())
       .then(result => {
-        debugger;
         this.friendships = result;
         window.location.reload();
       })

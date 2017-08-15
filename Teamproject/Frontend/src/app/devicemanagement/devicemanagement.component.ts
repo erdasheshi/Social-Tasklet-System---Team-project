@@ -30,20 +30,16 @@ export class DevicemanagementComponent implements OnInit {
     this.userService
       .getDevices()
       .then(result => {
-        console.log('Devices' + result);
         this.registeredDevices = result;
-        console.log(this.registeredDevices);
       })
       .catch(err => this.handleError(err));
   }
 
   getregisteredDevices(): Device[] {
     if (this.registeredDevices) {
-      console.log(this.registeredDevices.length);
       return this.registeredDevices;
     }
     else {
-      console.log(this.registeredDevices.length);
       return [];
     }
   }

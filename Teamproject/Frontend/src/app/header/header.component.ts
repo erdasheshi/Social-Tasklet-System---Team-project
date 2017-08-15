@@ -24,15 +24,12 @@ export class HeaderComponent implements OnInit {
   userInfo: NetworkUser;
 
   ngOnInit() {
-
     this.userService
       .getNetwork()
       .then(result => {
-        console.log('Network' + result);
         this.networkUserForHeader = result;
       })
       .catch(err => this.handleError(err));
-
   }
 
   logoutFunction() {
@@ -40,11 +37,9 @@ export class HeaderComponent implements OnInit {
     this.userService
       .logoutUser()
       .then(result => {
-        console.log('Tscchüüüsssiii');
         window.location.reload();
       })
       .catch(err => this.handleErrorToaster(err));
-
   }
 
   deleteUserFunction() {
@@ -60,10 +55,6 @@ export class HeaderComponent implements OnInit {
         return window.location.reload();
       })
       .catch(err => this.handleErrorToaster(err));
-  }
-
-  getNetworkUserForHeader(): NetworkUser[] {
-    return this.networkUserForHeader;
   }
 
   private handleError(err: any) {

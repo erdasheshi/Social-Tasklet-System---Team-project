@@ -28,16 +28,13 @@ export class LoginComponent implements OnInit {
   user = new User("", "", "", "", 0, "");
 
   onSubmit(user: User) {
-    console.log(this.user);
     this.userService
       .loginUser(this.user)
       .then(res => {
-        console.log(res.status);
         if (res.status === 200) {
           this.router.navigate(['/transactions']);
           window.location.reload();
         }
-        console.log(JSON.stringify(res));
       })
       .catch(err => this.handleError(err));
   }

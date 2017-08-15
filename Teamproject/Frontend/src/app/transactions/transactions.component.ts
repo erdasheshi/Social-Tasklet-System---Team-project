@@ -30,10 +30,7 @@ export class TransactionsComponent implements OnInit {
     this.userService
       .getTransactions()
       .then(result => {
-        console.log('Transactions' + result);
-        console.log('Hallo');
         this.transactionListItems = result;
-        console.log(this.transactionListItems);
       })
       .catch(err => this.handleError(err));
 
@@ -50,10 +47,6 @@ export class TransactionsComponent implements OnInit {
 
   getTransactions(): TransactionList[] {
     return this.transactionListItems;
-  }
-
-  getUser(): NetworkUser {
-    return this.NetworkUserItems;
   }
 
   private handleError(err: any) {

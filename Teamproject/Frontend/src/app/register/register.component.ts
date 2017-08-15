@@ -22,19 +22,14 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-
-
   }
 
   user = new User("", "", "", "", 0, "");
 
   onSubmit(user: User) {
-    console.log(this.user);
-
     this.userService
       .registerUser(this.user)
       .then(res => {
-        console.log(JSON.stringify(res));
         if (res.status === 200) {
           this.router.navigate(['/transactions']);
           window.location.reload();

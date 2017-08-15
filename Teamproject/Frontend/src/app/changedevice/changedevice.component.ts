@@ -30,16 +30,12 @@ export class ChangedeviceComponent implements OnInit {
 
   ngOnInit() {
     this.deviceNew = this.changeDevice.device;
-    console.log(this.deviceNew);
-
   }
 
   onSubmit(device: Device) {
-    console.log(this.deviceNew);
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {
-        console.log(JSON.stringify(res));
         if (res.status === 200) {
           this.router.navigate(['/devices']);
         }

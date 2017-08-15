@@ -39,12 +39,10 @@ export class RegisterdeviceComponent implements OnInit {
 
   onSubmit(device: Device) {
 
-    console.log(this.deviceNew);
     this.deviceNew.username = this.username;
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {
-        console.log(JSON.stringify(res));
         if (res.status === 200) {
           this.router.navigate(['/devices']);
         }
