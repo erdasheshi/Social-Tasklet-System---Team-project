@@ -17,7 +17,6 @@ export class NetworkComponent implements OnInit {
 
   networkUsers: NetworkUser[];
   friendships: Friendship[];
-  requester: string;
 
   constructor(public toastr: ToastsManager,
               vcr: ViewContainerRef,
@@ -26,7 +25,6 @@ export class NetworkComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.userService
       .getNetwork()
       .then(result => {
@@ -42,19 +40,12 @@ export class NetworkComponent implements OnInit {
         this.friendships = result;
       })
       .catch(err => this.handleError(err));
-
-    this.userService
-      .getUser()
-      .then(res => {
-        this.requester = res.username;
-      })
-      .catch(err => this.handleError(err));
   }
 
   getPendingFriends(): Friendship[] {
     if (this.friendships) {
       console.log(this.friendships.length);
-      return this.friendships.filter(friendship => friendship.status === 'pending');
+      return this.friendships.filter(friendship => friendship.status === 'Pending');
     }
     else {
       console.log(this.friendships.length);
@@ -64,13 +55,13 @@ export class NetworkComponent implements OnInit {
 
   getRequestedFriends(): Friendship[] {
     if (this.friendships) {
-      return this.friendships.filter(friendship => friendship.status === 'requested');
+      return this.friendships.filter(friendship => friendship.status === 'Requested');
     }
   }
 
   getFriends(): Friendship[] {
     if (this.friendships) {
-      return this.friendships.filter(friendship => friendship.status === 'confirmed');
+      return this.friendships.filter(friendship => friendship.status === 'Confirmed');
     }
   }
 
@@ -95,67 +86,50 @@ export class NetworkComponent implements OnInit {
   }
 
   confirmFriend(user) {
-    var tmp = {name: user, status: "confirmed"};
-    var newFriendship = new Friendship(user, tmp);
+    var tmp = {user: user, status: "Confirmed"};
+    var newFriendship = new Friendship(tmp);
 
     this.userService
       .addFriend(newFriendship)
       .then(res => {
-        console.log(res.status);
         if (res.status === 200) {
           console.log('success adding a friend');
         }
-        console.log(JSON.stringify(res));
       })
       .catch(err => this.handleError(err));
 
-    this.friendships = this.updateFriendship(this.friendships, user, 'confirmed');
+    this.friendships = this.updateFriendship(this.friendships, user, 'Confirmed');
   }
 
   addFriend(user) {
     const friend = {
-      status: 'requested',
-      user_1: this.requester,
-      user_2: user,
+      user: user,
+      status: 'Requested'
     };
-    var newFriendship = new Friendship(this.requester, friend);
+    var newFriendship = new Friendship(friend);
 
     this.userService
       .addFriend(newFriendship)
       .then(res => {
-        console.log(res.status);
         if (res.status === 200) {
           console.log('success adding a friend');
         }
-        console.log(JSON.stringify(res));
+        this.friendships.push(newFriendship);
+        window.location.reload();
       })
       .catch(err => this.handleError(err));
-
-    this.friendships.push(newFriendship);
   }
 
   deleteFriend(user) {
-    //if (this.friendships) {
-    //this.friendships = this.updateFriendship(this.friendships, user, 'none');
-    //}
-
-    var tmp = {name: user, status: "none"};
-    var newFriendship = new Friendship(user, tmp);
-
     this.userService
-      .addFriend(newFriendship)
-      .then(res => {
-        console.log(res.status);
-        if (res.status === 200) {
-          console.log('friend successfully deleted');
-          window.location.reload();
-        }
-        console.log(JSON.stringify(res));
+      .deleteFriendship(user)
+      .then(() => this.userService.getFriends())
+      .then(result => {
+        debugger;
+        this.friendships = result;
+        window.location.reload();
       })
       .catch(err => this.handleError(err));
-
-    this.friendships.push(newFriendship);
-
   }
 
   private handleError(err: any) {

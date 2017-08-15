@@ -83,9 +83,7 @@ export class UserService {
     return this.http.get(this.apiURLAddFriend, options)
       .toPromise()
       .then((res: Response) => {
-        const response = res.json();
-        const username = response.username;
-        return response.connections.map(obj => new Friendship(username, obj));
+        return JSON.parse(res.json()).map(obj => new Friendship(obj))
       })
       .catch(this.handleError);
   }
@@ -98,7 +96,6 @@ export class UserService {
   }
 
   addFriend(friendship: Friendship): Promise<any> {
-    debugger;
     return this.http.post(this.apiURLAddFriend, friendship, options)
       .toPromise()
       .catch(this.handleError);
@@ -131,6 +128,12 @@ export class UserService {
 
   deleteDevice(addDevice: Device): Promise<any> {
     return this.http.delete(this.apiURLDevice + "?device=" + addDevice)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  deleteFriendship(user: string): Promise<any> {
+    return this.http.delete(this.apiURLAddFriend + "?user=" + user)
       .toPromise()
       .catch(this.handleError);
   }
