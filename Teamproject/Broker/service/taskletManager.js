@@ -9,11 +9,11 @@ var providerList = require('./tasklet/providerList');
 
 
 function findPotentialProvider(consumer, callback) {
-    var consumer = consumer.username;
+    var username = consumer.username;
     var privacy = consumer.privacy;
 
     if (privacy == "high") {
-        friendships.findFriends({username: consumer}, function (e, res) {
+        friendships.findFriends({username: username}, function (e, res) {
             if (e) callback(e, null);
             var result = JSON.parse({});
             res.forEach(function (data, index, array) {
@@ -22,7 +22,7 @@ function findPotentialProvider(consumer, callback) {
                 } else if (data.user_2 == consumer) {
                     provider = data.user_1;
                 }
-                devices.deleteByUser({username: provider}, function (e, data) {
+                devices.findByUser({username: provider}, function (e, data) {
                     if (e) return callback(e, data);
                     result.push(data);
                     if (index = array.length) callback(null, result);

@@ -6,7 +6,7 @@ var tasklet = new Map();
 function insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy){
   
         tasklet.add({
-			broker_id: broker_id
+			broker_id: broker_id,
             deviceID: deviceID,
             isRemote: isRemote,
 			requestedNumber: requestedNumber,
