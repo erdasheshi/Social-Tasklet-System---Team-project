@@ -44,7 +44,6 @@ router.get('/acctransaction', authService.loggedIn, function (req, res, next) {
         });
     }
 });
-/******************
 
  /* GET friend transactions. */
 router.get('/friendship', authService.loggedIn, function (req, res, next) {
@@ -55,7 +54,7 @@ router.get('/friendship', authService.loggedIn, function (req, res, next) {
         });
     }
     else {
-        friendshipTransaction.findNetwork({username: req.user.username}, function (e, data) {
+       logic.findFriendships({username: req.user.username}, function (e, data) {
             if (e) return next(e);
             res.json(data);
         });
@@ -75,23 +74,10 @@ router.get('/user', authService.loggedIn, function (req, res, next) {
     }
 });
 
-
-/** RECHECK following two calls */
-/* GET sfbuserinfo. -- Same as friendship???? */
-router.get('/sfbuserinfo', authService.loggedIn, function (req, res, next) {
-    var username = req.user.username;
-    logic.find({type: constants.Friends, username: username, key: 'Network'}, function (e, data) {
-        if (e) return next(e);
-        var response = '{ "username": "' + username + '", "connections": ' + data + '}';
-        console.log(response);
-        res.json(JSON.parse(response.toString()));
-    });
-});
-
-/* GET sfbusertransactions.  Not used in the frontend yet???*/
+/* GET sfbusertransactions.  Not used in the frontend yet???*/          //to be removed....not used and after the refactoring, not working anymore
 router.get('/sfbusertransactions', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
-    logic.find({type: constants.AllTransactions, username: username}, function (e, result) {
+    logic.findAllTransactions({ username: username}, function (e, result) {
         if (e) return next(e);
         var fin_result = result;
         user.findByUser({username: username}), function (e, data) {
@@ -208,6 +194,8 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
 
         if (download) {
             downloadManager.provideDownload({id: id}, function (err, data) {
+                if (err) return next(err);
+                res.download(data.destination + "MiddlewareExecutable.zip");
                 if (err) return res.status(500).json({err: 'Action not successful!'} );
                 res.download(data.destination);
             });
@@ -248,7 +236,6 @@ router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 
     user.deleteByUsername({username: username}, function (err, data) {
-      console.log("inside the function");
           if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
           res.json('User successfully deleted!');
  });

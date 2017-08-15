@@ -23,7 +23,7 @@ function DeviceAssignments(data) {
 
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
-    Device.findOne({'device': this.device}, function (e, udata) {
+    Device.findOne({'device': tmpDevice.device}, function (e, udata) {
         if (udata == null) {
             var device = new Device(tmpDevice);
             device.save({}, function (error, data) {

@@ -9,6 +9,8 @@ var log = require('./../replication/log');
 var user = require('../classes/User');
 var accountingTransaction = require('../classes/AccountingTransaction');
 var coinTransaction = require('../classes/CoinTransaction');
+var deviceAssignment = require('../classes/DeviceAssignments');
+
 
 var replicationManager = require('./../replication/replicationManager');
 
@@ -32,6 +34,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('CoinsApproval', function (data) {
       var username = data.username;
       var coins = parseInt( data.requestedCoins);
+
         new_balance = 0 ;
          var coinTr = coinTransaction.get({
              requestid: data.requestid,
@@ -39,9 +42,9 @@ io.sockets.on('connection', function (socket) {
              username: username,
              requestedCoins: coins
          });
-         coinTr.save(function (err, post) {
-             if (err) return next(err);
-         });
+            coinTr.save(function (err, post) {
+                if (err) console.error(err);
+            });
         user.findByUser({username: username}, function (e, data) {
             if (data.balance == undefined){
            var old_balance = 5;
@@ -57,7 +60,7 @@ io.sockets.on('connection', function (socket) {
             user_balance.save(function (err, post) {
                 if (err) return next(err);
             });
-            console.log(new_balance + ": the new balance of the consumer");
+            console.log("The new balance of the consumer: " + new_balance);
             user_balance.update();
         });
      })
@@ -76,12 +79,9 @@ socket_c.on('SFInformation', function (data) {
     var broker = 5;   //*** needs to be send by the broker with the information request
     var taskletid = data.taskletid;
 
- console.log( "Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
-
     // Check if the user has enough money in his account
    user.findByUser({username: username}, function (e, user_data) {
         balance = user_data.balance;
-        console.log(user_data.balance + ": user's balance");
 
         //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
           if(balance >= min_balance) {
@@ -138,3 +138,21 @@ var accTransaction = accountingTransaction.get({
         console.log('Tasklet ' + res.taskletid + ' confirmed!');
         });
     });
+
+ //Activate device when recieved the first heartbeat
+socket_c.on('ActivateDevice', function (data) {
+if (data.status == 'Active'){
+deviceAssignment.findByID( { device:data.device }, function (e, data) {
+    var device = deviceAssignment.get({
+                 username: data.username,
+                 name: data.name,
+                 device: data.device,
+                 price: data.price ,
+                 status: data.status
+    });
+    device.save(function (err, post) {
+        if (err) return next(err);
+    });
+});
+}
+});
