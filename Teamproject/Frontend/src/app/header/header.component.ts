@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
         console.log('Tscchüüüsssiii');
         window.location.reload();
       })
-      .catch(err => this.handleError(err));
+      .catch(err => this.handleErrorToaster(err));
 
   }
 
@@ -59,7 +59,7 @@ export class HeaderComponent implements OnInit {
       .then(() => {
         return window.location.reload();
       })
-      .catch(err => this.handleError(err));
+      .catch(err => this.handleErrorToaster(err));
   }
 
   getNetworkUserForHeader(): NetworkUser[] {
@@ -67,6 +67,10 @@ export class HeaderComponent implements OnInit {
   }
 
   private handleError(err: any) {
+    console.log(JSON.parse(err._body).err);
+  }
+
+  private handleErrorToaster(err: any) {
     this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
