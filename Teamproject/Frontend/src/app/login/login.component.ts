@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { User }    from './user';
-import { UserService } from '../shared/services/user.service';
-import { Router } from '@angular/router';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {User} from './user';
+import {UserService} from '../shared/services/user.service';
+import {Router} from '@angular/router';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 
 var conf = require('../../../config.json');
@@ -14,10 +15,12 @@ var conf = require('../../../config.json');
 })
 export class LoginComponent implements OnInit {
 
-  constructor(
-      private userService: UserService,
-        private router: Router,
-  ) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService,
+              private router: Router,) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
   }
@@ -27,22 +30,20 @@ export class LoginComponent implements OnInit {
   onSubmit(user: User) {
     console.log(this.user);
     this.userService
-        .loginUser(this.user)
-        .then(res => {
-            console.log(res.status);
-            if (res.status === 200){
-              this.router.navigate(['/transactions']);
-              window.location.reload();
-            }
-          console.log(JSON.stringify(res));
-        })
-        .catch(this.handleError);
+      .loginUser(this.user)
+      .then(res => {
+        console.log(res.status);
+        if (res.status === 200) {
+          this.router.navigate(['/transactions']);
+          window.location.reload();
+        }
+        console.log(JSON.stringify(res));
+      })
+      .catch(err => this.handleError(err));
   }
 
   private handleError(err: any) {
-
-      alert(err || err.message);
-
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

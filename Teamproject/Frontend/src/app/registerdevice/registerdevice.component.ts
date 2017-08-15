@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import { Router } from '@angular/router';
-import { Device } from './device';
-import { NetworkUser } from '../shared/model/networkuser';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {Router} from '@angular/router';
+import {Device} from './device';
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 var conf = require('../../../config.json');
 
@@ -16,12 +17,14 @@ export class RegisterdeviceComponent implements OnInit {
 
   NetworkUserItems: NetworkUser;
   username: string;
-  deviceNew = new Device ("", "", 0, "", "", "");
+  deviceNew = new Device("", "", 0, "", "", "");
 
-  constructor(
-    private userService: UserService, //API Service
-    private router: Router,
-  ) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService, //API Service
+              private router: Router,) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
     //get username
@@ -31,7 +34,7 @@ export class RegisterdeviceComponent implements OnInit {
         this.NetworkUserItems = result;
         this.username = this.NetworkUserItems.username;
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
   }
 
   onSubmit(device: Device) {
@@ -42,15 +45,15 @@ export class RegisterdeviceComponent implements OnInit {
       .addDevice(this.deviceNew)
       .then(res => {
         console.log(JSON.stringify(res));
-        if (res.status === 200){
+        if (res.status === 200) {
           this.router.navigate(['/devices']);
         }
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
   }
 
   private handleError(err: any) {
-     alert(err || err.message);
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

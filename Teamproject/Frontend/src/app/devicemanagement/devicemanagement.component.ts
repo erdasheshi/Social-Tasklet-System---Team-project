@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import { Router } from '@angular/router';
-import { Device } from '../shared/model/device';
-import { ChangeDevice } from '../shared/model/ChangeDevice';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {Router} from '@angular/router';
+import {Device} from '../shared/model/device';
+import {ChangeDevice} from '../shared/model/ChangeDevice';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 @Component({
   selector: 'app-devicemanagement',
@@ -16,11 +17,13 @@ export class DevicemanagementComponent implements OnInit {
   registeredDevices: Device[];
   device: Device;
 
-  constructor(
-    public changeDevice: ChangeDevice,
-    private userService: UserService, //API Service
-    private router: Router
-  ) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              public changeDevice: ChangeDevice,
+              private userService: UserService, //API Service
+              private router: Router) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
     //get devices
@@ -31,7 +34,7 @@ export class DevicemanagementComponent implements OnInit {
         this.registeredDevices = result;
         console.log(this.registeredDevices);
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
   }
 
   getregisteredDevices(): Device[] {
@@ -39,26 +42,26 @@ export class DevicemanagementComponent implements OnInit {
       console.log(this.registeredDevices.length);
       return this.registeredDevices;
     }
-    else{
+    else {
       console.log(this.registeredDevices.length);
       return [];
     }
   }
 
-  removeDevice(name){
+  removeDevice(name) {
     this.userService
       .deleteDevice(name.device)
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
     window.location.reload();
   }
 
-  changeDeviceNav(name){
+  changeDeviceNav(name) {
     this.changeDevice.device = name;
     this.router.navigate(['/changeDevice', name.device]);
   }
 
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error.message || error);
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

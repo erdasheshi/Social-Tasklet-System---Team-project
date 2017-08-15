@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {UserService} from '../shared/services/user.service'; //API Service
 import {User} from './user';
-import {NetworkUser} from '../shared/model/networkuser'
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,10 @@ export class HeaderComponent implements OnInit {
 
   networkUserForHeader: NetworkUser[];
 
-  constructor(private userService: UserService) {
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService) {
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   user = new User("", "", "", "", 0, "");
@@ -27,7 +31,7 @@ export class HeaderComponent implements OnInit {
         console.log('Network' + result);
         this.networkUserForHeader = result;
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
   }
 
@@ -39,7 +43,7 @@ export class HeaderComponent implements OnInit {
         console.log('Tscchüüüsssiii');
         window.location.reload();
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
   }
 
@@ -55,15 +59,15 @@ export class HeaderComponent implements OnInit {
       .then(() => {
         return window.location.reload();
       })
-      .catch(this.handleError);
-  }
-
-
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error.message || error);
+      .catch(err => this.handleError(err));
   }
 
   getNetworkUserForHeader(): NetworkUser[] {
     return this.networkUserForHeader;
   }
+
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
+  }
+
 }

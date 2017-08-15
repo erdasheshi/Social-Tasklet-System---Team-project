@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import { Router, ActivatedRoute, Params, Data } from '@angular/router';
-import { Device } from './device';
-import { NetworkUser } from '../shared/model/networkuser';
-import { ChangeDevice } from '../shared/model/ChangeDevice';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {Router, ActivatedRoute, Params, Data} from '@angular/router';
+import {Device} from './device';
+import {NetworkUser} from '../shared/model/networkuser';
+import {ChangeDevice} from '../shared/model/ChangeDevice';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 @Component({
   selector: 'app-changedevice',
@@ -18,12 +19,14 @@ export class ChangedeviceComponent implements OnInit {
   deviceNew: Device;
   deviceID: string;
 
-  constructor(
-    private userService: UserService, //API Service
-    private router: Router,
-    private route: ActivatedRoute,
-    public changeDevice: ChangeDevice,
-  ) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService, //API Service
+              private router: Router,
+              private route: ActivatedRoute,
+              public changeDevice: ChangeDevice,) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
     this.deviceNew = this.changeDevice.device;
@@ -37,15 +40,15 @@ export class ChangedeviceComponent implements OnInit {
       .addDevice(this.deviceNew)
       .then(res => {
         console.log(JSON.stringify(res));
-        if (res.status === 200){
+        if (res.status === 200) {
           this.router.navigate(['/devices']);
         }
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
   }
 
   private handleError(err: any) {
-    alert(err || err.message);
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

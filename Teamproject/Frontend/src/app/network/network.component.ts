@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {Friendship} from '../shared/model/friendship';
 import {UserService} from '../shared/services/user.service'; //API Service
-import {NetworkUser} from '../shared/model/networkuser'
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 const conf = require('../../../config.json');
 
@@ -18,7 +19,10 @@ export class NetworkComponent implements OnInit {
   friendships: Friendship[];
   requester: string;
 
-  constructor(private userService: UserService,) {
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService,) {
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
@@ -29,7 +33,7 @@ export class NetworkComponent implements OnInit {
         console.log('Network' + result);
         this.networkUsers = result;
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.userService
       .getFriends()
@@ -37,18 +41,14 @@ export class NetworkComponent implements OnInit {
         console.log('Friends' + result);
         this.friendships = result;
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.userService
       .getUser()
       .then(res => {
         this.requester = res.username;
       })
-      .catch(this.handleError);
-  }
-
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error.message || error);
+      .catch(err => this.handleError(err));
   }
 
   getPendingFriends(): Friendship[] {
@@ -107,7 +107,7 @@ export class NetworkComponent implements OnInit {
         }
         console.log(JSON.stringify(res));
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.friendships = this.updateFriendship(this.friendships, user, 'confirmed');
   }
@@ -129,7 +129,7 @@ export class NetworkComponent implements OnInit {
         }
         console.log(JSON.stringify(res));
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.friendships.push(newFriendship);
   }
@@ -152,10 +152,14 @@ export class NetworkComponent implements OnInit {
         }
         console.log(JSON.stringify(res));
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.friendships.push(newFriendship);
 
+  }
+
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }
