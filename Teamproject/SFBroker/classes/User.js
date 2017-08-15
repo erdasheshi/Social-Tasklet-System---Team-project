@@ -39,21 +39,12 @@ user.prototype.save =  function(callback) {
 
 user.prototype.update =  function() {
     var transaction = this;
-    console.log(transaction);
 
     User.findOne({ 'username' : this.username }, function (err, doc) {
-		//avoiding the assignment null values
-		//**maybe it requires the check for each single attribute so it does not assign the missing ones to null
-		//**this might be done also in the call of the update function where u assign the unchanged values to the existing ones
-
         doc.balance   = transaction.balance;
-
-        // if we decide to let the user change his data
-		 doc.firstname = transaction.firstname;
-		 doc.lastname  = transaction.lastname;
-		 doc.email     = transaction.email;
-
- //**** User.update ({}, function (error, data) {
+		doc.firstname = transaction.firstname;
+		doc.lastname  = transaction.lastname;
+		doc.email     = transaction.email;
         doc.save({}, function (error, data) {
            if (error) {
                 console.error(error.stack || error.message);
@@ -87,7 +78,6 @@ function deleteByUsername(data, callback){
             coins.deleteByUser({ username : username }, function(e, data) {
                 if (e) callback(e, null);
                 User.remove({ 'username': username }, function (err, data) {
-                    console.log("The user is deleted!");
 
                     if (err) callback(err, null);
                     if (callback) callback(null, true);

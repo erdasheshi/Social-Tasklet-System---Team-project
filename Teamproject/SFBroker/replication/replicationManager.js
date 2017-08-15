@@ -4,10 +4,8 @@ var brokerTransaction = require('../classes/Broker');
 
 var constants = require('../constants');
 
-//********************** tested ***************//
 //collect the deleted/updated/created friendship and device transactions into an update log
 
-// What is the difference between new and updated??
 function CollectUpdates(data) {
     var logData = data;
     var update;
@@ -19,11 +17,6 @@ function CollectUpdates(data) {
                 log.add(JSON.parse(JSON.stringify(update)));
                 break;
 
-        /*    case 'u_device':    //keeping track of updated device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.id + +'", "key": "Update",  "status": "' + logData.status + '", "price": ' + logData.price + '}';
-                log.add(JSON.parse(JSON.stringify(update)));
-                break;
-*/
             case 'd_device':   //keeping track of deleted device transactions
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
                 log.add(JSON.parse(JSON.stringify(update)));
@@ -55,11 +48,8 @@ function CollectUpdates(data) {
 function globalUpdate() {
 }
 
-
-//********************** tested ***************//
 //retrieve updates related to a specific broker
 function updateBroker(broker) {
-console.log("function entered");
     var log_updates = log.read();
     var log_version = log_updates.length - 1;  //the array index of the last committed change
     var broker_updates = [];
@@ -68,9 +58,6 @@ console.log("function entered");
 
     while (i > broker_version) {
         var temp_element = JSON.parse(log_updates[i]);
-        console.log(temp_element.type + " the type of the update");
-        console.log(JSON.stringify(temp_element) + " the update itself");
-
         if (temp_element.type == 'Friendship') {
             if (temp_element.broker_1 == broker || temp_element.broker_2 == broker) {
                 broker_updates = broker_updates.concat(JSON.stringify(temp_element));
@@ -83,22 +70,21 @@ console.log("function entered");
         }
         i--;
     }
-    syncBroker(broker, log_version);
+    syncBroker(broker, log_version); //broker's version is equal to the array index of the last update in the log
     return broker_updates;
 }
-//********************** tested ***************//
+
 //update the sync version of the broker
 function syncBroker(broker, version) {
-    console.log(version + " the sync version of the broker")
+    console.log(" Broker's new version: " + version );
     var elem = { broker:  broker, version: version };
     broker_log.add(elem);
 }
 
-//********************** tested ***************//
 //get the last updated version of the broker
 function readBroker(broker) {
     var current_version = broker_log.read_one(broker);
-    console.log(current_version + " the broker version before updates are sent");
+    console.log(" Broker's old version: " + current_version );
     return current_version;
 }
 

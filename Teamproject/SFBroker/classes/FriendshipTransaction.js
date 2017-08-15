@@ -17,17 +17,20 @@ function friendshipTransaction(data) {
     this.user_1 = data.user_1;
     this.user_2 = data.user_2;
     this.status = data.status;
+
 }
 
 friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
+    var id     = this.id;
     Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
         if (udata == null) {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
                 if (data == null) {
                     var transaction = new Friendship({ //You're entering a new transaction here
+                        id : id,
                         user_1: user_1,
                         user_2: user_2,
                         status: status
@@ -40,6 +43,7 @@ friendshipTransaction.prototype.save = function (callback) {
                             //Store in the log the confirmed friendships
                             if (status == constants.AccountingStatusConfirmed) {
                                 replicationManager.CollectUpdates({
+                                    id : id,
                                     username: user_1,
                                     user_2: user_2,
                                     key: constants.Friendship
@@ -58,6 +62,7 @@ friendshipTransaction.prototype.save = function (callback) {
                             //Store in the log the confirmed friendships
                             if (status == constants.AccountingStatusConfirmed) {
                                 replicationManager.CollectUpdates({
+                                    id : id,
                                     username: user_1,
                                     user_2: user_2,
                                     key: constants.Friendship
@@ -79,6 +84,7 @@ friendshipTransaction.prototype.save = function (callback) {
                     //Store in the log the confirmed friendships
                     if (status == constants.AccountingStatusConfirmed) {
                         replicationManager.CollectUpdates({
+                            id : id,
                             username: user_1,
                             user_2: user_2,
                             key: constants.Friendship
@@ -154,11 +160,9 @@ function deleteByUsers(data, callback) {
 }
 
 function deleteByUser(data, callback) {
- console.log("it deleted the frindships   in the frindship");
 var user_1 = data.username;
 Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){
 res.forEach(function (data, index, array) {
-console.log("in the friendship loop");
 var id = data.id;
   deleteByID({ id: id });
     });

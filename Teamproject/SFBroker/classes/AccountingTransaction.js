@@ -14,38 +14,37 @@ function AccountingTransaction(data) {
     this.time = data.time;
 }
 
-AccountingTransaction.prototype.save =  function(callback) {
-    var transaction = new Accounting({ //You're entering a new transaction here
-        consumer: this.consumer,
-        provider: this.provider,
-        coins: this.coins,
-        status: this.status,
-        taskletid: this.taskletid,
-        time: this.time
-        });
-
-    transaction.save({}, function (error, data) {
-        if (error){
-            callback(error, false);
+AccountingTransaction.prototype.save = function (callback) {
+    var tempAcc = this;
+   Accounting.findOne({ 'taskletid' : tempAcc.taskletid }, function (err, udata) {
+        if (udata == null) {
+            var transaction = new Accounting(tempAcc);
+            transaction.save({}, function (error, data) {
+                if (error) {
+                    console.error(error);
+                }
+                if (callback) {
+                    callback(null, true);
+                }
+            });
         }
-        if (callback) callback(null, true);
-    });
-}
-
-AccountingTransaction.prototype.update =  function() {
-    var transaction = this;
-    accounting.findOne({ 'taskletid' : this.taskletid }, function (err, doc) {
-        doc.consumer = transaction.consumer;
-        doc.provider = transaction.provider;
-        doc.coins = transaction.computation;
-        doc.status = transaction.status;
-        doc.time = transaction.time;
-        doc.save({}, function (error, data) {
-            if (error) {
-                console.error(error.stack || error.message);
-                return;
-            }
-        });
+        else {
+            Accounting.update({  'taskletid' : tempAcc.taskletid  },{
+            consumer : tempAcc.consumer,
+            provider : tempAcc.provider,
+            coins : tempAcc.computation,
+            status : tempAcc.status,
+            time : tempAcc.time
+                },
+                function (error, data) {
+                    if (error) {
+                        callback(error, false);
+                    }
+                    else if (callback) {
+                        callback(null, true);
+                    }
+                });
+        }
     });
 }
 

@@ -11,7 +11,7 @@ var replicationManager = require('./../replication/replicationManager');
 
 //Initializing a transaction
 function DeviceAssignments(data) {
-    this.device = data.device;
+    this.device = data.device,
     this.name = data.name,
     this.username = data.username,
     this.price = data.price,

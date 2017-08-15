@@ -10,23 +10,16 @@ module.exports = {
   add:  function (data) {
            //find the position of the broker, if it has already an entry in the array
            var i = 0;
-             console.log(data.broker + "iuiiiia");
            while( i<sync.length && sync[i].broker != data.broker) {
                    i++;
                }
-
-               console.log(i + "ija");
-               console.log(sync.length + "length");
            if (i == sync.length )                            // does the broker already have an entry in the array ?
            {
             sync = sync.concat(data);                      //Broker doesn't exist in the array then add a new entry
            }
            else{
-                 console.log(sync[i].version + "para");
                  sync[i].version = data.version;    //broker exists, therefor update the existing entry with the updated version
-                 console.log(sync[i].version + "mbrapa");
            }
-                        console.log(sync[i].broker + "brok");
            },
 
 //will return the current version of a broker or 0 if the broker doesn't have an entry
