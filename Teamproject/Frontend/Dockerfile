@@ -13,7 +13,12 @@ RUN mkdir -p /usr/src/app
 # Start only with package.json
 COPY ./package.json /usr/src/app
 WORKDIR /usr/src/app
+
+RUN mkdir -p node_modules/node-sass/vendor/linux-x64-51
+RUN curl -L https://github.com/sass/node-sass/releases/download/v4.5.3/linux-x64-51_binding.node -o node_modules/node-sass/vendor/linux-x64-51/binding.node
+
 RUN npm install
+RUN npm rebuild node-sass
 
 # Copy and build rest of the app
 COPY . /usr/src/app
