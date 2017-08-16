@@ -5,7 +5,7 @@ var express = require('express')
 ,   conf = require('./config.json')
 , 	constants = require('./constants');
  
-var port = process.argv[2] || 8009;
+var port = 8009;
 console.log('Port: ' + port);
 
 // Webserver
