@@ -36,6 +36,6 @@ db.once("open", function(callback){
 var tasklets = require('./service/tasklet_interface.js');
 var websockets = require('./service/websockets');
 
-websockets(server);
+websockets.initialize(server);
 
 console.log('Broker runs on http://' + conf.broker.ip  + ':' + conf.broker.port + '/');

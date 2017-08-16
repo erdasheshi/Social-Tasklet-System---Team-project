@@ -3,7 +3,6 @@ var constants = require('./../../constants');
 
 function readProtocolHeader(header){
 
-	console.log(header);
 	var magic = header.readInt32LE(0);
 	var version = header.readInt32LE(4);
 	var messageType = header.readInt32LE(8);

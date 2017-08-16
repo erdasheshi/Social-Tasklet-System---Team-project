@@ -15,6 +15,12 @@ var server_vmup = net.createServer(function(socket) {
 
     socket.on('data', function(data) {
 
+	console.log(data);
+	
+	if(data.length ==4){
+	}
+	
+	else{
         var messageType = pH.readProtocolHeader(data);
 		var address = socket.remoteAddress;
 		
@@ -33,7 +39,7 @@ var server_vmup = net.createServer(function(socket) {
 		else if(messageType != constants.vmUpMessage && messageType != constants.vmDownMessage){
 			console.log('Received a wrong message type in vmup data');
 		}
-		
+	}
     });
 	
 	socket.on('close', function(data) {
