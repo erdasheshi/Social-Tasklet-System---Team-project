@@ -13,6 +13,7 @@ RUN mkdir -p /usr/src/app
 # Start only with package.json
 COPY ./package.json /usr/src/app
 WORKDIR /usr/src/app
+
 RUN npm install
 
 # Copy and build rest of the app
