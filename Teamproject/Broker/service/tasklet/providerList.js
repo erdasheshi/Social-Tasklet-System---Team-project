@@ -81,6 +81,10 @@ function getDeviceID(address) {
     return deviceID;
 }
 
+function getProviderList(){
+    return provider;
+}
+
 module.exports = {
 
     insertProvider: function (address, deviceID) {
@@ -105,5 +109,9 @@ module.exports = {
 
     getDeviceID: function (address) {
         return getDeviceID(address)
+    },
+
+    getProviderList: function() {
+        return getProviderList();
     }
 };

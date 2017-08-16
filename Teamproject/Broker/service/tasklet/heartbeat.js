@@ -25,7 +25,6 @@ var server_heartbeat = net.createServer(function(socket) {
 		if(messageType == constants.bHeartbeatMessage){
 			console.log('Heartbeat from: ' + socket.remoteAddress + ":" + socket.remotePort);
 			var address = socket.remoteAddress;
-			
 			var deviceID = data.readInt32LE(12);
 			
 			//Adding the new client if it is not yet in the list

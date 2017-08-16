@@ -11,8 +11,12 @@ var devices = require('./../../classes/DeviceAssignments');
 var web = require('./../websockets');
 var taskletManager = require('./../taskletManager');
 
+var taskletSocket;
+
 // Socket Request
 var server_request = net.createServer(function(socket) {
+
+    taskletSocket = socket;
 
     socket.on('error', function (exc) {
         console.log("Ignoring exception: " + exc);
@@ -50,20 +54,7 @@ var server_request = net.createServer(function(socket) {
 
             console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Minimum Speed: ' + minimumSpeed + ' Requesting IP: ' + requestingIP + ' Cost: ' + cost + ' Privacy: ' + privacy);
 
-            // Step 5: Informing the consumer
-            var buf1 = pH.writeProtocolHeader(constants.bResponseMessage);
 
-
-            //var buf2 = Buffer.alloc(length + 1);
-            //buf2.writeIntLE('bla',0,
-
-
-            //var totalLength = buf1.length + buf2.length;
-            //var buf = Buffer.concat([buf1,buf2],totalLength);
-
-            //socket.write(buf);
-
-            //socket.end();
 
         }
 
@@ -87,6 +78,24 @@ function preScheduling(data, callback){
     //Step 4: Finding most suitable provider
     taskletManager.scheduling(information, function (error, data) {
         if (error) console.error(error);
+
+        // Step 5: Informing the consumer
+        var buf1 = pH.writeProtocolHeader(constants.bResponseMessage);
+        var buf2 = Buffer.alloc(4);
+        var buf3 = Buffer.alloc(8);
+
+
+        buf3.writeInt32LE(data.address,0);
+        buf3.writeInt32LE(1,4);
+
+        buf2.writeInt32LE(buf3.length, 0);
+
+        var totalLength = buf1.length + buf2.length + buf3.length;
+        var buf = Buffer.concat([buf1,buf2, buf3],totalLength);
+
+
+        taskletSocket.write(buf);
+        taskletSocket.end();
 
     });
 
