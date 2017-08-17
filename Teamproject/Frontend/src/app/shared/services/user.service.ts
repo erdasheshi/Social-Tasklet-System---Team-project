@@ -13,7 +13,7 @@ import {RequestOptions, Request, RequestMethod} from '@angular/http';
 import {Headers} from '@angular/http';
 
 var conf = require('../../../../config.json');
-var serverURL = 'http://52.32.5.225';
+var serverURL = 'http://35.166.150.57';
 let headers = new Headers();
 let options = new RequestOptions({ headers: headers, withCredentials: true });
 
