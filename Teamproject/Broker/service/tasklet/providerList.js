@@ -41,7 +41,7 @@ function insertProvider(address, deviceID) {
 }
 function updateBenchmark(address, benchmark) {
     var infos = provider.get(address);
-    infos.benchmark = benchmark;
+    if(infos) infos.benchmark = benchmark;
     // Demonstrating purposes
     console.log(provider.toObject());
 }
@@ -62,31 +62,24 @@ function updateProviderList() {
 
 function increaseAvailableVMs(address) {
     var infos = provider.get(address);
-    if (typeof infos.availableVMs !== 'undefined'){
-    infos.availableVMs = infos.availableVMs + 1;
-    }
-    else {
-        infos.availableVMs = 1;
-    }
+    if (infos) infos.availableVMs = infos.availableVMs + 1;
+
     // Demonstrating purposes
     console.log(provider.toObject());
 }
 
 function decreaseAvailableVMs(address) {
     var infos = provider.get(address);
-    if (typeof infos.availableVMs !== 'undefined') {
-        infos.availableVMs = infos.availableVMs - 1;
-    }
-    else {
-        infos.availableVMs = 0;
-    }
+    if (infos) infos.availableVMs = infos.availableVMs - 1;
+
     // Demonstrating purposes
     console.log(provider.toObject());
 }
 
 function getDeviceID(address) {
     var infos = provider.get(address);
-    var deviceID = infos.deviceID;
+    var deviceID;
+    if (infos) deviceID = infos.deviceID;
 
     return deviceID;
 }
