@@ -1,4 +1,4 @@
-IP_Responder: 127.0.0.1
-Tasklet_Monitor: 127.0.0.1
+IP_Responder: 52.32.5.225
+Tasklet_Monitor: 52.32.5.225
 Number_of_TVMs: -1
 Timeout: 4

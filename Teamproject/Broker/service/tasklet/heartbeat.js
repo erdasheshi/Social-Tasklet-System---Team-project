@@ -14,7 +14,8 @@ var server_heartbeat = net.createServer(function(socket) {
     });
 
     socket.on('data', function(data) {
-
+	console.log(data);
+	if(data.length == 16){
         var messageType = pH.readProtocolHeader(data);
 
 		if(messageType < 0){
@@ -29,7 +30,7 @@ var server_heartbeat = net.createServer(function(socket) {
 			//Adding the new client if it is not yet in the list
 			//Otherwise just update the timestamp
 			providerList.insertProvider(address, deviceID);
-			
+	
 			var buf1 = pH.writeProtocolHeader(constants.bIPMessage);
 			var buf2 = Buffer.alloc(4);
 			buf2.writeInt32LE(address,0);
@@ -39,11 +40,13 @@ var server_heartbeat = net.createServer(function(socket) {
 			
 			socket.write(buf);
 			
+			socket.end();
+			
 		}
 		
 		if(messageType == constants.benchmarkMessage){
 			var address = socket.remoteAddress;
-			var benchmark = data.readFloatLE(16);
+			var benchmark = data.readFloatLE(12);
 			
 			//Replace the default benchmark with the actual one
 			providerList.updateBenchmark(address, benchmark);
@@ -53,8 +56,20 @@ var server_heartbeat = net.createServer(function(socket) {
 		else if(messageType != constants.bHeartbeatMessage && messageType != constants.benchmarkMessage){
 			console.log('Received a wrong message type in heartbeat data');
 		}
-	
-
+	}
+	else{
+		var buf1 = pH.writeProtocolHeader(constants.bIPMessage);
+		var buf2 = Buffer.alloc(4);
+		buf2.writeInt32LE(address,0);
+			
+		var totalLength = buf1.length + buf2.length;
+		var buf = Buffer.concat([buf1,buf2],totalLength);	
+			
+		socket.write(buf);
+			
+		socket.end();
+	}
+		
     });
 
     socket.on('close', function(data) {
