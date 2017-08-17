@@ -9,14 +9,14 @@ import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 @Component({
   selector: 'app-changedevice',
   templateUrl: './changedevice.component.html',
-  styleUrls: ['./changedevice.component.css']
+  styleUrls: ['./changedevice.component.css', '../shared/styles/grid.css', '../shared/styles/global.css']
 })
 export class ChangedeviceComponent implements OnInit {
 
   NetworkUserItems: NetworkUser;
   username: string;
   device: Params;
-  deviceNew: Device;
+  deviceNew = new Device("", "", 0, "", "", "", "");
   deviceID: string;
 
   constructor(public toastr: ToastsManager,
@@ -33,6 +33,7 @@ export class ChangedeviceComponent implements OnInit {
   }
 
   onSubmit(device: Device) {
+    this.deviceNew.download = "";
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {

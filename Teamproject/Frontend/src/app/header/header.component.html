@@ -1,6 +1,9 @@
 <div class="grid">
   <div class="grid__col grid__col--2-of-2">
     <ul class="navigation">
+      <div *ngIf="networkUserForHeader != null">
+        <li class="navigation__item">  <a (click)="deleteUserFunction()" href="#/">Delete Account</a></li>
+      </div>
       <div *ngIf="networkUserForHeader == null">
         <li class="navigation__item">  <a href="#/register">Register</a> </li>
       </div>
@@ -19,14 +22,11 @@
       <div *ngIf="networkUserForHeader != null">
         <li class="navigation__item">  <a href="#/devices">Device Management</a></li>
       </div>
-      <div *ngIf="networkUserForHeader != null">
+      <!--<div *ngIf="networkUserForHeader != null">
         <li class="navigation__item">  <a href="#/adddevice">Add Device</a></li>
-      </div>
+      </div>-->
       <div *ngIf="networkUserForHeader != null">
         <li class="navigation__item">  <a (click)="logoutFunction()" href="#/">Logout</a></li>
-      </div>
-      <div *ngIf="networkUserForHeader != null">
-        <li class="navigation__item">  <a (click)="deleteUserFunction()" href="#/">Delete User</a></li>
       </div>
     </ul>
   </div>

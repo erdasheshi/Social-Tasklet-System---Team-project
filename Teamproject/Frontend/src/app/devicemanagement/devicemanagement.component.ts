@@ -56,6 +56,10 @@ export class DevicemanagementComponent implements OnInit {
     this.router.navigate(['/changeDevice', name.device]);
   }
 
+  nav_adddevice(){
+    this.router.navigate(['/adddevice']);
+  }
+
   private handleError(err: any) {
     this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }

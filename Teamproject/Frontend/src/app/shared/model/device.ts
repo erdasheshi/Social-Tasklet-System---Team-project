@@ -6,6 +6,7 @@ export class Device {
   device: string;
   status: string;
   id: string;
+  download: string;
 
   constructor(userObj) {
     this.username = userObj.username;
@@ -14,6 +15,7 @@ export class Device {
     this.device = userObj.device;
     this.status = userObj.status;
     this.id = userObj._id;
+    this.download = userObj.download;
   }
 
 }

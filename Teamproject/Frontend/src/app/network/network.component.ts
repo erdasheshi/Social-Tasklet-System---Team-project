@@ -108,7 +108,8 @@ export class NetworkComponent implements OnInit {
       .addFriend(newFriendship)
       .then(res => {
         if (res.status === 200) {
-          this.toastr.info('Friendship successfully requested.');
+          window.location.reload();
+          // this.toastr.info('Friendship successfully requested.');
         }
         this.friendships.push(newFriendship);
         window.location.reload();

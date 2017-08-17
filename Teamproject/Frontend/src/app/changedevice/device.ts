@@ -6,5 +6,6 @@ export class Device {
     public price: number,
     public device: string,
     public status: string,
-    public id: string) { }
+    public id: string,
+    public download: string,) { }
 }

@@ -2,16 +2,19 @@
   <div class="grid">
     <div class="grid__col grid__col--2-of-2">
       <div class="welcomeMessage">Device Management</div>
+      <button (click)="nav_adddevice()" class="friend__name">
+        Register Device
+      </button>
     </div>
 
     <div class="grid__col grid__col--2-of-2" id="2">
       <div *ngIf="registeredDevices != null">
         <div *ngFor="let registeredDevice of getregisteredDevices()" class="friend__tile">
-          <button (click)="removeDevice(registeredDevice)" class="friend__name">
-            {{ registeredDevice.name }} (Delete Device)
-          </button>
           <button (click)="changeDeviceNav(registeredDevice)" class="friend__name">
-            {{ registeredDevice.name }} (Change Device)
+            Change Device ({{ registeredDevice.name }})
+          </button>
+          <button (click)="removeDevice(registeredDevice)" class="friend__name">
+            Delete Device ({{ registeredDevice.name }})
           </button>
           <div class="friend__innerTile">
             <div class="friend__stats">

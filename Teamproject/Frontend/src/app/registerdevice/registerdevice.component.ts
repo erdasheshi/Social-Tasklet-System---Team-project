@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
-import {UserService} from '../shared/services/user.service'; //API Service
+import {UserService} from '../shared/services/user.service'; // API Service
 import {Router} from '@angular/router';
 import {Device} from './device';
 import {NetworkUser} from '../shared/model/networkuser';
@@ -11,23 +11,23 @@ var conf = require('../../../config.json');
   selector: 'app-registerdevice',
   templateUrl: './registerdevice.component.html',
   styleUrls: ['./registerdevice.component.css', '../shared/styles/grid.css', '../shared/styles/global.css'],
-  providers: [UserService] //API Service
+  providers: [UserService] // API Service
 })
 export class RegisterdeviceComponent implements OnInit {
 
   NetworkUserItems: NetworkUser;
   username: string;
-  deviceNew = new Device("", "", 0, "", "", "");
+  deviceNew = new Device("", "", 0, "", "", "", "");
 
   constructor(public toastr: ToastsManager,
               vcr: ViewContainerRef,
-              private userService: UserService, //API Service
-              private router: Router,) {
+              private userService: UserService, // API Service
+              private router: Router) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    //get username
+    // get username
     this.userService
       .getUser()
       .then(result => {
@@ -40,6 +40,7 @@ export class RegisterdeviceComponent implements OnInit {
   onSubmit(device: Device) {
 
     this.deviceNew.username = this.username;
+    // this.deviceNew.download = "X";
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {
