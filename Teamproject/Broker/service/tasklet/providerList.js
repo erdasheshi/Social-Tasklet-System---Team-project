@@ -62,14 +62,24 @@ function updateProviderList() {
 
 function increaseAvailableVMs(address) {
     var infos = provider.get(address);
+    if (infos.availableVMs){
     infos.availableVMs = infos.availableVMs + 1;
+    }
+    else {
+        infos.availableVMs = 1;
+    }
     // Demonstrating purposes
     console.log(provider.toObject());
 }
 
 function decreaseAvailableVMs(address) {
     var infos = provider.get(address);
-    infos.availableVMs = infos.availableVMs - 1;
+    if (infos.availableVMs) {
+        infos.availableVMs = infos.availableVMs - 1;
+    }
+    else {
+        infos.availableVMs = 0;
+    }
     // Demonstrating purposes
     console.log(provider.toObject());
 }
