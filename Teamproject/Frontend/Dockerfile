@@ -14,7 +14,6 @@ RUN mkdir -p /usr/src/app
 COPY ./package.json /usr/src/app
 WORKDIR /usr/src/app
 
-RUN npm install --unsafe-perm node-sass
 RUN npm install
 
 # Copy and build rest of the app
