@@ -84,7 +84,7 @@ function scheduling(data, callback) {
         }
 
         else if (data.length == 1) {
-            callback(null, data[0]);
+            callback(null, [{number: 1},{ip: data[0].address,vms: 1}]);
         }
         else {
             //Converting QoC high and low to 9 and 1

@@ -29,8 +29,10 @@ function initialize(server) {
             }
             else{
                 // Abort!!! --> Add error handling if user does not have enough coins
-                tasklet.abortScheduling();
-            }
+                tasklet.abortScheduling({taskletid: taskletid}, function (e, data) {
+                    if (e) console.error(e);
+				});
+			}
         });
 
         // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker
