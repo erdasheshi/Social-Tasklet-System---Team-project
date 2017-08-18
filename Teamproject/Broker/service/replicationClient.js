@@ -14,6 +14,7 @@ function setUpdates(updates, callback) {
         switch (data.type) {         //the data structure for friendships is different from the one for devices, therefore its tested the type before proceeding
             case constants.Friendship:
                 if (data.key == "New") {        //create a new friendship transaction
+                console.log("new friendship");
                     var friendship = friendships.get({
                      ID: data.ID,
                      user_1: data.user_1,        //*** check that is sent only information related to the friend an not the user itself (its defined in the useername section)

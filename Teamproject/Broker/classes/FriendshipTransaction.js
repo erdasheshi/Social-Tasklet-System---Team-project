@@ -49,7 +49,6 @@ friendshipTransaction.prototype.save = function (callback) {
                     });
                 }
             });
-
         }
         else {
             Friendship.update({ 'user_1': user_1, 'user_2': user_2 }, { 'status': status }, function (e, data) {
@@ -77,16 +76,50 @@ function findNetwork(data, callback) {
         if (e) return next(e, null);
         var response = '{ "username": "' + username + '", "connections": ' + JSON.stringify(data) + '}';
         callback(null, JSON.parse(response.toString()));
-
     });
 }
 
-function findFriends(data, callback) {
+
+function findFriends(data, callback){
     var username = data.username;
-    Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
+    var friends_list = [];
+    Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, res) {
         if (e) callback(e, null);
-        callback(null, data);
+
+        //find the username of the friends
+        res.forEach(function ( data, index, array){
+        if(data.user_1 == username) {
+        friends_list = friends_list.concat({ username: data.user_2 });
+        }
+        else{
+        friends_list = friends_list.concat({ username: data.user_1 });
+         }
+         });
+        callback(null, friends_list);
     });
+}
+
+//checks the existence of a friendship transaction between two users
+function findExistence(data, callback){
+  var user_1 = data.user_1;
+  var user_2 = data.user_2;
+  var existence = "false";
+
+console.log(user_1 + "u1");
+console.log(user_2 + "u2");
+ Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, res) {
+  if (res != null) {
+  existence = "true";
+ }
+else{  Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, res) {
+  if (res != null) {
+ existence = "true";
+}
+});
+}
+ console.log( "existence in Find Existence" + existence);
+callback(null, existence);
+});
 }
 
 function deleteByID(data, callback) {
@@ -100,7 +133,6 @@ function deleteByID(data, callback) {
             });
             if (callback) callback(null, true);
         }
-
     });
 }
 
@@ -131,7 +163,6 @@ function deleteByUser(data, callback) {
             if (callback) {
                 callback(null, true);
             }
-
     });
 }
 
@@ -153,6 +184,10 @@ module.exports = {
 
     findNetwork: function (data, callback) {
         return findNetwork(data, callback);
+    },
+
+    findExistence: function (data, callback) {
+        return findExistence(data, callback);
     },
 
     deleteByID: function (data, callback) {

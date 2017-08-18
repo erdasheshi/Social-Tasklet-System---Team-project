@@ -101,6 +101,7 @@ function findByUser(data, callback) {
 function findByID(data, callback) {
     var device = data.device;
     Device.findOne({'device': device}, function (err, obj) {
+    console.log(obj + "---------in the find by id");
         if (err) callback(err, null);
         if (callback) callback(null, obj);
     });

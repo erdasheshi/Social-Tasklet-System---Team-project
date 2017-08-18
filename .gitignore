@@ -11,3 +11,6 @@ data/
 Default/
 Debug/
 *.zip
+*.csv
+*.class
+*.class

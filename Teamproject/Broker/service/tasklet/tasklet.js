@@ -88,11 +88,11 @@ var server_request = net.createServer(function (socket) {
 server_request.listen(conf.tasklet.port, conf.tasklet.ip);
 
 function preScheduling(data, callback) {
-
+    var username = data.username;
     var information = taskletList.getTasklet(data.taskletid);
 
     //Step 4: Finding most suitable provider
-    taskletManager.scheduling(information, function (error, data) {
+    taskletManager.scheduling({ information: information, username : username}, function (error, data) {
         if (error) console.error(error);
         var schedulingResult = data;
         var buf;

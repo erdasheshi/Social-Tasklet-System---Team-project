@@ -64,7 +64,7 @@ public class Tasklet {
 		Tasklet tasklet = new Tasklet("primes.cmm");
 		tasklet.addInt(0);
 		tasklet.addInt(25000);
-		tasklet.setQoCReliable();
+		//tasklet.setQoCReliable();
 		tasklet.setQoCost(3);
 		tasklet.setQocPrivacy(5);
 		System.out.println("Running!");

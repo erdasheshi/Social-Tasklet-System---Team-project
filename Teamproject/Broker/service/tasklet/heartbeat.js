@@ -5,7 +5,10 @@ var pH = require('./protocolHeader');
 var providerList = require('./providerList');
 var constants = require('./../../constants');
 
-var heartbeat = Buffer.alloc(0);
+var Map = require("collections/map");
+
+
+var heartbeatSockets = new Map();
 
 // Socket Heartbeat
 var server_heartbeat = net.createServer(function (socket) {
@@ -16,15 +19,24 @@ var server_heartbeat = net.createServer(function (socket) {
 
     socket.on('data', function (data) {
         console.log(data);
+        var heartbeat = Buffer.alloc(0);
 
-
-
+        var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
         if (data.length == 16) {
             heartbeat = data;
+            if (heartbeatSockets.has(socketIdentifier)) heartbeatSockets.delete(socketIdentifier);
         }
         else {
-            var heartbeatLength = heartbeat.length + data.length;
-            heartbeat = Buffer.concat([heartbeat, data], heartbeatLength);
+            if (heartbeatSockets.has(socketIdentifier)) {
+                var tmpData = heartbeatSockets.get(socketIdentifier)
+                var heartbeatLength = tmpData.data.length + data.length;
+                heartbeat =  Buffer.concat([ tmpData.data, data ], heartbeatLength);
+            }
+            else {
+                heartbeatSockets.add({
+                    data : data
+                }, socketIdentifier);
+            }
         }
 
         if (heartbeat.length == 16) {
@@ -50,9 +62,7 @@ var server_heartbeat = net.createServer(function (socket) {
                         buf2.writeInt32LE(address, 0);
 
                         var totalLength = buf1.length + buf2.length;
-                        var buf = Buffer.concat([buf1, buf2], totalLength);
-
-                        heartbeat = Buffer.alloc(0);
+                        var buf = Buffer.concat([ buf1, buf2 ], totalLength);
 
                         socket.write(buf, function (err) {
                             socket.end();
@@ -83,11 +93,13 @@ var server_heartbeat = net.createServer(function (socket) {
                 buf2.writeInt32LE(address, 0);
 
                 var totalLength = buf1.length + buf2.length;
-                var buf = Buffer.concat([buf1, buf2], totalLength);
+                var buf = Buffer.concat([ buf1, buf2 ], totalLength);
 
                 socket.write(buf, function (err) {
                     socket.end();
                 });
+
+                if (heartbeatSockets.has(socketIdentifier)) heartbeatSockets.delete(socketIdentifier);
 
             });
 
