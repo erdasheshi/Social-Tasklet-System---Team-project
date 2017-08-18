@@ -112,13 +112,13 @@ function findNetwork(data, callback) {
 });
 }
 
-function findFriends(data, callback) {
-    var username = data.username;
-    Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
-        if (e) callback(e, null);
-        callback(null, data);
-    });
-}
+  function findFriends(data, callback) {
+      var username = data.username;
+      Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
+          if (e) callback(e, null);
+          callback(null, data);
+      });
+  }
 
 function deleteByID(data, callback) {
     var id = data.id;

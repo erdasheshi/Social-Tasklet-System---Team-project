@@ -25,7 +25,6 @@ function initialize(server) {
                 tasklet.preScheduling({taskletid: taskletid, username: username}, function (e, data) {
                     if (e) console.error(e);
                 });
-
             }
             else{
                 // Abort!!! --> Add error handling if user does not have enough coins
@@ -65,6 +64,7 @@ function activateDevice(data) {
 }
 
 function sendSFInformation(deviceID, taskletid, broker_id) {
+console.log(deviceID + "the device id");
     io.sockets.emit('SFInformation', {
         device: deviceID,
         taskletid: taskletid,

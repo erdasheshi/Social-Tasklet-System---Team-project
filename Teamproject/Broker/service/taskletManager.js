@@ -5,51 +5,67 @@ var constants = require('../constants');
 var friendships = require('../classes/FriendshipTransaction');
 var devices = require('../classes/DeviceAssignments');
 
-// Will be replaced by ERDA
-/*
- function findPotentialProvider(consumer, callback) {
- var username = consumer.username;
- var privacy = consumer.privacy;
+//Find the relation between the consumer and the owner of the device
+function findRelation(data, callback){
+var username = data.username;
+var device = data.device
+var ownership;
 
- if (privacy == "high") {
- friendships.findFriends({ username: username }, function (e, res) {
- if (e) callback(e, null);
- var result = JSON.parse({});
- res.forEach(function (data, index, array) {
- if (data.user_1 == consumer) {
- provider = data.user_2;
- } else if (data.user_2 == consumer) {
- provider = data.user_1;
- }
- devices.findByUser({ username: provider }, function (e, data) {
- if (e) return callback(e, data);
- result.push(data);
- if (index = array.length) callback(null, result);
- });
- });
- });
- } else {
- devices.findAll(function (e, data) {
- if (e) return callback(e, data);
- callback(null, data);
- });
- }
- }
- */
+//find the proprietary of the device
+devices.findByID({ device: device}, function(err, res){
+var proprietary = res.username;
+console.log(username + " username");
+console.log(proprietary + " proprietary");
 
+if (username == proprietary){
+ownership = "own";
+var result = '{ "device": "' + device + '", "ownership": "' + ownership + '" }'
+callback(null, {device: device, ownership: ownership});
+}
+else{
+
+friendships.findExistence({ user_1: username, user_2 : proprietary }, function(err, existence){
+console.log(existence + "existence");
+if( existence == "true" ){
+ownership = "friend";
+}
+else {
+var connection = find_friends_of_friends(username,  proprietary);
+//find_friends_of_friends({ username: username, proprietary : proprietary }, function(err, existence){
+console.log("return----" + connection);
+var connection = connection;
+if( connection == "true" ){
+ownership = "network";
+}
+else {
+ownership = "others";
+}
+//});
+}
+callback(null, {device: device, ownership: ownership});
+});
+}
+});
+}
 
 function onlinePotentialProvider(data, callback) {
     var providerList = require('./tasklet/providerList');
+    var username = data.username;
 
     var provider = providerList.getProviderList();
     var result = '[';
     var processed = 0;
 
     provider.forEach(function (entry, index, array) {
+var index = index;
+var deviceID = entry.deviceID;
+var availableVMs = entry.availableVMs;
+var benchmark = entry.benchmark;
 
-        // ERDA: methode has to be plugged in here!!! --> Determine Ownership + throw entries away, which do not fit the privacy purpose
+        findRelation({device: entry.deviceID, username: username }, function (error, data) {
+        console.log("Ownership: " + data.ownership);
 
-        result = result.concat('{ "address": "' + index + '", "deviceID":' + entry.deviceID + ', "availableVMs":' + entry.availableVMs + ', "benchmark": ' + entry.benchmark + ', "ownership": "own"}');
+        result = result.concat('{ "address": "' + index + '", "deviceID":' + deviceID + ', "availableVMs":' + availableVMs + ', "benchmark": ' + benchmark + ', "ownership": "' + data.ownership + '"}');
         processed += 1;
 
         if (processed == array.length){
@@ -61,19 +77,18 @@ function onlinePotentialProvider(data, callback) {
         else {
             result = result.replace('}{', '},{');
         }
-
     });
-
+});
 }
 
 // Step 4: Scheduler chooses based on QoC the most suitable provider
 // Assuming price range is 1-10 and for reliability and speed 1 is best, 10 is worst
-
 function scheduling(data, callback) {
-    var cost = data.cost;
-    var reliability = data.reliability;
-    var speed = data.speed;
-    var privacy = data.privacy;
+var information = data.information;
+    var cost = information.cost;
+    var reliability = information.reliability;
+    var speed = information.speed;
+    var privacy = information.privacy;
     var username = data.username;
 
     onlinePotentialProvider({username: username, privacy: privacy}, function (error, data) {
@@ -120,6 +135,61 @@ function scheduling(data, callback) {
     })
 }
 
+
+// //check if a user is one of the friends of of the friends of a second user
+// function find_friends_of_friends(data, callback){
+//
+// var username = data.username;
+// var proprietary = data.proprietary;
+//
+// //get the list of friends for this user
+// friendships.findFriends({username: username}, function(err, list_friends){
+// var existence = "false";
+// var counter = 0;
+// list_friends.forEach(function (friend, index, array) {
+//    var friend = friend.username;
+//    friendships.findExistence({ user_1: friend, user_2 : proprietary }, function(err, existence){
+//         if(err) console.error(err);
+//         if(existence == "true") { callback( null, 'true') };
+//         counter += 1;
+//    });
+//    if(counter == list_friends.length ){
+//         callback( null, 'false')
+//    }
+// });
+//
+// });
+// }
+
+
+//check if a user is one of the friends of of the friends of a second user
+function find_friends_of_friends(username, proprietary){
+var username = username;
+var proprietary = proprietary;
+//get the list of friends for this user
+friendships.findFriends({username: username}, function(err, list_friends){
+var existence = "false";
+var counter = 0;
+list_friends.forEach(function (friend, index, array) {
+   var friend = friend.username;
+   friendships.findExistence({ user_1: friend, user_2 : proprietary }, function(err, existence){
+        if(err) console.error(err);
+        if(existence == "true") { return "true" };
+        counter += 1;
+        console.log("111111111111");
+   });
+        console.log("2222222222");
+        console.log("33333333333");
+
+   if(counter == list_friends.length ){
+        return "false";
+   }
+
+});
+
+});
+}
+
 module.exports = {
     find: function (data, callback) {
         if (data.type == constants.PotentialProvider) {
@@ -127,8 +197,15 @@ module.exports = {
         } else if (data.type == constants.Friends) {
             return findFriends(data, callback);
         }
+        else if (data.type == constants.Friends) {
+                    return findFriends(data, callback);
+                }
     },
+
     scheduling: function (providers, cost, reliability, speed) {
         return scheduling(providers, cost, reliability, speed)
-    }
+    },
+
+    findRelation: function( data, callback)  {
+            return findRelation( data, callback) ; }
 };

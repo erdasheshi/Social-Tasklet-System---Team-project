@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 var Friendships = require("../models/Friendships");
 var accountingTransaction = require('../classes/AccountingTransaction');
 var friendshipTransaction = require('../classes/FriendshipTransaction');
+var devices = require('../classes/DeviceAssignments');
+
 var user = require('../classes/User');
 
 function findAllTransactions(user, callback) {
@@ -42,7 +44,7 @@ console.log("in the findfriendship function");
     friendshipTransaction.findNetwork({username: user}, function (e, res) {
         if (e) callback(e, null);
         
-        if (res) {
+        if (res.length > 0) {
         res.forEach(function (data, index, array) {
             if (data.status == constants.FriendshipStatusRequested) {
                 if (data.user_1 == user) {
@@ -75,10 +77,9 @@ console.log("in the findfriendship function");
         else {
               F_List = F_List.concat(']');
         }
-         callback(null, F_List);
+callback(null, F_List);
     });
     }
-
 
 //update user's balance
 function updateBalance(difference, username) {
@@ -106,5 +107,6 @@ module.exports = {
              return findAllTransactions(user, callback) ; },
 
     updateBalance: function(difference, username) {
-            return updateBalance(difference, username); }
+            return updateBalance(difference, username); },
+
 };

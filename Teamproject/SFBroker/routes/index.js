@@ -236,13 +236,6 @@ router.delete('/user', authService.loggedIn, function (req, res, next) {
           if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
           res.json('User successfully deleted!');
  });
- //   ***     authService.logout(req, res, function () {
- //   ***         user.deleteByUsername({username: username}, function (err, data) {
- //   ***         console.log("inside the function");
- //   ***             if (err) return next(err);
- //   ***             res.json('true');
- //   ***         });
- //   ***     });
 });
 
 module.exports = router;
