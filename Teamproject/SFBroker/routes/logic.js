@@ -74,9 +74,8 @@ console.log("in the findfriendship function");
         }
         else {
               F_List = F_List.concat(']');
-              callback(null, F_List);
         }
-        
+        callback(null, F_List);
     });
     }
 
