@@ -129,8 +129,7 @@ function preScheduling(data, callback) {
             buf = Buffer.concat([buf1, buf2], totalLength);
         }
 
-        taskletSocket.write(buf);
-        taskletSocket.end();
+        taskletSocket.write(buf, function(err) { taskletSocket.end(); });
 
         taskletList.deleteTasklet(information.taskletid);
 
@@ -149,8 +148,7 @@ function abortScheduling(data, callback) {
     var totalLength = buf1.length + buf2.length;
     var buf = Buffer.concat([buf1, buf2], totalLength);
 
-    taskletSocket.write(buf);
-    taskletSocket.end();
+    taskletSocket.write(buf, function(err) { taskletSocket.end(); });
 
     taskletList.deleteTasklet(data.taskletid);
 
