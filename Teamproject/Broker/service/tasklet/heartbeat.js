@@ -49,9 +49,7 @@ var server_heartbeat = net.createServer(function (socket) {
 
                 heartbeat = Buffer.alloc(0);
 
-                socket.write(buf);
-
-                socket.end();
+                socket.write(buf, function(err) { socket.end(); });
 
             }
 
@@ -76,9 +74,7 @@ var server_heartbeat = net.createServer(function (socket) {
             var totalLength = buf1.length + buf2.length;
             var buf = Buffer.concat([buf1, buf2], totalLength);
 
-            socket.write(buf);
-
-            socket.end();
+            socket.write(buf, function(err) { socket.end(); });
         }
 
     });
