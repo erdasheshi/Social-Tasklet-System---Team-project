@@ -17,7 +17,8 @@ import {Headers} from '@angular/http';
 var conf = require('../../../../config.json');
 
 // var serverURL = 'http://localhost';
-var serverURL = 'http://35.166.150.57';
+// var serverURL = 'http://35.166.150.57';
+var serverURL = 'http://46.101.198.127';
 
 let headers = new Headers();
 let options = new RequestOptions({headers: headers, withCredentials: true});
