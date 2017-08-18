@@ -17,7 +17,6 @@ function friendshipTransaction(data) {
     this.user_1 = data.user_1;
     this.user_2 = data.user_2;
     this.status = data.status;
-
 }
 
 friendshipTransaction.prototype.save = function (callback) {

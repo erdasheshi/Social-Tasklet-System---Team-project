@@ -20,37 +20,37 @@ function user(data) {
         this.balance = data.balance
 }
 
-user.prototype.save =  function(callback) {
-    var transaction = new User({ //You're entering a new transaction here
-            username: this.username,
-            password: this.password,
-            email: this.email,
-            firstname: this.firstname,
-            lastname: this.lastname,
-            balance: this.balance
-    });
-    transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-        if (error){
-            callback(error, false);
+user.prototype.save = function (callback) {
+    var tmpUser = this;
+    User.findOne({'username': tmpUser.username}, function (e, udata) {
+        if (udata == null) {
+            var element = new User(tmpUser);
+            element.save({}, function (error, data) {
+                if (error) {
+                    console.error(error);
+                }
+                if (callback) {
+                    callback(null, true);
+                }
+            });
         }
-        if (callback) callback(null, true);
-    });
-}
-
-user.prototype.update =  function() {
-    var transaction = this;
-
-    User.findOne({ 'username' : this.username }, function (err, doc) {
-        doc.balance   = transaction.balance;
-		doc.firstname = transaction.firstname;
-		doc.lastname  = transaction.lastname;
-		doc.email     = transaction.email;
-        doc.save({}, function (error, data) {
-           if (error) {
-                console.error(error.stack || error.message);
-                return;
-            }
-        }); //not sure about the else...it needs to be tested
+        else {
+            User.update({'username': tmpUser.username},{
+            username: username,
+            password: password,
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            balance: balance
+                }, function (error, data) {
+                    if (error) {
+                        callback(error, false);
+                    }
+                    else if (callback) {
+                        callback(null, true);
+                    }
+                });
+        }
     });
 }
 
