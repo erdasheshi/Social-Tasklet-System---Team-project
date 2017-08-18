@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import { NetworkUser } from '../shared/model/networkuser';
-import { coinsRequest }    from '../shared/model/coinsRequest';
-import { RequestedCoinsList } from '../shared/model/requestedCoinsList';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {NetworkUser} from '../shared/model/networkuser';
+import {coinsRequest} from '../shared/model/coinsRequest';
+import {RequestedCoinsList} from '../shared/model/requestedCoinsList';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 var conf = require('../../../config.json');
 
@@ -18,69 +19,54 @@ export class CoinsComponent implements OnInit {
   requestedCoinsListItems: RequestedCoinsList[];
   NetworkUserItems: NetworkUser;
   balance = 0;
-  coinsReq = new coinsRequest (0);
+  coinsReq = new coinsRequest(0);
 
-  constructor(private userService: UserService) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
 
     //get balance
     this.userService
-        .getUser()
-        .then(result => {
-            console.log('Coins' + result);
-            console.log('Hallo');
-            this.NetworkUserItems = result;
-            console.log(this.NetworkUserItems);
-            this.balance = this.NetworkUserItems.balance;
-        })
-        .catch(this.handleError);
+      .getUser()
+      .then(result => {
+        this.NetworkUserItems = result;
+        this.balance = this.NetworkUserItems.balance;
+      })
+      .catch(err => this.handleError(err));
 
-        //get all coin requests
-        this.userService
-            .getRequestedCoins()
-            .then(result => {
-                console.log('RequestedCoins' + result);
-                console.log('Hallo');
-                this.requestedCoinsListItems = result;
-                console.log(this.requestedCoinsListItems);
-            })
-            .catch(this.handleError);
+    //get all coin requests
+    this.userService
+      .getRequestedCoins()
+      .then(result => {
+        this.requestedCoinsListItems = result;
+      })
+      .catch(err => this.handleError(err));
 
   }
 
   onSubmit(user: coinsRequest) {
-    console.log(this.coinsReq);
     this.userService
-        .requestCoins(this.coinsReq)
-        .then(res => {
-          console.log(JSON.stringify(res));
-          if (res.status === 200){
-            console.log("NIICCCEEE! Rich guy!");
-          }
-        })
-        .catch(this.handleError);
-    this.userService
-      .getRequestedCoins()
-      .then(result => {
-        console.log('RequestedCoins' + result);
-        console.log('Hallo');
-        this.requestedCoinsListItems = result;
-        console.log(this.requestedCoinsListItems);
+      .requestCoins(this.coinsReq)
+      .then(res => {
+        return;
       })
-      .catch(this.handleError);
-  }
-
-  private handleError(error: any): Promise<any> {
-      return Promise.reject(error.message || error);
+      .then(() => this.userService.getRequestedCoins())
+      .then(result => {
+        this.requestedCoinsListItems = result;
+      })
+      .catch(err => this.handleError(err));
   }
 
   getRequestedCoins(): RequestedCoinsList[] {
     return this.requestedCoinsListItems;
   }
 
-  getUser(): NetworkUser{
-      return this.NetworkUserItems;
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

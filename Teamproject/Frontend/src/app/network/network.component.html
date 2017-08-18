@@ -1,49 +1,38 @@
 <div class="wrapper">
   <div class="grid">
-
     <div class="grid__col grid__col--2-of-2">
-<div ></div>
       <div *ngIf="friendships != null">
         <div style="  margin-top: 40px;" class="welcomeMessage">Pending Friendships</div>
-      <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
-            <button (click)="confirmFriend(friendship.name)" class="friend__name">
-                {{ friendship.name }} (Confirm)
-            </button>
-            <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
-                <div class="friend__image">
-                </div>
-                <div class="friend__stats">
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Buyer
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Seller
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Friends
-                        </div>
-                    </div>
-                </div>
+        <div *ngFor="let friendship of getPendingFriends()" class="friend__tile">
+          <button (click)="confirmFriend(friendship.name)" class="friend__name">
+            Confirm ({{ friendship.name }})
+          </button>
+          <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
+            <div class="friend__image">
             </div>
+            <div class="friend__stats">
+              <div class="statsSection__tile">
+                <div class="statsSection__tile__value">
+                  {{ friendship.name }}
+                </div>
+                <div class="statsSection__tile__description">
+                  Username
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        </div>
+      </div>
 
 
       <div style="  margin-top: 40px;" class="welcomeMessage">Requested Friendships</div>
+      <div *ngFor="let friendship of getRequestedFriends()" class="friend__tile">
+        <div *ngIf="friendship.name === null">
+          <div class="statsSection__tile__description">
+            No requested Friends
+          </div>
+        </div>
+      </div>
 
       <div *ngFor="let friendship of getRequestedFriends()" class="friend__tile">
         <div class="friend__name">
@@ -55,108 +44,60 @@
           <div class="friend__stats">
             <div class="statsSection__tile">
               <div class="statsSection__tile__value">
-                0
+                {{ friendship.name }}
               </div>
               <div class="statsSection__tile__description">
-                Buyer
-              </div>
-            </div>
-            <div class="statsSection__tile">
-              <div class="statsSection__tile__value">
-                0
-              </div>
-              <div class="statsSection__tile__description">
-                Seller
-              </div>
-            </div>
-            <div class="statsSection__tile">
-              <div class="statsSection__tile__value">
-                0
-              </div>
-              <div class="statsSection__tile__description">
-                Friends
+                Username
               </div>
             </div>
           </div>
         </div>
       </div>
 
-        <div style="  margin-top: 40px;" class="welcomeMessage">Friends</div>
+      <div style="  margin-top: 40px;" class="welcomeMessage">Friends</div>
 
-        <div *ngFor="let friendship of getFriends()" class="friend__tile">
-            <button (click)="deleteFriend(friendship.name)" class="friend__name">
-                {{ friendship.name }} (Delete)
-            </button>
-            <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
-                <div class="friend__image">
-                </div>
-                <div class="friend__stats">
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Buyer
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Seller
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Friends
-                        </div>
-                    </div>
-                </div>
+      <div *ngFor="let friendship of getFriends()" class="friend__tile">
+        <button (click)="deleteFriend(friendship.name)" class="friend__name">
+          Delete ({{ friendship.name }})
+        </button>
+        <div [ngClass]="{'friend__innerTile--inactive' : friendship.status==='Pending'}" class="friend__innerTile">
+          <div class="friend__image">
+          </div>
+          <div class="friend__stats">
+            <div class="statsSection__tile">
+              <div class="statsSection__tile__value">
+                {{ friendship.name }}
+              </div>
+              <div class="statsSection__tile__description">
+                Username
+              </div>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div style="  margin-top: 40px;" class="welcomeMessage">Network</div>
+      <div style="  margin-top: 40px;" class="welcomeMessage">Network</div>
 
-        <div *ngFor="let networkUsers of getNetwork()" class="friend__tile">
-            <button (click)="addFriend(networkUsers.username)" class="friend__name">
-                {{ networkUsers.username }} (Add)
-            </button>
+      <div *ngFor="let networkUsers of getNetwork()" class="friend__tile">
+        <button (click)="addFriend(networkUsers.username)" class="friend__name">
+          Add ({{ networkUsers.username }})
+        </button>
 
-            <div class="friend__innerTile">
-                <div class="friend__image">
-                </div>
-                <div class="friend__stats">
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Buyer
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Seller
-                        </div>
-                    </div>
-                    <div class="statsSection__tile">
-                        <div class="statsSection__tile__value">
-                            0
-                        </div>
-                        <div class="statsSection__tile__description">
-                            Friends
-                        </div>
-                    </div>
-                </div>
+        <div class="friend__innerTile">
+          <div class="friend__image">
+          </div>
+          <div class="friend__stats">
+            <div class="statsSection__tile">
+              <div class="statsSection__tile__value">
+                {{ networkUsers.username }}
+              </div>
+              <div class="statsSection__tile__description">
+                Username
+              </div>
             </div>
+          </div>
         </div>
+      </div>
 
     </div>
 

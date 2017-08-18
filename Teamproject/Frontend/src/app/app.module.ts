@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -15,6 +16,10 @@ import { HeaderComponent } from './header/header.component';
 import { UserService } from './shared/services/user.service';
 import { DevicemanagementComponent } from './devicemanagement/devicemanagement.component';
 import { RegisterdeviceComponent } from './registerdevice/registerdevice.component';
+import { ChangedeviceComponent } from './changedevice/changedevice.component';
+import {ToastModule} from "ng2-toastr/ng2-toastr";
+
+
 
 @NgModule({
   declarations: [
@@ -26,10 +31,13 @@ import { RegisterdeviceComponent } from './registerdevice/registerdevice.compone
     NetworkComponent,
     HeaderComponent,
     DevicemanagementComponent,
-    RegisterdeviceComponent
+    RegisterdeviceComponent,
+    ChangedeviceComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    ToastModule.forRoot(),
     FormsModule,
     HttpModule,
     RouterModule.forRoot([
@@ -62,6 +70,10 @@ import { RegisterdeviceComponent } from './registerdevice/registerdevice.compone
         'path': 'adddevice',
         'component': RegisterdeviceComponent,
         'pathMatch': 'full'
+      },
+      {
+        'path': 'changeDevice/:deviceID',
+        'component': ChangedeviceComponent
       },
       {
         'path': 'coins',

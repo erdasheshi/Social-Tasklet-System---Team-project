@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {Friendship} from '../shared/model/friendship';
 import {UserService} from '../shared/services/user.service'; //API Service
-import {NetworkUser} from '../shared/model/networkuser'
-import {AddFriendship} from "../shared/model/addFriendship";
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 const conf = require('../../../config.json');
 
@@ -18,39 +18,33 @@ export class NetworkComponent implements OnInit {
   networkUsers: NetworkUser[];
   friendships: Friendship[];
 
-  constructor(private userService: UserService,) {
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService,) {
+    this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-
     this.userService
       .getNetwork()
       .then(result => {
-        console.log('Network' + result);
         this.networkUsers = result;
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.userService
       .getFriends()
       .then(result => {
-        console.log('Friends' + result);
         this.friendships = result;
       })
-      .catch(this.handleError);
-  }
-
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error.message || error);
+      .catch(err => this.handleError(err));
   }
 
   getPendingFriends(): Friendship[] {
     if (this.friendships) {
-      console.log(this.friendships.length);
       return this.friendships.filter(friendship => friendship.status === 'Pending');
     }
-    else{
-      console.log(this.friendships.length);
+    else {
       return [];
     }
   }
@@ -88,63 +82,54 @@ export class NetworkComponent implements OnInit {
   }
 
   confirmFriend(user) {
-    var tmp = {name: user, status: "Confirmed"};
+    var tmp = {user: user, status: "Confirmed"};
     var newFriendship = new Friendship(tmp);
 
     this.userService
       .addFriend(newFriendship)
       .then(res => {
-        console.log(res.status);
         if (res.status === 200) {
-          console.log('success adding a friend');
+          this.toastr.success('Friend successfully added.');
         }
-        console.log(JSON.stringify(res));
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
 
     this.friendships = this.updateFriendship(this.friendships, user, 'Confirmed');
   }
 
   addFriend(user) {
-    var tmp = {name: user, status: "Requested"};
-    var newFriendship = new Friendship(tmp);
+    const friend = {
+      user: user,
+      status: 'Requested'
+    };
+    var newFriendship = new Friendship(friend);
 
     this.userService
       .addFriend(newFriendship)
       .then(res => {
-        console.log(res.status);
         if (res.status === 200) {
-          console.log('success adding a friend');
+          window.location.reload();
+          // this.toastr.info('Friendship successfully requested.');
         }
-        console.log(JSON.stringify(res));
+        this.friendships.push(newFriendship);
+        window.location.reload();
       })
-      .catch(this.handleError);
-
-    this.friendships.push(newFriendship);
+      .catch(err => this.handleError(err));
   }
 
   deleteFriend(user) {
-    //if (this.friendships) {
-      //this.friendships = this.updateFriendship(this.friendships, user, 'none');
-    //}
-
-    var tmp = {name: user, status: "none"};
-    var newFriendship = new Friendship(tmp);
-
     this.userService
-      .addFriend(newFriendship)
-      .then(res => {
-        console.log(res.status);
-        if (res.status === 200) {
-          console.log('friend successfully deleted');
-          window.location.reload();
-        }
-        console.log(JSON.stringify(res));
+      .deleteFriendship(user)
+      .then(() => this.userService.getFriends())
+      .then(result => {
+        this.friendships = result;
+        window.location.reload();
       })
-      .catch(this.handleError);
+      .catch(err => this.handleError(err));
+  }
 
-    this.friendships.push(newFriendship);
-
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
   }
 
 }

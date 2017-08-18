@@ -54,14 +54,12 @@
         <table class="transaction__table">
           <tbody>
             <tr class="transaction__table__row__first">
-              <td>ID</td>
               <td>RequestID</td>
               <td>Username</td>
               <td>RequestedCoins</td>
               <td>Approval</td>
             </tr>
             <tr *ngFor="let requestedCoinsListItem of getRequestedCoins()" class="transaction__table__row">
-              <td>{{ requestedCoinsListItem.id }}</td>
               <td>{{ requestedCoinsListItem.requestid }}</td>
               <td>{{ requestedCoinsListItem.username }}</td>
               <td>{{ requestedCoinsListItem.requestedCoins }}</td>

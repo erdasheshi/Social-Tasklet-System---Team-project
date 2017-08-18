@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import { TransactionList } from '../shared/model/transactionlist';
-import { NetworkUser } from '../shared/model/networkuser'
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {TransactionList} from '../shared/model/transactionlist';
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 var conf = require('../../../config.json');
 
@@ -17,42 +18,39 @@ export class TransactionsComponent implements OnInit {
   NetworkUserItems: NetworkUser;
   balance = 0;
 
-  constructor(private userService: UserService,) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService,) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 
   ngOnInit() {
 
     //get all transactions
     this.userService
-        .getTransactions()
-        .then(result => {
-            console.log('Transactions' + result);
-            console.log('Hallo');
-            this.transactionListItems = result;
-            console.log(this.transactionListItems);
-        })
-        .catch(this.handleError);
+      .getTransactions()
+      .then(result => {
+        this.transactionListItems = result;
+      })
+      .catch(err => this.handleError(err));
 
-        //get balance
-        this.userService
-            .getUser()
-            .then(result => {
-                this.NetworkUserItems = result;
-                this.balance = this.NetworkUserItems.balance;
-            })
-            .catch(this.handleError);
+    //get balance
+    this.userService
+      .getUser()
+      .then(result => {
+        this.NetworkUserItems = result;
+        this.balance = this.NetworkUserItems.balance;
+      })
+      .catch(err => this.handleError(err));
 
-  }
-
-  private handleError(error: any): Promise<any> {
-      return Promise.reject(error.message || error);
   }
 
   getTransactions(): TransactionList[] {
-      return this.transactionListItems;
+    return this.transactionListItems;
   }
 
-    getUser(): NetworkUser{
-        return this.NetworkUserItems;
-    }
+  private handleError(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
+  }
 
 }
