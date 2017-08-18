@@ -42,7 +42,7 @@ console.log("in the findfriendship function");
     friendshipTransaction.findNetwork({username: user}, function (e, res) {
         if (e) callback(e, null);
         
-        if (res) {
+        if (res.length > 0) {
         res.forEach(function (data, index, array) {
             if (data.status == constants.FriendshipStatusRequested) {
                 if (data.user_1 == user) {
@@ -74,8 +74,9 @@ console.log("in the findfriendship function");
         }
         else {
               F_List = F_List.concat(']');
+              callback(null, F_List);
         }
-         callback(null, F_List);
+        
     });
     }
 
