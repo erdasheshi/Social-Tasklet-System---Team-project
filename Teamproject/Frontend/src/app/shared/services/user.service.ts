@@ -1,4 +1,4 @@
-import {Injectable}    from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Http, Response} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
@@ -9,27 +9,33 @@ import {AddFriendship} from '../model/addFriendship';
 import {TransactionList} from '../model/transactionlist';
 import {coinsRequest} from '../model/coinsRequest';
 import {RequestedCoinsList} from '../model/requestedCoinsList';
+import {Device} from '../model/device';
+
 import {RequestOptions, Request, RequestMethod} from '@angular/http';
 import {Headers} from '@angular/http';
 
 var conf = require('../../../../config.json');
+
+// var serverURL = 'http://localhost';
 var serverURL = 'http://35.166.150.57';
+
 let headers = new Headers();
-let options = new RequestOptions({ headers: headers, withCredentials: true });
+let options = new RequestOptions({headers: headers, withCredentials: true});
 
 @Injectable()
 export class UserService {
 
-  private apiURLRegister =  serverURL + ':8001/register/';
-  private apiURLLogin =  serverURL + ':8001/login/';
-  private apiURLLogout =  serverURL + ':8001/logout/';
-  private apiURLNetwork =  serverURL + ':8001/user/?all=X';
-  private apiURLFriendships =  serverURL + ':8001/sfbuserinfo/';
-  private apiURLAddFriend =  serverURL + ':8001/friendship/';
-  private apiURLTransaction =  serverURL + ':8001/acctransaction';
-  private apiURLUser =  serverURL + ':8001/user';
-  private apiURLAddCoins =  serverURL + ':8001/coinrequest/';
+  private apiURLRegister = serverURL + ':8001/register/';
+  private apiURLLogin = serverURL + ':8001/login/';
+  private apiURLLogout = serverURL + ':8001/logout/';
+  private apiURLNetwork = serverURL + ':8001/user/?all=X';
+  // private apiURLFriendships =  serverURL + ':8001/sfbuserinfo/';
+  private apiURLAddFriend = serverURL + ':8001/friendship/';
+  private apiURLTransaction = serverURL + ':8001/acctransaction';
+  private apiURLUser = serverURL + ':8001/user';
+  private apiURLAddCoins = serverURL + ':8001/coinrequest/';
   private apiURLRequestedCoins = serverURL + ':8001/requestedcoins/';
+  private apiURLDevice = serverURL + ':8001/device/';
 
   constructor(private http: Http) {
   }
@@ -47,7 +53,7 @@ export class UserService {
   }
 
   logoutUser(): Promise<any> {
-    return this.http.get(this.apiURLLogout, options)
+    return this.http.post(this.apiURLLogout, options)
       .toPromise()
       .catch(this.handleError);
   }
@@ -55,7 +61,7 @@ export class UserService {
   getNetwork(): Promise<NetworkUser[]> {
     return this.http.get(this.apiURLNetwork, options)
       .toPromise()
-      .then((res: Response) => res.json()[0].map(obj => new NetworkUser(obj)))
+      .then((res: Response) => res.json().map(obj => new NetworkUser(obj)))
       .catch(this.handleError);
   }
 
@@ -74,9 +80,11 @@ export class UserService {
   }
 
   getFriends(): Promise<Friendship[]> {
-    return this.http.get(this.apiURLFriendships, options)
+    return this.http.get(this.apiURLAddFriend, options)
       .toPromise()
-      .then((res: Response) => res.json().connections.map(obj => new Friendship(obj)))
+      .then((res: Response) => {
+        return JSON.parse(res.json()).map(obj => new Friendship(obj))
+      })
       .catch(this.handleError);
   }
 
@@ -99,6 +107,36 @@ export class UserService {
       .catch(this.handleError);
   }
 
+  deleteUser(username: string): Promise<any> {
+    return this.http.delete(this.apiURLUser + "?username=" + username)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  addDevice(addDevice: Device): Promise<any> {
+    return this.http.post(this.apiURLDevice, addDevice, options)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  getDevices(): Promise<Device[]> {
+    return this.http.get(this.apiURLDevice, options)
+      .toPromise()
+      .then((res: Response) => res.json().map(obj => new Device(obj)))
+      .catch(this.handleError);
+  }
+
+  deleteDevice(addDevice: Device): Promise<any> {
+    return this.http.delete(this.apiURLDevice + "?device=" + addDevice)
+      .toPromise()
+      .catch(this.handleError);
+  }
+
+  deleteFriendship(user: string): Promise<any> {
+    return this.http.delete(this.apiURLAddFriend + "?user=" + user)
+      .toPromise()
+      .catch(this.handleError);
+  }
 
   private handleError(error: any): Promise<any> {
     return Promise.reject(error.message || error);

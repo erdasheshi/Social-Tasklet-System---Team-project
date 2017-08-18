@@ -1,11 +1,15 @@
 export class Friendship {
 
-    name: string;
-    status: string;
+  status: string;
+  name: string;
+  user: string;
 
-    constructor(userObj) {
-        this.name = userObj.name;
-        this.status = userObj.status;
+  constructor(userObj) {
 
-    }
+    this.name = userObj.name;
+    this.status = userObj.status;
+    this.user = userObj.user;
+
+    return this;
+  }
 }

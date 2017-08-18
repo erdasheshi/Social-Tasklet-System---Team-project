@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../shared/services/user.service'; //API Service
-import {NetworkUser} from '../shared/model/networkuser'
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
+import {UserService} from '../shared/services/user.service'; //API Service
+import {User} from './user';
+import {NetworkUser} from '../shared/model/networkuser';
+import {ToastsManager} from 'ng2-toastr/ng2-toastr';
 
 @Component({
   selector: 'app-header',
@@ -12,38 +14,55 @@ export class HeaderComponent implements OnInit {
 
   networkUserForHeader: NetworkUser[];
 
-  constructor(private userService: UserService) { }
+  constructor(public toastr: ToastsManager,
+              vcr: ViewContainerRef,
+              private userService: UserService) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
+
+  user = new User("", "", "", "", 0, "");
+  userInfo: NetworkUser;
 
   ngOnInit() {
-
     this.userService
       .getNetwork()
       .then(result => {
-        console.log('Network' + result);
         this.networkUserForHeader = result;
       })
-      .catch(this.handleError);
-
+      .catch(err => this.handleError(err));
   }
 
-  logoutFunction(){
-
+  logoutFunction() {
     //logout
     this.userService
       .logoutUser()
       .then(result => {
-        console.log('Tscchüüüsssiii');
         window.location.reload();
       })
-      .catch(this.handleError);
-
+      .catch(err => this.handleErrorToaster(err));
   }
 
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error.message || error);
+  deleteUserFunction() {
+    this.userService
+      .getUser()
+      .then(result => {
+        this.userInfo = result;
+      })
+      .then(() => {
+        return this.userService.deleteUser(this.userInfo.username);
+      })
+      .then(() => {
+        return window.location.reload();
+      })
+      .catch(err => this.handleErrorToaster(err));
   }
 
-  getNetworkUserForHeader(): NetworkUser[] {
-    return this.networkUserForHeader;
+  private handleError(err: any) {
+    console.log(JSON.parse(err._body).err);
   }
+
+  private handleErrorToaster(err: any) {
+    this.toastr.error(JSON.parse(err._body).err, 'Oops!');
+  }
+
 }

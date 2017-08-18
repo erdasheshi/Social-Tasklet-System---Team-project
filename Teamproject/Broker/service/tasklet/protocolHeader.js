@@ -1,21 +1,21 @@
 
 var constants = require('./../../constants');
 
-function readProtocolHeader(header){
+function readProtocolHeader(header, callback){
 
 	var magic = header.readInt32LE(0);
 	var version = header.readInt32LE(4);
 	var messageType = header.readInt32LE(8);
 	
 	if(magic == constants.Magic){
-		return messageType;
+        if(callback) callback(null, messageType);
 	}
 	
 	else
-		return -1;
+    if(callback) callback(-1, null);
 };
 
-function writeProtocolHeader(messageType){
+function writeProtocolHeader(messageType, callback){
 	
 	var buf1 = Buffer.alloc(4);
 	var buf2 = Buffer.alloc(4);
@@ -28,14 +28,14 @@ function writeProtocolHeader(messageType){
 	var totalLength = buf1.length + buf2.length + buf3.length;
 	var buffer = Buffer.concat([buf1,buf2,buf3],totalLength);
   
-	return buffer;
+	if(callback) callback(null,buffer);
 };
 
 module.exports = {
-	readProtocolHeader : function(header){
-		return readProtocolHeader(header);
+	readProtocolHeader : function(header, callback){
+		return readProtocolHeader(header, callback);
 	},
-	writeProtocolHeader : function(messageType){
-		return writeProtocolHeader(messageType);
+	writeProtocolHeader : function(messageType, callback){
+		return writeProtocolHeader(messageType, callback);
 	}
 };
