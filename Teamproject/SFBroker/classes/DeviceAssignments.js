@@ -125,14 +125,18 @@ function deleteByID(data, callback) {
 }
 
 function deleteByUser(data, callback) {
-
     var username = data.username;
+
     Device.find({'username': username}, function (e, res) {
+    if (e) callback(e, null);
+
+    if(res.length > 0){
         res.forEach(function (data, index, array) {
             var device = data.device;
             deleteByID({device: device, username: username});
         });
-        if (e) callback(e, null);
+        console.log("deleting devices");
+        }
         callback(null, true);
     });
 }

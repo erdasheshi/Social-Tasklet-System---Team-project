@@ -123,7 +123,9 @@ function findNetwork(data, callback) {
 function deleteByID(data, callback) {
     var id = data.id;
     Friendship.remove({ 'id': data.id }, function (err, obj) {
-        if (err) callback(err, null);
+        if (err){
+        callback(err, null);
+        }
         else {
         Friendship.find({ 'id': id }).exec(function (e, data) {
             replicationManager.CollectUpdates({
@@ -133,7 +135,7 @@ function deleteByID(data, callback) {
                 key: 'd_friendship'
             });
             });
-            if (callback) callback(null, true);
+            callback(null, true);
         }
     });
 }
@@ -154,7 +156,7 @@ function deleteByUsers(data, callback) {
                 key: 'd_friendship'
             });
             });
-           if (callback)  callback(null, true);
+             callback(null, true);
             }
     });
 }

@@ -73,7 +73,7 @@ function deleteByUser(data, callback) {
     var username = data.username;
     Coins.remove({ 'username': username }, function (err, data) {
         if (err) callback(err, null);
-        if (callback) callback(null, true);
+         callback(null, true);
     });
 }
 
