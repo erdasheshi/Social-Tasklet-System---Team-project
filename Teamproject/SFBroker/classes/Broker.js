@@ -7,7 +7,7 @@ var Broker = require('../models/Brokers.js');
 
 function broker(data) {
     this.username = data.username,
-        this.broker = data.broker
+    this.broker = data.broker
 }
 
 broker.prototype.save = function (callback) {
@@ -53,6 +53,12 @@ function findAll(callback) {
      });
 }
 
+ function findBrokers(callback) {
+   Broker.distinct( "broker" ).exec(function (e, data) {
+         if (e) callback(e, null);
+         callback(null, data);
+     });
+}
 module.exports = {
     broker: broker,
 
@@ -66,5 +72,9 @@ module.exports = {
 
     findByUser: function (data, callback) {
         return findByUser(data, callback);
+    },
+
+    findBrokers: function (callback) {
+        return findBrokers(callback);
     }
 };
