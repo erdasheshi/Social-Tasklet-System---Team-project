@@ -121,25 +121,21 @@ function findNetwork(data, callback) {
 
 function deleteByID(data, callback) {
     var id = data.id;
-
-    Friendship.find({ 'id': id }).exec(function (e, data) {
-    var user_1 = data.user_1;
-    var user_2 = data.user_2;
-
     Friendship.remove({ 'id': data.id }, function (err, obj) {
         if (err){
         callback(err, null);
         }
         else {
+        Friendship.find({ 'id': id }).exec(function (e, data) {
             replicationManager.CollectUpdates({
                 username : data.user_1,
                 user_2 : data.user_2,
                 id: id,
                 key: 'd_friendship'
             });
+            });
             callback(null, true);
         }
-    });
     });
 }
 
@@ -169,9 +165,7 @@ var user_1 = data.username;
 Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){
 res.forEach(function (data, index, array) {
 var id = data.id;
-  deleteByID({ id: id }, function (e, data) {
-        if (e) callback(e, null);
-    });
+  deleteByID({ id: id });
     });
   if (e) callback(e, null);
   callback(null, true);

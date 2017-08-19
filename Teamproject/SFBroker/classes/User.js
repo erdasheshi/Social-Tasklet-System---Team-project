@@ -68,14 +68,17 @@ function findByUser(data, callback) {
 }
 
 function deleteByUsername(data, callback){
+console.log( username + " the delete user is called")
     var username = data.username;
     friendship.deleteByUser({ username : username }, function(e, data){
         if (e) callback(e, null);
         device.deleteByUser({ username : username }, function(e, data) {
+
             if (e) callback(e, null);
             coins.deleteByUser({ username : username }, function(e, data) {
                 if (e) callback(e, null);
                 User.remove({ 'username': username }, function (err, data) {
+console.log("after deleting the coin requests");
                     if (err) callback(err, null);
                     if (callback) callback(null, true);
                 });

@@ -20,7 +20,7 @@ function DeviceAssignments(data) {
 
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
-    Device.findOne({'device': tmpDevice.device}, function (e, udata) {
+    Device.findOne({'device': this.device}, function (e, udata) {
         if (udata == null) {
             if (tmpDevice.device) {
                 var device = new Device(tmpDevice);
@@ -101,6 +101,7 @@ function findByUser(data, callback) {
 function findByID(data, callback) {
     var device = data.device;
     Device.findOne({'device': device}, function (err, obj) {
+    console.log(obj + "---------in the find by id");
         if (err) callback(err, null);
         if (callback) callback(null, obj);
     });
@@ -132,10 +133,9 @@ function deleteByUser(data, callback) {
     if(res.length > 0){
         res.forEach(function (data, index, array) {
             var device = data.device;
-            deleteByID({device: device, username: username}, function (e, data) {
-                if (e) callback(e, null);
-            });
+            deleteByID({device: device, username: username});
         });
+        console.log("deleting devices");
         }
         callback(null, true);
     });
@@ -185,4 +185,5 @@ module.exports = {
     generateDeviceID: function (data, callback) {
         return generateDeviceID(data, callback);
     }
+
 }

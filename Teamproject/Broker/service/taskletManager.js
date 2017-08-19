@@ -14,20 +14,25 @@ var ownership;
 //find the proprietary of the device
 devices.findByID({ device: device}, function(err, res){
 var proprietary = res.username;
+console.log(username + " username");
+console.log(proprietary + " proprietary");
 
 if (username == proprietary){
 ownership = "own";
+var result = '{ "device": "' + device + '", "ownership": "' + ownership + '" }'
 callback(null, {device: device, ownership: ownership});
 }
 else{
 
 friendships.findExistence({ user_1: username, user_2 : proprietary }, function(err, existence){
+console.log(existence + "existence");
 if( existence == "true" ){
 ownership = "friend";
 }
 else {
 var connection = find_friends_of_friends(username,  proprietary);
 //find_friends_of_friends({ username: username, proprietary : proprietary }, function(err, existence){
+console.log("return----" + connection);
 var connection = connection;
 if( connection == "true" ){
 ownership = "network";
@@ -58,6 +63,7 @@ var availableVMs = entry.availableVMs;
 var benchmark = entry.benchmark;
 
         findRelation({device: entry.deviceID, username: username }, function (error, data) {
+        console.log("Ownership: " + data.ownership);
 
         result = result.concat('{ "address": "' + index + '", "deviceID":' + deviceID + ', "availableVMs":' + availableVMs + ', "benchmark": ' + benchmark + ', "ownership": "' + data.ownership + '"}');
         processed += 1;
@@ -129,6 +135,33 @@ var information = data.information;
     })
 }
 
+
+// //check if a user is one of the friends of of the friends of a second user
+// function find_friends_of_friends(data, callback){
+//
+// var username = data.username;
+// var proprietary = data.proprietary;
+//
+// //get the list of friends for this user
+// friendships.findFriends({username: username}, function(err, list_friends){
+// var existence = "false";
+// var counter = 0;
+// list_friends.forEach(function (friend, index, array) {
+//    var friend = friend.username;
+//    friendships.findExistence({ user_1: friend, user_2 : proprietary }, function(err, existence){
+//         if(err) console.error(err);
+//         if(existence == "true") { callback( null, 'true') };
+//         counter += 1;
+//    });
+//    if(counter == list_friends.length ){
+//         callback( null, 'false')
+//    }
+// });
+//
+// });
+// }
+
+
 //check if a user is one of the friends of of the friends of a second user
 function find_friends_of_friends(username, proprietary){
 var username = username;
@@ -143,12 +176,17 @@ list_friends.forEach(function (friend, index, array) {
         if(err) console.error(err);
         if(existence == "true") { return "true" };
         counter += 1;
+        console.log("111111111111");
    });
+        console.log("2222222222");
+        console.log("33333333333");
 
    if(counter == list_friends.length ){
         return "false";
    }
+
 });
+
 });
 }
 

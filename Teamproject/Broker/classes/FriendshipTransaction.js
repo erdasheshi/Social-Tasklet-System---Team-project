@@ -19,7 +19,7 @@ friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
-    Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
+    Friendship.findOne({ 'user_1': this.user_1, 'user_2': this.user_2 }).exec(function (e, udata) {
         if (udata == null) {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
                 if (data == null) {
@@ -70,7 +70,6 @@ function findAll(callback) {
     });
 }
 
-//not used in the broker (we have no pending requests Broker's database)
 function findNetwork(data, callback) {
     var username = data.username;
     Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
@@ -79,6 +78,7 @@ function findNetwork(data, callback) {
         callback(null, JSON.parse(response.toString()));
     });
 }
+
 
 function findFriends(data, callback){
     var username = data.username;
@@ -124,22 +124,23 @@ callback(null, existence);
 
 function deleteByID(data, callback) {
     var id = data.id;
-    Friendship.remove({ 'id': data.id }, function (err, obj) {
-        if (err) {
-         callback(err, null);
-        }
+    friendship.remove({ 'id': data.id }, function (err, obj) {
+        if (err) callback(err, null);
         else {
+            replicationManager.CollectUpdates({
+                id: id,
+                key: 'd_friendship'
+            });
             if (callback) callback(null, true);
         }
     });
 }
 
-//************check if this function is used anywhere... if yes test it
 function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
 
-    Friendship.remove({
+    friendship.remove({
         $or: [ { 'user_1': data.user_1, 'user_2': user_2 }, {
             'user_2': user_1, 'user_1': user_2
         } ]
@@ -152,11 +153,10 @@ function deleteByUsers(data, callback) {
     });
 }
 
-//************check if this function is used anywhere... if yes test it
 function deleteByUser(data, callback) {
     var user_1 = data.username;
 
-    Friendship.remove({
+    friendship.remove({
         $or: [ { 'user_1': data.user_1 }, { 'user_2': user_1 } ] }, function (err, data) {
         if (err) callback(err, null);
 
