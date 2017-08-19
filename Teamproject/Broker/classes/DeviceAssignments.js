@@ -17,7 +17,7 @@ function DeviceAssignments(data) {
 
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
-    Device.findOne({'device': this.device}, function (e, udata) {
+    Device.findOne({'device': tmpDevice.device}, function (e, udata) {
         if (udata == null) {
             var device = new Device(tmpDevice);
             device.save({}, function (error, data) {
@@ -80,6 +80,7 @@ var min = 1000000000000;
 var max = 0;
 var price;
 findAll(function (e, data) {
+
 if(data.length > 0){
 data.forEach(function (element, index, array) {
 price = element.price;
@@ -91,6 +92,11 @@ if( price > max)
 });
 callback ( null, {min: min, max: max});
 }
+else{
+max = 0;
+min = 0;
+callback ( null, {min: min, max: max});
+}
 });
 }
 
@@ -100,7 +106,6 @@ function deleteByID(data, callback) {
     Device.remove({'device': device}, function (err, obj) {
         if (err) callback(err, null);
         if (callback) callback(null, true);
-
     });
 }
 
@@ -109,7 +114,6 @@ function deleteByUser(data, callback) {
     Device.remove({'username': username}, function (err, obj) {
         if (err) callback(err, null);
         else if (callback) callback(null, true);
-
     });
 }
 
