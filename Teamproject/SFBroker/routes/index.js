@@ -192,7 +192,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         if (err) return next(err);
 
         if (download) {
-            downloadManager.provideDownload({ id: data.device }, function (err, data) {
+            downloadManager.provideDownload({ id: data.device, username : data.username }, function (err, data) {
                 if (err) return res.status(500).json({err: 'Action not successful!'} );
                 res.download(data.destination);
             });
