@@ -1,42 +1,42 @@
 {
 	"sfbroker": {
-		"ip": "127.0.0.1",
+		"ip": "35.166.150.57",
 		"port": 8001,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-sfbroker",
 			"port": "27017",
-			"database": "SFBroker"
+			"database": ""
 		},
 		"download" :{
-			"source": "../SFBroker/download/",
-			"destination": "../SFBroker/download/Middleware/"
+			"source": "/usr/src/app/download/",
+			"destination": "/usr/src/app/download/Middleware/"
 		}
 	},
 	"sfbroker_socket": {
-		"ip": "127.0.0.1",
+		"ip": "35.166.150.57",
 		"port": 8002
 	},
 	"broker": {
-		"ip": "127.0.0.1",
+		"ip": "35.166.150.57",
 		"port": 8003,
 		"mongoDB":{
-			"address": "127.0.0.1",
+			"address": "mongodb-broker",
 			"port": "27018",
-			"database": "Broker"
+			"database": ""
 		}
 	},
 	"broker_socket": {
-		"ip": "127.0.0.1",
+		"ip": "35.166.150.57",
 		"port": 8004
 	},
-	"frontend": {
-		"protocol" : "http",
-		"ip": "localhost",
-		"port": 4200
-	},
 	"admin": {
-		"ip": "127.0.0.1",
+		"ip": "35.166.150.57",
 		"port": 8009
+	},
+    "frontend": {
+		"protocol" : "http",
+		"ip": "35.166.150.57",
+		"port": 4200
 	},
 	"tasklet":{
 		"ip": "0.0.0.0",
@@ -45,10 +45,6 @@
 	"heartbeat":{
 		"ip": "0.0.0.0",
 		"port": 34123
-	},
-	"direct_access": {
-		"ip": "127.0.0.1",
-		"port": 8009
 	},
 	"vmup":{
 		"ip": "0.0.0.0",
