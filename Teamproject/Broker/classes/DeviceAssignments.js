@@ -75,8 +75,6 @@ function findByStatus(data, callback) {
     });
 }
 
-<<<<<<< HEAD
-=======
 function findPriceRange(callback){
 var min = 1000000000000;
 var max = 0;
@@ -102,7 +100,6 @@ callback ( null, {min: min, max: max});
 });
 }
 
->>>>>>> origin/DataReplication
 function deleteByID(data, callback) {
     var device = data.device;
     Device.remove({'device': device}, function (err, obj) {
@@ -132,13 +129,10 @@ module.exports = {
         return findByUser(data, callback);
     },
 
-<<<<<<< HEAD
-=======
      findByStatus: function (data, callback) {
          return findByStatus(data, callback);
      },
 
->>>>>>> origin/DataReplication
     findByID: function (data, callback) {
         return findByID(data, callback);
     },
