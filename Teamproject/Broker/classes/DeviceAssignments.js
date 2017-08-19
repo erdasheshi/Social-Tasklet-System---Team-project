@@ -100,7 +100,6 @@ callback ( null, {min: min, max: max});
 });
 }
 
-
 function deleteByID(data, callback) {
     var device = data.device;
     Device.remove({'device': device}, function (err, obj) {
@@ -129,7 +128,7 @@ module.exports = {
     },
 
      findByStatus: function (data, callback) {
-         return findByUser(data, callback);
+         return findByStatus(data, callback);
      },
 
     findByID: function (data, callback) {

@@ -68,7 +68,7 @@ socket_c.on('SFInformation', function (data) {
     var taskletid = data.taskletid;
 
     deviceAssignment.findByID({device: device}, function (error, data) {
-
+    if(data){
         var username = data.username;
 
         console.log("Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
@@ -98,19 +98,22 @@ socket_c.on('SFInformation', function (data) {
                 further = false;
             }
 
-            var updates = replicationManager.updateBroker(broker);
-            //*** not sure if the taskletid needs to be passed further to the broker since he was the one who sent it in the firs place
-            //the socket call that will return the results and the updates to the broker
+           // var updates = replicationManager.updateBroker({broker: broker}, function (e, updates) {
+            var updates = replicationManager.updateBroker(broker)
+            var updates = updates;
             socket_c.emit('SFInformation', {
                 further: further,
                 username: username,
                 taskletid: taskletid,
                 updates: updates
             });
+
         });
-
+}
+else{
+callback(err, null);
+}
     });
-
 });
 
 // Step 11: Tasklet finished + Tasklet cycles known
@@ -175,3 +178,14 @@ total = total + cost;
                 });
             }
         });
+
+        function send_global_updates(broker, updates) {
+             socket_c.emit('GlobalUpdate', { broker: broker, updates: updates });
+        }
+
+
+module.exports = {
+    send_global_updates: function (server) {
+        return send_global_updates(data);
+    }
+    }
