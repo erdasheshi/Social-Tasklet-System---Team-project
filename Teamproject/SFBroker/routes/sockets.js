@@ -25,7 +25,9 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
+    console.log("the request comes");
         coinTransaction.findByApproval({approval: 'false'}, function (e, data) {
+        console.log("the results are sent");
             io.sockets.emit('Requested_Coins', data);
         });
     });
@@ -36,7 +38,6 @@ io.sockets.on('connection', function (socket) {
         var username = data.username;
         var coins = parseInt(data.requestedCoins);
 
-        new_balance = 0;
         var coinTr = coinTransaction.get({
             requestid: data.requestid,
             approval: data.approval,
@@ -46,24 +47,10 @@ io.sockets.on('connection', function (socket) {
         coinTr.save(function (err, post) {
             if (err) console.error(err);
         });
-        user.findByUser({username: username}, function (e, data) {
-            if (data.balance == undefined) {
-                var old_balance = 5;
-            }
-            else {
-                var old_balance = parseInt(data.balance);
-            }
-            new_balance = coins + old_balance;
-            var user_balance = user.get({
-                username: data.username,
-                balance: new_balance,
-            });
-            user_balance.save(function (err, post) {
-                if (err) return next(err);
-            });
-            console.log("The new balance of the consumer: " + new_balance);
-            user_balance.update();
-        });
+
+        var difference = coins;
+        logic.updateBalance(difference, username);
+
     })
 });
 
@@ -128,32 +115,47 @@ socket_c.on('SFInformation', function (data) {
 
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
-    //add security check that the computation is really a number
-    var cost = data.cost;
-    var taskletid = data.taskletid;
-    var provider = data.provider;    //***here we get the username of the provider, not the device anymore
-    accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
-        var initial_coins = res.coins;
-        var consumer = res.consumer;
-        var difference = initial_coins - cost;
+if(data != null){
+var providers = data.provider;
+var taskletid = data.taskletid;
 
-        var accTransaction = accountingTransaction.get({
-            consumer: consumer,
-            provider: provider,
-            coins: cost,
-            status: constants.AccountingStatusConfirmed
-        });
-        accTransaction.save(function (err, post) {
-            if (err) return next(err);
-        });
-        //transferring money to the provider
-        logic.updateBalance(cost, provider);
+accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
+    var initial_coins = res.coins;
+    var consumer = res.consumer;
 
-        // fixing the balance of the consumer, based on the real cost
-        logic.updateBalance(difference, consumer);
-        console.log('Tasklet ' + res.taskletid + ' confirmed!');
-    });
+providers.forEach(function ( device, index, array){
+    var cost = device.cost;
+    var device = device.device;
+var total = 0 ;
+    var difference = initial_coins - cost;
+
+    deviceAssignment.findByID({device: device}, function (error, data) {
+
+        var username = data.username;
+total = total + cost;
+//generate a list of providers and the total of the cost then update the transaction
+
+    //transferring money to the provider
+    logic.updateBalance(cost, username);
 });
+
+  var accTransaction = accountingTransaction.get({ //transfer in the end
+        consumer: consumer,
+        provider: provider,
+        coins: cost,
+        status: constants.AccountingStatusConfirmed
+    });
+    accTransaction.save(function (err, post) {
+        if (err) return next(err);
+    });
+    // fixing the balance of the consumer, based on the real cost
+    logic.updateBalance(difference, consumer);
+    console.log('Tasklet ' + res.taskletid + ' confirmed!');
+    });
+    });
+    };
+    });
+
 
 //Activate device when recieved the first heartbeat
         socket_c.on('ActivateDevice', function (data) {

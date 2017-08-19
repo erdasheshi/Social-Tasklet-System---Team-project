@@ -36,12 +36,11 @@ user.prototype.save = function (callback) {
         }
         else {
             User.update({'username': tmpUser.username},{
-            username: username,
-            password: password,
-            email: email,
-            firstname: firstname,
-            lastname: lastname,
-            balance: balance
+            password: udata.password,   //to be changed when the user will be allowed to change his registration data in the frontend
+            email: udata.email,         //to be changed when the user will be allowed to change his registration data in the frontend
+            firstname: udata.firstname, //to be changed when the user will be allowed to change his registration data in the frontend
+            lastname: udata.lastname,   //to be changed when the user will be allowed to change his registration data in the frontend
+            balance: tmpUser.balance
                 }, function (error, data) {
                     if (error) {
                         callback(error, false);
