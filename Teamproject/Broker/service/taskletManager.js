@@ -239,6 +239,7 @@ function scheduling(data, callback) {
 						result = result.concat({ip: currentProvider, vms: selectedVMs, price: currentPrice});
 						selectedProviders = selectedProviders + 1;
 						data.splice(position, 1);
+						providerList.decreaseVMs(currentProvider);
 					}
 					
 					attempts = attempts + 1; 
