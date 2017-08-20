@@ -9,7 +9,7 @@ function broker(data) {
     this.username = data.username,
     this.broker = data.broker
 }
-
+//creates a new database entry or updates the existing ones
 broker.prototype.save = function (callback) {
     var transaction = new Broker({
         username: this.username,
@@ -17,6 +17,7 @@ broker.prototype.save = function (callback) {
 
     });
     Broker.findOne({'username': this.username}, function (err, doc) {
+    //if no entry was not found, then create it
         if (doc) {
             doc.broker = transaction.broker
             doc.save({}, function (error, data) {
@@ -27,8 +28,9 @@ broker.prototype.save = function (callback) {
 
             });
         }
+        //an entry was found, therefore update it with the new values
         else {
-            transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
+            transaction.save(function (error) {
                 if (error) {
                     callback(error, false);
                 }
@@ -39,6 +41,7 @@ broker.prototype.save = function (callback) {
 
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Broker.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -46,6 +49,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
  function findByUser(data, callback) {
    Broker.findOne({'username': data.username}).exec(function (e, data) {
          if (e) callback(e, null);
@@ -53,6 +57,7 @@ function findAll(callback) {
      });
 }
 
+//find all brokers registered in the database
  function findBrokers(callback) {
    Broker.distinct( "broker" ).exec(function (e, data) {
          if (e) callback(e, null);

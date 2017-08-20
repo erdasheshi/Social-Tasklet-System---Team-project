@@ -18,9 +18,12 @@ function DeviceAssignments(data) {
     this.status = data.status
 }
 
+//creates a new database entry or updates the existing ones
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
+
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
+        //if there was no entry found then create it
         if (udata == null) {
             if (tmpDevice.device) {
                 var device = new Device(tmpDevice);
@@ -62,6 +65,7 @@ DeviceAssignments.prototype.save = function (callback) {
                 });
             }
         }
+        //an entry was found, therefore update it with the new values
         else {
             Device.update({'device': tmpDevice.device},
                 {name: tmpDevice.name, username: tmpDevice.username, price: tmpDevice.price, status: tmpDevice.status},
@@ -72,7 +76,7 @@ DeviceAssignments.prototype.save = function (callback) {
                     else if (callback) {
                         replicationManager.CollectUpdates({
                             username: tmpDevice.username,
-                            devices: tmpDevice.device,
+                            device: tmpDevice.device,
                             status: tmpDevice.status,
                             price: tmpDevice.price,
                             key: constants.Device
@@ -84,6 +88,7 @@ DeviceAssignments.prototype.save = function (callback) {
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Device.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -91,6 +96,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
 function findByUser(data, callback) {
     Device.find({'username': data.username}, function (e, data) {
         if (e) callback(e, null);
@@ -98,6 +104,7 @@ function findByUser(data, callback) {
     });
 }
 
+//find the single entry that matches the given ID
 function findByID(data, callback) {
     var device = data.device;
     Device.findOne({'device': device}, function (err, obj) {
@@ -106,6 +113,7 @@ function findByID(data, callback) {
     });
 }
 
+//delete the single entry that matches the given ID
 function deleteByID(data, callback) {
     var device = data.device;
     var username = data.username;
@@ -123,6 +131,7 @@ function deleteByID(data, callback) {
     });
 }
 
+//delete the entries that belong to a certain user
 function deleteByUser(data, callback) {
     var username = data.username;
 
@@ -141,6 +150,7 @@ function deleteByUser(data, callback) {
     });
 }
 
+//generate an ID for newly registered devices
 function generateDeviceID(data, callback) {
     Device.findOne()
         .sort('-device')

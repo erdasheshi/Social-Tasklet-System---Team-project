@@ -12,24 +12,40 @@ function initialize(server) {
         var broker_id = 5;    //important in case of distributed - multiple brokers
 
         socket.on('SFInformation', function (data) {
+            var updates = data.updates;
             var username = data.username;
             var taskletid = data.taskletid;
             var tasklet = require('./tasklet/tasklet');
-			repClient.setUpdates(data.updates);
+            var further = data.further;
 
-            //store the updates before proceeding
-            if (data.further == true) { // Check if the user has enough money
-			
-                tasklet.preScheduling({taskletid: taskletid, username: username}, function (e, data) {
-                    if (e) console.error(e);
-                });
-            }
-            else{
-                // Abort!!!
-                tasklet.abortScheduling({taskletid: taskletid}, function (e, data) {
-                    if (e) console.error(e);
-				});
-			}
+	repClient.setUpdates({updates: updates}, function(e, res){
+	console.log("it comes in the websocket");
+          if (e) ; console.error(e);
+          //store the updates before proceeding
+          if (further == true) { // Check if the user has enough money
+
+              tasklet.preScheduling({taskletid: taskletid, username: username}, function (e, data) {
+                  if (e) console.error(e);
+              });
+          }
+          else{
+              // Abort!!!
+              tasklet.abortScheduling({taskletid: taskletid}, function (e, data) {
+                  if (e) console.error(e);
+       	});
+       }
+	});
+        });
+
+       //get daily updates
+        socket.on('GlobalUpdate', function (data){
+        var broker_id = data.broker;
+        var updates = data.updates;
+            //store the updates in the database
+        	repClient.setUpdates({updates: updates}, function(e, res){
+        	if (e) console.error(e);
+        	callback(null, true);
+        	});
         });
     });
 }

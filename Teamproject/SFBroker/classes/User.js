@@ -19,10 +19,11 @@ function user(data) {
         this.lastname = data.lastname,
         this.balance = data.balance
 }
-
+//creates a new database entry or updates the existing ones
 user.prototype.save = function (callback) {
     var tmpUser = this;
     User.findOne({'username': tmpUser.username}, function (e, udata) {
+        //if no entry was not found, then create it
         if (udata == null) {
             var element = new User(tmpUser);
             element.save({}, function (error, data) {
@@ -34,6 +35,7 @@ user.prototype.save = function (callback) {
                 }
             });
         }
+        //an entry was found, therefore update it with the new values
         else {
             User.update({'username': tmpUser.username},{
             password: udata.password,   //to be changed when the user will be allowed to change his registration data in the frontend
@@ -53,6 +55,7 @@ user.prototype.save = function (callback) {
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     User.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -60,6 +63,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
 function findByUser(data, callback) {
     User.findOne({ 'username' : data.username }, function (e, data) {
         if (e) callback(e, null);
@@ -67,6 +71,8 @@ function findByUser(data, callback) {
     });
 }
 
+//delete all the database entries that belong to a certain user
+//an exception are the tasklet transactions, which are stored in the database for statistical & safety reasons
 function deleteByUsername(data, callback){
     var username = data.username;
     friendship.deleteByUser({ username : username }, function(e, data){

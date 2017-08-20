@@ -18,15 +18,17 @@ function friendshipTransaction(data) {
     this.user_2 = data.user_2;
     this.status = data.status;
 }
-
+//creates a new database entry or updates the existing ones
 friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
     var id     = this.id;
     Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
+    //if no entry was not found, then search again with the other combination of user_2, user_1
         if (udata == null) {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
+            //if no entry was not found with neither of the combination, then create its
                 if (data == null) {
                     var transaction = new Friendship({ //You're entering a new transaction here
                         id : id,
@@ -52,6 +54,7 @@ friendshipTransaction.prototype.save = function (callback) {
                         }
                     });
                 }
+                //an entry was found, therefore update it with the new values
                 else {
                     Friendship.update({ 'user_1': user_2, 'user_2': user_1 }, { 'status': status }, function (e, data) {
                         if (e) {
@@ -74,6 +77,7 @@ friendshipTransaction.prototype.save = function (callback) {
             });
 
         }
+        //an entry was found, therefore update it with the new values
         else {
             Friendship.update({ 'user_1': user_1, 'user_2': user_2 }, { 'status': status }, function (e, data) {
                 if (e) {
@@ -96,6 +100,7 @@ friendshipTransaction.prototype.save = function (callback) {
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Friendship.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -103,6 +108,7 @@ function findAll(callback) {
     });
 }
 
+//find all the friendship transactions of a user, independent of the status
 function findNetwork(data, callback) {
     var username = data.username;
     Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
@@ -111,6 +117,7 @@ function findNetwork(data, callback) {
 });
 }
 
+//find only the friendship transactions with the status set to "Confirmed"
   function findFriends(data, callback) {
       var username = data.username;
       Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
@@ -119,6 +126,7 @@ function findNetwork(data, callback) {
       });
   }
 
+//delete the single entry that matches the given ID
 function deleteByID(data, callback) {
     var id = data.id;
 
@@ -143,6 +151,7 @@ function deleteByID(data, callback) {
     });
 }
 
+//delete the entry that contains user_1 and user_2
 function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
@@ -164,6 +173,7 @@ function deleteByUsers(data, callback) {
     });
 }
 
+//delete the entries that belong to a certain user
 function deleteByUser(data, callback) {
 var user_1 = data.username;
 Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){

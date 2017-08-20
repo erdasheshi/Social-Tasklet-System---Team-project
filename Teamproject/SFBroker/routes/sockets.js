@@ -118,71 +118,92 @@ callback(err, null);
 
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
-if(data != null){
+console.log("the cycles are returned" + data.length);
+
+if(data != null && data.length >0 ) {
+console.log("11111111");
 var providers = data.provider;
 var taskletid = data.taskletid;
 
 accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
+   if (e) console.error(err, null);
+
+    var transaction_id = res.transaction_id;
     var initial_coins = res.coins;
     var consumer = res.consumer;
+    var total_cost = 0 ;
 
-providers.forEach(function ( device, index, array){
-    var cost = device.cost;
-    var device = device.device;
-var total = 0 ;
-    var difference = initial_coins - cost;
+//Create a new tasklet transaction for each provider. Tasklet_id is the same for all of them
+providers.forEach(function ( provider, index, array){
+    var cost = provider.cost;
+    var device = provider.device;
 
-    deviceAssignment.findByID({device: device}, function (error, data) {
+    //calculate the total cost of the tasklet
+    total = total + cost;
 
-        var username = data.username;
-total = total + cost;
-//generate a list of providers and the total of the cost then update the transaction
+//find the owner of the device used as a provider for the tasklet
+    deviceAssignment.findByID({device: device}, function (e, data) {
+    if (e) console.error(err, null);
+    var device_owner = data.username;
 
-    //transferring money to the provider
-    logic.updateBalance(cost, username);
-});
+    var accTransaction = accountingTransaction.get({
+          taskletid : taskletid,
+          consumer: consumer,
+          provider: device_owner,
+          coins: cost,
+          status: constants.AccountingStatusConfirmed
+      });
+      accTransaction.save(function (err, post) {
+          if (err) return next(err);
+      });
 
-  var accTransaction = accountingTransaction.get({ //transfer in the end
-        consumer: consumer,
-        provider: provider,
-        coins: cost,
-        status: constants.AccountingStatusConfirmed
+      //transferring money to the provider
+      logic.updateBalance(cost,  device_owner );
+      });
+ });
+
+    //delete the transaction entry stored when the tasklet request was received in step 3
+    accountingTransaction.deleteByTransactionID({transaction_id: transaction_id}, function (e, res) {
+            if (e) console.error(err, null);
+            if (callback) callback(null, true);
     });
-    accTransaction.save(function (err, post) {
-        if (err) return next(err);
     });
-    // fixing the balance of the consumer, based on the real cost
+    //calculate the amount still to be payed by the user when considering the fixed amount subtracted in step 3
+    var difference = initial_coins - total;
+
+    // fixing the balance of the consumer, based on the calculated taskelt's cost
     logic.updateBalance(difference, consumer);
+    console.log("the total cost is " + total);
     console.log('Tasklet ' + res.taskletid + ' confirmed!');
-    });
-    });
+
     };
     });
 
-
-//Activate device when recieved the first heartbeat
+//Activate device when received the first heartbeat
         socket_c.on('ActivateDevice', function (data) {
             if (data.status == constants.DeviceStatusActive) {
-                deviceAssignment.findByID({device: data.device}, function (e, data) {
-                    var device = deviceAssignment.get({
+            console.log(data.device + "the id of the activated device ");
+            var device = data.device;
+                deviceAssignment.findByID({device: device}, function (e, data) {
+                console.log("it found the id " + data.device);
+                    var new_device = deviceAssignment.get({
+                        device: data.device,
                         username: data.username,
                         name: data.name,
-                        device: data.device,
                         price: data.price,
                         status: constants.DeviceStatusActive
                     });
-
-                    device.save(function (err, post) {
+                    new_device.save(function (err, post) {
                         if (err) return next(err);
                     });
                 });
             }
         });
 
+//send the global update to the broker              *** needs to be changed the structure of this file so it accepts socket calls via functions
         function send_global_updates(broker, updates) {
              socket_c.emit('GlobalUpdate', { broker: broker, updates: updates });
         }
-
 
 module.exports = {
     send_global_updates: function (server) {

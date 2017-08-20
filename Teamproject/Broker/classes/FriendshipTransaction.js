@@ -14,12 +14,13 @@ function friendshipTransaction(data) {
     this.user_2 = data.user_2;
     this.status = data.status;
 }
-
+//creates a new database entry or updates the existing ones
 friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
     Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
+        //if no entry was not found, then create it
         if (udata == null) {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
                 if (data == null) {
@@ -50,6 +51,7 @@ friendshipTransaction.prototype.save = function (callback) {
                 }
             });
         }
+        //an entry was found, therefore update it with the new values
         else {
             Friendship.update({ 'user_1': user_1, 'user_2': user_2 }, { 'status': status }, function (e, data) {
                 if (e) {
@@ -63,6 +65,7 @@ friendshipTransaction.prototype.save = function (callback) {
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Friendship.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -70,16 +73,7 @@ function findAll(callback) {
     });
 }
 
-//not used in the broker (we have no pending requests Broker's database)
-function findNetwork(data, callback) {
-    var username = data.username;
-    Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
-        if (e) return next(e, null);
-        var response = '{ "username": "' + username + '", "connections": ' + JSON.stringify(data) + '}';
-        callback(null, JSON.parse(response.toString()));
-    });
-}
-
+//find the list fo friends for the given user
 function findFriends(data, callback){
     var username = data.username;
     var friends_list = [];
@@ -99,29 +93,70 @@ function findFriends(data, callback){
     });
 }
 
-//checks the existence of a friendship transaction between two users
-function findExistence(data, callback){
-  var user_1 = data.user_1;
-  var user_2 = data.user_2;
-  var existence = "false";
+//check the existence of a friendship transaction between two users
+function findExistence(data, callback) {
+    var user_1 = data.user_1;
+    var user_2 = data.user_2;
+    var existence = "false";
 
-console.log(user_1 + "u1");
-console.log(user_2 + "u2");
- Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, res) {
-  if (res != null) {
-  existence = "true";
- }
-else{  Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, res) {
-  if (res != null) {
- existence = "true";
-}
-});
-}
- console.log( "existence in Find Existence" + existence);
-callback(null, existence);
-});
+    Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, res) {
+        if (res != null) {
+            existence = "true";
+        }
+        else {
+            Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, res) {
+                if (res != null) {
+                    existence = "true";
+                }
+            });
+        }
+        callback(null, existence);
+    });
 }
 
+function findFriendsOfFriends(data, callback) {
+    var user_1 = data.user_1;
+    var user_2 = data.user_2;
+    var existence = "false";
+
+    findFriends({ username: user_1 }, function (e, data) {
+        if (e) callback(e, null);
+        if (JSON.stringify(data) == "[]") callback(null, existence);
+        else {
+            var processed = 0;
+            data.forEach(function (entry, index, array) {
+
+                if (entry.user_1 == user_1) {
+                    findExistence({ user_1: entry.user_2, user_2: user_2 }, function (e, result) {
+                        if (result == "true") {
+                            existence = "true";
+                            callback(null, existence);
+                        }
+                        processed += 1;
+                        if (processed == array.length && existence == "false") {
+                            callback(null, existence);
+                        }
+                    });
+                }
+                else {
+                    findExistence({ user_1: entry.user_1, user_2: user_2 }, function (e, result) {
+                        if (result == "true") {
+                            existence = "true";
+                            callback(null, existence);
+                        }
+                        processed += 1;
+                        if (processed == array.length && existence == "false") {
+                            callback(null, existence);
+                        }
+                    });
+                }
+
+            });
+        }
+    });
+}
+
+//delete the single entry that matches the given ID
 function deleteByID(data, callback) {
     var id = data.id;
     Friendship.remove({ 'id': data.id }, function (err, obj) {
@@ -134,7 +169,7 @@ function deleteByID(data, callback) {
     });
 }
 
-//************check if this function is used anywhere... if yes test it
+//delete the entry that contains user_1 and user_2               ( ?not used in the broker ---- to be removed )
 function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
@@ -152,7 +187,7 @@ function deleteByUsers(data, callback) {
     });
 }
 
-//************check if this function is used anywhere... if yes test it
+//delete the entries that belong to a certain user               ( ?not used in the broker ---- to be removed )
 function deleteByUser(data, callback) {
     var user_1 = data.username;
 
@@ -165,7 +200,6 @@ function deleteByUser(data, callback) {
             }
     });
 }
-
 
 module.exports = {
     friendshipTransaction: friendshipTransaction,
@@ -188,6 +222,10 @@ module.exports = {
 
     findExistence: function (data, callback) {
         return findExistence(data, callback);
+    },
+
+    findFriendsOfFriends: function (data, callback) {
+        return findFriendsOfFriends(data, callback);
     },
 
     deleteByID: function (data, callback) {

@@ -9,16 +9,18 @@ var Device = mongoose.model("Device", Devices.deviceSchema); //This creates a De
 //Initializing a transaction
 function DeviceAssignments(data) {
     this.device = data.device;
-    this.name = data.name,
     this.username = data.username,
     this.price = data.price,
     this.status = data.status
 }
 
+//creates a new database entry or updates the existing ones
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
+    //if no entry was not found, then create it
         if (udata == null) {
+
             var device = new Device(tmpDevice);
             device.save({}, function (error, data) {
                 if (error) {
@@ -29,22 +31,26 @@ DeviceAssignments.prototype.save = function (callback) {
                 }
             });
         }
+        //an entry was found, therefore update it with the new values
         else {
-            Device.update({'device': tmpDevice.device},
-                {name: tmpDevice.name, username: tmpDevice.username, price: tmpDevice.price, status: tmpDevice.status},
+                  Device.update({'device': tmpDevice.device}, {
+                  name: tmpDevice.name,
+                  username: tmpDevice.username,
+                  price: tmpDevice.price,
+                  status: tmpDevice.status},
                 function (error, data) {
-                    if (error) {
-                        callback(error, false);
-                    }
-                    else if (callback) {
-
-                        callback(null, true);
-                    }
-                });
+                                  if (error) {
+                                      callback(error, false);
+                                  }
+                                  else if (callback) {
+                                      callback(null, true);
+                                  }
+                              });
         }
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Device.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -52,6 +58,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
 function findByUser(data, callback) {
     Device.find({'username': data.username}, function (e, data) {
         if (e) callback(e, null);
@@ -59,6 +66,7 @@ function findByUser(data, callback) {
     });
 }
 
+//find the single entry that matches the given ID
 function findByID(data, callback) {
     var device = data.device;
     Device.findOne({'device': device}, function (err, obj) {
@@ -67,6 +75,7 @@ function findByID(data, callback) {
     });
 }
 
+//find the entry that have the field "satus" set to data.status
 function findByStatus(data, callback) {
     var status = data.status;
     Device.find({'status': status}, function (err, obj) {
@@ -75,8 +84,9 @@ function findByStatus(data, callback) {
     });
 }
 
+//Find the lowest and highest price of the devices. Information used for normalizing price while scheduling
 function findPriceRange(callback){
-var min = 1000000000000;
+var min = 10000000000000000000000000000000000000000000000;
 var max = 0;
 var price;
 findAll(function (e, data) {
@@ -100,6 +110,7 @@ callback ( null, {min: min, max: max});
 });
 }
 
+//delete the single entry that matches the given ID
 function deleteByID(data, callback) {
     var device = data.device;
     Device.remove({'device': device}, function (err, obj) {
@@ -108,6 +119,7 @@ function deleteByID(data, callback) {
     });
 }
 
+//delete the entries that belong to a certain user
 function deleteByUser(data, callback) {
     var username = data.username;
     Device.remove({'username': username}, function (err, obj) {
