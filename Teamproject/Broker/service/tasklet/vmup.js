@@ -5,7 +5,9 @@ var pH = require('./protocolHeader');
 var providerList = require('./providerList');
 var constants = require('./../../constants');
 
-var vmup = Buffer.alloc(0);
+var Map = require("collections/map");
+
+var vmupSockets = new Map();
 
 // Socket VM Up
 var server_vmup = net.createServer(function (socket) {
@@ -16,12 +18,24 @@ var server_vmup = net.createServer(function (socket) {
 
     socket.on('data', function (data) {
 
+		var vmup = Buffer.alloc(0);
+		var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+		 
         if (data.length == 16) {
             vmup = data;
+			if (vmupSockets.has(socketIdentifier)) vmupSockets.delete(socketIdentifier);
         }
         else {
-            var vmupLength = vmup.length + data.length;
-            vmup = Buffer.concat([vmup, data], vmupLength);
+			if(vmupSockets.has(socketIdentifier)){
+				var tmpData = vmupSockets.get(socketIdentifier)
+                var vmupLength = tmpData.data.length + data.length;
+                vmup =  Buffer.concat([ tmpData.data, data ], vmupLength);	
+			}
+			  else {
+                vmupSockets.add({
+                    data : data
+                }, socketIdentifier);
+            }
         }
 
         if (vmup.length == 16) {
@@ -45,11 +59,9 @@ var server_vmup = net.createServer(function (socket) {
                 else if (messageType != constants.vmUpMessage && messageType != constants.vmDownMessage) {
                     console.log('Received a wrong message type in vmup data');
                 }
-                vmup = Buffer.alloc(0);
             });
         }
         else if (vmup.length > 16){
-            vmup = Buffer.alloc(0);
         }
     });
 

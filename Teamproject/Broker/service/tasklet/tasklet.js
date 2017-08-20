@@ -11,26 +11,42 @@ var web = require('./../websockets');
 var taskletManager = require('./../taskletManager');
 
 var taskletSocket;
-var taskletRequest = Buffer.alloc(0);
+
+var Map = require("collections/map");
+
+var taskletSockets = new Map();
 
 // Socket Request
 var server_request = net.createServer(function (socket) {
 
     taskletSocket = socket;
-
-    socket.on('error', function (exc) {
+	var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+   
+	socket.on('error', function (exc) {
         console.log("Ignoring exception: " + exc);
     });
 
     socket.on('data', function (data) {
         console.log(data);
 
+		var taskletRequest = Buffer.alloc(0);
+		var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+				
         if (data.length == 40) {
             taskletRequest = data;
+			if (taskletSockets.has(socketIdentifier)) tasklet.delete(socketIdentifier);
         }
         else {
-            var taskletLength = taskletRequest.length + data.length;
-            taskletRequest = Buffer.concat([taskletRequest, data], taskletLength);
+			if(taskletSockets.has(socketIdentifier)){
+				var tmpData = taskletSockets.get(socketIdentifier)
+                var taskletLength = tmpData.data.length + data.length;
+                taskletRequest =  Buffer.concat([ tmpData.data, data ], taskletLength);	
+			}
+			  else {
+                taskletSockets.add({
+                    data : data
+                }, socketIdentifier);
+            }
         }
 
         if (taskletRequest.length == 40) {
@@ -52,7 +68,7 @@ var server_request = net.createServer(function (socket) {
                     var isRemote = taskletRequest.readInt32LE(12);
                     var requestedNumber = taskletRequest.readInt32LE(16);
                     var requestedInstances = taskletRequest.readInt32LE(20);
-                    var minimumSpeed = taskletRequest.readFloatLE(24);
+                    var speed = taskletRequest.readFloatLE(24);
                     var requestingIP = taskletRequest.readInt32LE(28);
                     var cost = taskletRequest.readInt32LE(32);
                     var privacy = taskletRequest.readInt32LE(36);
@@ -60,11 +76,11 @@ var server_request = net.createServer(function (socket) {
                     requestingIP = socket.remoteAddress;
                     var deviceID = providerList.getDeviceID(requestingIP);
 
-                    taskletList.insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy);
+                    taskletList.insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, speed, requestingIP, cost, privacy);
                     //Step 2: Sending information request to SFBroker
                     web.sendSFInformation(deviceID, taskletid, broker_id);
 
-                    console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Minimum Speed: ' + minimumSpeed + ' Requesting IP: ' + requestingIP + ' Cost: ' + cost + ' Privacy: ' + privacy);
+                    console.log('Remote: ' + isRemote + ' Number: ' + requestedNumber + ' Instances: ' + requestedInstances + ' Speed: ' + speed + ' Requesting IP: ' + requestingIP + ' Cost: ' + cost + ' Privacy: ' + privacy);
 
                 }
 
@@ -75,7 +91,6 @@ var server_request = net.createServer(function (socket) {
             });
         }
         else if (taskletRequest.length > 40) {
-            taskletRequest = Buffer.alloc(0);
         }
 
     });
@@ -88,11 +103,21 @@ var server_request = net.createServer(function (socket) {
 server_request.listen(conf.tasklet.port, conf.tasklet.ip);
 
 function preScheduling(data, callback) {
-    var username = data.username;
+    
+	var minBenchmark = providerList.getMinBenchmark();
+	var maxBenchmark = providerList.getMaxBenchmark();
+	var minPrice;
+	var maxPrice;
+	devices.findPriceRange(function(err,data){
+		if(err) console.error(err);
+		minPrice = data.min;
+		maxPrice = data.max;
+	});
+	
+	var username = data.username;
     var information = taskletList.getTasklet(data.taskletid);
-
     //Step 4: Finding most suitable provider
-    taskletManager.scheduling({ information: information, username : username}, function (error, data) {
+    taskletManager.scheduling({ information: information, username : username, minBenchmark: minBenchmark, maxBenchmark: maxBenchmark, minPrice: minPrice, maxPrice: maxPrice}, function (error, data) {
         if (error) console.error(error);
         var schedulingResult = data;
         var buf;
@@ -102,7 +127,8 @@ function preScheduling(data, callback) {
             var buf1 = data;
             var buf2 = Buffer.alloc(4);
             buf2.writeInt32LE(schedulingResult[0].number, 0);
-
+			
+			var providers = [];
             // If at least one provider was found
             if (schedulingResult[0].number > 0) {
 
@@ -123,6 +149,17 @@ function preScheduling(data, callback) {
 
                 var totalLength = buf1.length + buf2.length + buf3.length;
                 buf = Buffer.concat([buf1, buf2, buf3], totalLength);
+				
+				for(var i= 1; i < schedulingResult[0].number + 1; i++){
+				
+					var device = providerList.getDeviceID(schedulingResult[i].ip);
+					var price = schedulingResult[i].price;
+					// default because there is no responds from the provider!
+					var computation = 1;
+					//calculate the computation cost
+					var cost = computation * price;
+					providers = providers.concat({device: device, cost: cost});
+				}
 
             }
             // In case none provider was found
@@ -134,8 +171,11 @@ function preScheduling(data, callback) {
 
             taskletSocket.write(buf, function (err) {
                 taskletSocket.end();
+			
             });
 
+			web.returnTaskletCycles(information.taskletid, providers);
+			
             taskletList.deleteTasklet(information.taskletid);
 
         });
@@ -145,9 +185,13 @@ function preScheduling(data, callback) {
 
 function abortScheduling(data, callback) {
 
+	var taskletid = data.taskletid;
+	
     // Step 5: Informing the consumer of the unsuccessful request (reason: not enough coins)
-    var buf1 = pH.writeProtocolHeader(constants.bResponseMessage);
+	
+    pH.writeProtocolHeader(constants.bResponseMessage,function(e, data){
 
+	var buf1 = data;
     var buf2 = Buffer.alloc(4);
     buf2.writeInt32LE(0, 0);
 
@@ -158,9 +202,10 @@ function abortScheduling(data, callback) {
         taskletSocket.end();
     });
 
-    taskletList.deleteTasklet(data.taskletid);
+    taskletList.deleteTasklet(taskletid);
 
     console.error('The requesting user does not have enough money!');
+	});
 }
 
 

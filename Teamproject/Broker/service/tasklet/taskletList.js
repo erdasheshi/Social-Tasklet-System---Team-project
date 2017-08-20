@@ -3,7 +3,7 @@ var constants = require('./../../constants');
 
 var tasklet = new Map();
 
-function insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy){
+function insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, speed, requestingIP, cost, privacy){
   
         tasklet.add({
 			broker_id: broker_id,
@@ -11,7 +11,7 @@ function insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber
             isRemote: isRemote,
 			requestedNumber: requestedNumber,
 			requestedInstances: requestedInstances,
-			minimumSpeed: minimumSpeed,
+			speed: speed,
 			requestingIP: requestingIP,
 			cost: cost,
 			privacy: privacy
@@ -30,8 +30,8 @@ function getTasklet(taskletid){
 
 module.exports = {
 
-    insertTasklet: function (taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy) {
-        return insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, minimumSpeed, requestingIP, cost, privacy);
+    insertTasklet: function (taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, speed, requestingIP, cost, privacy) {
+        return insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, speed, requestingIP, cost, privacy);
     },
 
     deleteTasklet: function (taskletid) {
