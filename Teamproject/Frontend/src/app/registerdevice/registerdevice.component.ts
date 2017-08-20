@@ -40,7 +40,7 @@ export class RegisterdeviceComponent implements OnInit {
   onSubmit(device: Device) {
 
     this.deviceNew.username = this.username;
-    // this.deviceNew.download = "X";
+    this.deviceNew.download = "X";
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {
