@@ -106,8 +106,9 @@ function scheduling(data, callback) {
 			var availableVMs = providerList.getAvailableVMs(ip);
 			
 			if(availableVMs > 0){
-			var vms = Math.min(requestedNumber, availableVMs); 
-			callback(null, [{number: 1},{ip: ip,vms: vms, price: 0}]);
+				var vms = Math.min(requestedNumber, availableVMs);
+				providerList.decreaseVMs(ip);
+				callback(null, [{number: 1},{ip: ip,vms: vms, price: 0}]);
 			}
 			
 			else{
@@ -126,8 +127,9 @@ function scheduling(data, callback) {
 				var ip = requestingIP;
 				var availableVMs = providerList.getAvailableVMs(ip);
 				if(availableVMs > 0){
-					var vms = Math.min(requestedNumber, availableVMs); 
-					callback(null, [{number: 1},{ip: ip,vms: vms}]);
+					var vms = Math.min(requestedNumber, availableVMs);
+					providerList.decreaseVMs(ip);
+					callback(null, [{number: 1},{ip: ip,vms: vms, price: 0}]);
 				}
 				else{
 				callback(null, [{number: 0}]);
@@ -175,10 +177,7 @@ function scheduling(data, callback) {
 				
 				var vms = Math.min(requestedNumber, availableVMs);
 				var newprice;
-					
-				if(data[0].ownership == 'own'){
-					newprice = 0;
-				}
+				
 				if(data[0].ownership == 'friend'){
 					newprice = data[0].price * (1 - constants.FriendsDiscount);
 				}	
@@ -188,6 +187,7 @@ function scheduling(data, callback) {
 				if(data[0].ownership == 'others'){
 					newprice = data[0].price;
 				}
+				providerList.decreaseVMs(data[0].address);
 				callback(null, [{number: 1},{ip: data[0].address,vms: vms, price: newprice}]);
 				
 			}
