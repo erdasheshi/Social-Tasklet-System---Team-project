@@ -83,7 +83,7 @@ function findByID(data, callback) {
 
 //find the single entry that matches the  given transaction_id
 function findByTransactionID(data, callback) {
-    Accounting.find({ 'transaction_id': data.transaction_id }, function (e, data) {
+    Accounting.findOne({ 'transaction_id': data.transaction_id }, function (e, data) {
         if (e) callback(e, null);
         callback(null, data);
     });

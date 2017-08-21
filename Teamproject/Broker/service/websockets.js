@@ -18,41 +18,41 @@ function initialize(server) {
             var tasklet = require('./tasklet/tasklet');
             var further = data.further;
 
-	repClient.setUpdates({updates: updates}, function(e, res){
-	console.log("it comes in the websocket");
-          if (e) ; console.error(e);
-          //store the updates before proceeding
-          if (further == true) { // Check if the user has enough money
+            repClient.setUpdates({ updates: updates }, function (e, res) {
+                if (e) ;
+                console.error(e);
+                //store the updates before proceeding
+                if (further == true) { // Check if the user has enough money
 
-              tasklet.preScheduling({taskletid: taskletid, username: username}, function (e, data) {
-                  if (e) console.error(e);
-              });
-          }
-          else{
-              // Abort!!!
-              tasklet.abortScheduling({taskletid: taskletid}, function (e, data) {
-                  if (e) console.error(e);
-       	});
-       }
-	});
+                    tasklet.preScheduling({ taskletid: taskletid, username: username }, function (e, data) {
+                        if (e) console.error(e);
+                    });
+                }
+                else {
+                    // Abort!!!
+                    tasklet.abortScheduling({ taskletid: taskletid }, function (e, data) {
+                        if (e) console.error(e);
+                    });
+                }
+            });
         });
 
-       //get daily updates
-        socket.on('GlobalUpdate', function (data){
-        var broker_id = data.broker;
-        var updates = data.updates;
+        //get daily updates
+        socket.on('GlobalUpdate', function (data) {
+            var broker_id = data.broker;
+            var updates = data.updates;
             //store the updates in the database
-        	repClient.setUpdates({updates: updates}, function(e, res){
-        	if (e) console.error(e);
-        	callback(null, true);
-        	});
+            repClient.setUpdates({ updates: updates }, function (e, res) {
+                if (e) console.error(e);
+                callback(null, true);
+            });
         });
     });
 }
 
-function returnTaskletCycles(taskletid, providers){
+function returnTaskletCycles(taskletid, providers) {
 
-io.sockets.emit('TaskletCyclesReturn', {taskletid: taskletid, providers: providers});
+    io.sockets.emit('TaskletCyclesReturn', { taskletid: taskletid, providers: providers });
 
 }
 
@@ -85,8 +85,8 @@ module.exports = {
     sendSFInformation: function (deviceID, taskletid, broker_id) {
         return sendSFInformation(deviceID, taskletid, broker_id)
     },
-	
-	returnTaskletCycles: function(taskletid, deviceID, computation){
-		return returnTaskletCycles(taskletid, deviceID, computation)
-	}
+
+    returnTaskletCycles: function (taskletid, providers) {
+        return returnTaskletCycles(taskletid, providers)
+    }
 }

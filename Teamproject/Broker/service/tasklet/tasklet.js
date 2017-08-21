@@ -115,7 +115,8 @@ function preScheduling(data, callback) {
 	});
 	
 	var username = data.username;
-    var information = taskletList.getTasklet(data.taskletid);
+	var taskletid = data.taskletid;
+    var information = taskletList.getTasklet(taskletid);
     //Step 4: Finding most suitable provider
     taskletManager.scheduling({ information: information, username : username, minBenchmark: minBenchmark, maxBenchmark: maxBenchmark, minPrice: minPrice, maxPrice: maxPrice}, function (error, data) {
         if (error) console.error(error);
@@ -138,6 +139,7 @@ function preScheduling(data, callback) {
                 for (var i = 1; i < schedulingResult[0].number + 1; i++) {
 
                     var str = schedulingResult[i].ip.split(".");
+                    console.log("Requested IPs: " + schedulingResult[i].ip);
 
                     buf3.writeInt32LE(str[0], 0);
                     buf3.writeInt32LE(str[1], 1);
@@ -173,10 +175,10 @@ function preScheduling(data, callback) {
                 taskletSocket.end();
 			
             });
-
-			web.returnTaskletCycles(information.taskletid, providers);
+            console.log('TaskletID: ' + taskletid);
+			web.returnTaskletCycles(taskletid, providers);
 			
-            taskletList.deleteTasklet(information.taskletid);
+            taskletList.deleteTasklet(taskletid);
 
         });
     });
