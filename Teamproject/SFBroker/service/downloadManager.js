@@ -20,15 +20,15 @@ function provideDownload(data, callback) {
         configStream.write(new Buffer("Timeout: 4\n"));
         configStream.write(new Buffer("Device_ID: " + deviceID + "\n"));
 
-        zipTasklet({}, function (err, data) {
+        zipTasklet({device : deviceID }, function (err, data) {
             if (err) callback(err, null);
-            callback(null, {destination: conf.sfbroker.download.source + "/TaskletMiddleware.zip"});
+            callback(null, {destination: conf.sfbroker.download.source + '/TaskletMiddleware' + deviceID + '.zip'});
         });
     });
 }
 
 function zipTasklet(data, callback) {
-    var output = fs.createWriteStream(conf.sfbroker.download.source + '/TaskletMiddleware.zip');
+    var output = fs.createWriteStream(conf.sfbroker.download.source + '/TaskletMiddleware' + data.device + '.zip');
     var archive = archiver('zip', {
         zlib: {level: 9} // Sets the compression level.
     });
