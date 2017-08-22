@@ -68,7 +68,7 @@ var update = data.update;
                 else if (update.key == "Deleted") {    //delete the existing transaction
                     friendships.deleteByID({ device: update.id }, function (err, data) {
                         if (err) return next(err);
-                           else {  callback(null, true);}
+                           else {  callback(null, true); }
                     });
                 }
 };
@@ -86,13 +86,13 @@ var update = data.update;
                     });
                     device.save(function (err, data) {
                         if (err) return next(err);
-                        else {  callback(null, true);}
+                        else {  callback(null, true); }
                     });
                 }
                 else if (update.key == "Deleted") {  //delete the transaction
                     devices.deleteByID({ device: update.device }, function (err, data) {
                         if (err) return next(err);
-                         else {  callback(null, true);}
+                         else {  callback(null, true); }
                     });
                 }
  };

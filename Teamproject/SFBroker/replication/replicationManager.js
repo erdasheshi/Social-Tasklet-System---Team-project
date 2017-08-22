@@ -7,20 +7,50 @@ var constants = require('../constants');
 //collect the deleted/updated/created friendship and device transactions into an update log
 
 function CollectUpdates(data) {
-    var logData = data;
+
+    if ( logData.key == constants.Device || logData.key == 'd_device'){
+
+    //call a function to check if the update is already in the log
+    searchLog({ key: data.key, device: data.device }, function(e, data){
+    if {
+    (e) return next(e)
+    }
+    else{
+        buildUpdate({ logData: data }, function (e, data) {
+        })
+        }
+    })
+    }
+    else {
+        searchLog({ key: data.key, id : data.id }, function(e, data){
+       if {
+       (e) return next(e)
+       }
+    else{
+        buildUpdate({ logData: data}, function (e, data) {
+        });
+        };
+    });
+    }
+}
+
+function buildUpdate(data, callback) {
+    var logData = data.logData ;
     var update;
+
     Brokers.findByUser({ username: logData.username }, function (e, data) {
         if (e) return next(e);
         switch (logData.key) {
             case constants.Device:    //keeping track of added device transactions
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
-
                 log.add(JSON.parse(JSON.stringify(update)));
+                callback(null, true);
                 break;
 
             case 'd_device':   //keeping track of deleted device transactions
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
                 log.add(JSON.parse(JSON.stringify(update)));
+                callback(null, true);
                 break;
 
             case constants.Friendship: //keeping track of added/updated friendship transactions
@@ -29,6 +59,7 @@ function CollectUpdates(data) {
                     if (e) return next(e);
                         update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
                         log.add(JSON.parse(JSON.stringify(update)));
+                        callback(null, true);
                 })
                 break;
             case 'd_friendship':   //keeping track of deleted friendship transactions
@@ -37,12 +68,45 @@ function CollectUpdates(data) {
                     if (e) return next(e);
                         update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
                         log.add(JSON.stringify(update));
+                        callback(null, true);
                     })
                 break;
             default:
                 ;
         }
     });
+}
+
+//if the updated device/friendship has already and entry in the log then delete it, so it can be substituted with the latest one
+function searchLog(data, callback){
+ var log_updates = log.read();
+ var log_length = log_updates.length;  //the length after the last committed change
+ var int i = 0;
+
+   for ( ; i < log_length; i++ ){
+
+     switch (data.key) {
+     case constants.Device:
+     case 'd_device':
+          if( log_updates[i].device == data.device {
+          //*splice the array
+          callback(null, true);
+          }
+     break;
+
+     case constants.Friendship:
+     case 'd_friendship':
+          if( log_updates[i].id == data.id) {
+          //* splice the array
+          callback(null, true);
+          }
+     break;
+     }
+   }
+ if(i == log_length)
+ {
+ callback(null, true);
+ }
 }
 
 //triggering the global update every 24 hours
@@ -132,3 +196,62 @@ module.exports = {
             return globalUpdate(broker);
         }
 };
+
+
+/*
+var log = require('./../replication/log');
+var broker_log = require('./../replication/broker_log');
+var Brokers = require('../classes/Broker');
+
+var constants = require('../constants');
+
+//collect the deleted/updated/created friendship and device transactions into an update log
+
+function CollectUpdates(data) {
+    var logData = data;
+    var update;
+
+    if ( logData.key == constants.Device || logData.key == 'd_device'){
+
+    }
+    }
+    //call a function to check if the update is already in the log
+    searchLog({ key: logData.key, }, function(e, data){
+
+    Brokers.findByUser({ username: logData.username }, function (e, data) {
+        if (e) return next(e);
+        switch (logData.key) {
+            case constants.Device:    //keeping track of added device transactions
+                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
+
+                log.add(JSON.parse(JSON.stringify(update)));
+                break;
+
+            case 'd_device':   //keeping track of deleted device transactions
+                update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
+                log.add(JSON.parse(JSON.stringify(update)));
+                break;
+
+            case constants.Friendship: //keeping track of added/updated friendship transactions
+                var broker_1 = data.broker;
+                Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
+                    if (e) return next(e);
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
+                        log.add(JSON.parse(JSON.stringify(update)));
+                })
+                break;
+            case 'd_friendship':   //keeping track of deleted friendship transactions
+                var broker_1 = data.broker;
+                       Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
+                    if (e) return next(e);
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
+                        log.add(JSON.stringify(update));
+                    })
+                break;
+            default:
+                ;
+        }
+    });
+    });
+}
+*/
