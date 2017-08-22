@@ -18,6 +18,7 @@ export class RegisterdeviceComponent implements OnInit {
   NetworkUserItems: NetworkUser;
   username: string;
   deviceNew = new Device("", "", 0, "", "", "", "");
+  downloadURL: string;
 
   constructor(public toastr: ToastsManager,
               vcr: ViewContainerRef,
@@ -45,10 +46,15 @@ export class RegisterdeviceComponent implements OnInit {
       .addDevice(this.deviceNew)
       .then(res => {
         if (res.status === 200) {
-          this.router.navigate(['/devices']);
+          this.downloadURL = res._body;
         }
       })
       .catch(err => this.handleError(err));
+  }
+
+  startDownload(){
+    window.open(this.downloadURL);
+    this.router.navigate(['/devices']);
   }
 
   private handleError(err: any) {
