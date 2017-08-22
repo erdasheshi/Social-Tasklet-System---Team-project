@@ -35,6 +35,7 @@ io.sockets.on('connection', function (socket) {
 
         var username = data.username;
         var coins = parseInt(data.requestedCoins);
+        var logic = require('./logic');
 
         var coinTr = coinTransaction.get({
             requestid: data.requestid,
@@ -75,6 +76,7 @@ socket_c.on('SFInformation', function (data) {
             user.findByUser({username: username}, function (e, user_data) {
                 balance = user_data.balance;
 
+
                 //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
                 if (balance >= min_balance) {
                     further = true;
@@ -90,6 +92,8 @@ socket_c.on('SFInformation', function (data) {
                         if (err) return next(err);
                     });
                     var difference = -1 * min_balance;
+
+                    var logic = require('./logic');
                     logic.updateBalance(difference, username);
                 }
                 else {
@@ -128,11 +132,13 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             var initial_coins = res[0].coins;
             var consumer = res[0].consumer;
             var total = 0;
+            var logic = require('./logic');
 
 //Create a new tasklet transaction for each provider. Tasklet_id is the same for all of them
             providers.forEach(function (provider, index, array) {
                 var cost = provider.cost;
                 var device = provider.device;
+
 
                 //calculate the total cost of the tasklet
                 total = total + cost;
@@ -154,6 +160,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                     });
 
                     //transferring money to the provider
+
                     logic.updateBalance(cost, device_owner);
                 });
             });
