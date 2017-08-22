@@ -66,6 +66,9 @@ socket_c.on('SFInformation', function (data) {
     var broker = 5;   //*** needs to be send by the broker with the information request
     var taskletid = data.taskletid;
 
+    var accountingTransaction = require('../classes/AccountingTransaction');
+    var deviceAssignment = require('../classes/DeviceAssignments');
+
     deviceAssignment.findByID({device: device}, function (error, data) {
         if (data) {
             var username = data.username;
@@ -101,6 +104,7 @@ socket_c.on('SFInformation', function (data) {
                 }
 
                 // var updates = replicationManager.updateBroker({broker: broker}, function (e, updates) {
+                var replicationManager = require('./../replication/replicationManager');
                 var updates = replicationManager.updateBroker(broker)
                 var updates = updates;
                 socket_c.emit('SFInformation', {
@@ -111,9 +115,6 @@ socket_c.on('SFInformation', function (data) {
                 });
 
             });
-        }
-        else {
-            callback(err, null);
         }
     });
 });
@@ -188,7 +189,7 @@ socket_c.on('ActivateDevice', function (data) {
         var device = data.device;
         deviceAssignment.findByID({device: device}, function (e, data) {
             var new_device = deviceAssignment.get({
-                device: data.device,
+                device: device,
                 username: data.username,
                 name: data.name,
                 price: data.price,
