@@ -124,6 +124,7 @@ function searchLog(data, callback) {
 setTimeout(function () {
     globalUpdate(function (e, data) {
     });
+}, 100); // timeout in 24 hours
 
 //Sending updates to all brokers. Triggered once per day
 function globalUpdate(callback) {
@@ -143,6 +144,7 @@ function globalUpdate(callback) {
         log.restart();
         //set the broker_log to empty so the brokers restart from version 0
         broker_log.restart();
+        setTimeout(globalUpdate, 60000);   // timeout in 24 hours
     });
 }
 
