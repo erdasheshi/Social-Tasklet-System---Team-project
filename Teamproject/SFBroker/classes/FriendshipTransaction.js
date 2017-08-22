@@ -56,6 +56,7 @@ friendshipTransaction.prototype.save = function (callback) {
                 }
                 //an entry was found, therefore update it with the new values
                 else {
+                    id = data.id;
                     Friendship.update({'user_1': user_2, 'user_2': user_1}, {'status': status}, function (e, data) {
                         if (e) {
                             callback(e, false);
@@ -80,6 +81,7 @@ friendshipTransaction.prototype.save = function (callback) {
         }
         //an entry was found, therefore update it with the new values
         else {
+        id = udata.id;
             Friendship.update({'user_1': user_1, 'user_2': user_2}, {'status': status}, function (e, data) {
                 if (e) {
                     callback(e, false);

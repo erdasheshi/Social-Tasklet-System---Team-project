@@ -24,14 +24,14 @@ DeviceAssignments.prototype.save = function (callback) {
 
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
         //if there was no entry found then create it
+        var replicationManager = require('./../replication/replicationManager');
         if (udata == null) {
             if (tmpDevice.device) {
                 var device = new Device(tmpDevice);
                 device.save({}, function (error, data) {
                     if (error) {
-                        console.error(error);
+                       callback(error, false);
                     }
-                    if (callback) {
                         replicationManager.CollectUpdates({
                             username: tmpDevice.username,
                             device: tmpDevice.device,
@@ -39,9 +39,8 @@ DeviceAssignments.prototype.save = function (callback) {
                             price: tmpDevice.price,
                             key: constants.Device
                         }, function (err, res) {
-                                      if (callback) callback(null, true);
+                                      if (callback) callback(null, device);
                                      });
-                    }
                 });
             }
             else {
@@ -50,9 +49,8 @@ DeviceAssignments.prototype.save = function (callback) {
                     var device = new Device(tmpDevice);
                     device.save({}, function (error, data) {
                         if (error) {
-                            console.error(error);
+                            callback(error, false);
                         }
-                        if (callback) {
                             replicationManager.CollectUpdates({
                                 username: tmpDevice.username,
                                 device: tmpDevice.device,
@@ -60,9 +58,8 @@ DeviceAssignments.prototype.save = function (callback) {
                                 price: tmpDevice.price,
                                 key: constants.Device
                             }, function (err, res) {
-                                          if (callback) callback(null, true);
-                                         });
-                        }
+                               callback(null, device);
+                               });
                     });
                 });
             }
@@ -75,17 +72,15 @@ DeviceAssignments.prototype.save = function (callback) {
                     if (error) {
                         callback(error, false);
                     }
-                    else if (callback) {
-                        replicationManager.CollectUpdates({
-                            username: tmpDevice.username,
-                            device: tmpDevice.device,
-                            status: tmpDevice.status,
-                            price: tmpDevice.price,
-                            key: constants.Device
-                        }, function (err, res) {
-                                      if (callback) callback(null, true);
-                                     });
-                    }
+                      replicationManager.CollectUpdates({
+                           username: tmpDevice.username,
+                           device: tmpDevice.device,
+                           status: tmpDevice.status,
+                           price: tmpDevice.price,
+                           key: constants.Device
+                       }, function (err, res) {
+                           if (callback) callback(null, true);
+                       });
                 });
         }
     });

@@ -64,12 +64,28 @@ router.get('/friendship', authService.loggedIn, function (req, res, next) {
 
 /* GET users. */
 router.get('/user', authService.loggedIn, function (req, res, next) {
-    if (req.query.all == 'X') {
-        user.findAll(function (e, data) {
-            if (e) return next(e);
-            res.json(data);
-        })
-    }
+    var username =  req.user.username;
+    console.log(username);
+        if (req.query.all == 'X') {
+            user.findAll(function (e, data) {
+                if (e) return next(e);
+                var user_list = data;
+
+                var i = 0 ;
+                var existence = false;
+                while (i < user_list.length && existence == false){
+    console.log(user_list[i].username + "the usename comming form the array");
+                if(user_list[i].username == username){
+                existence = true;
+                user_list.splice(i, 1);
+                existence = true ;
+                res.json(user_list);
+                }
+                else { i = i + 1;
+                }
+                }
+            });
+        }
     else {
         res.json(req.user);
     }
@@ -86,8 +102,7 @@ router.get('/requestedcoins', authService.loggedIn, function (req, res, next) {
 
 /* GET device. */
 router.get('/device', authService.loggedIn, function (req, res, next) {
-
-    if (req.query.all == 'X') {
+  if (req.query.all == 'X') {
         deviceAssignment.findAll(function (e, data) {
             if (e) return next(e);
             res.json(data);
