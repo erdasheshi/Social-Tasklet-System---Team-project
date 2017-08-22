@@ -205,7 +205,7 @@ function send_global_updates(broker, updates) {
 }
 
 module.exports = {
-    send_global_updates: function (broker, updates) {
-        return send_global_updates(broker, updates);
+    send_global_updates: function (server) {
+        return send_global_updates(data);
     }
 }
