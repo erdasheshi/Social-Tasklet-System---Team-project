@@ -7,15 +7,15 @@ var constants = require('../constants');
 //collect the deleted/updated/created friendship and device transactions into an update log
 
 function CollectUpdates(data) {
-
-    if ( logData.key == constants.Device || logData.key == 'd_device'){
+ console.log("1111111111");
+    if ( data.key == constants.Device || data.key == 'd_device'){
 
     //call a function to check if the update is already in the log
     searchLog({ key: data.key, device: data.device }, function(e, data){
-    if {
-    (e) return next(e)
-    }
+    if (e) return next(e)
     else{
+     console.log("222222222222222");
+
         buildUpdate({ logData: data }, function (e, data) {
         })
         }
@@ -23,10 +23,10 @@ function CollectUpdates(data) {
     }
     else {
         searchLog({ key: data.key, id : data.id }, function(e, data){
-       if {
-       (e) return next(e)
-       }
+       if (e) return next(e)
     else{
+     console.log("333333333333");
+
         buildUpdate({ logData: data}, function (e, data) {
         });
         };
@@ -39,9 +39,13 @@ function buildUpdate(data, callback) {
     var update;
 
     Brokers.findByUser({ username: logData.username }, function (e, data) {
+     console.log("4444444444444");
+
         if (e) return next(e);
         switch (logData.key) {
             case constants.Device:    //keeping track of added device transactions
+             console.log("55555555555");
+
                 update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
                 log.add(JSON.parse(JSON.stringify(update)));
                 callback(null, true);
@@ -79,25 +83,28 @@ function buildUpdate(data, callback) {
 
 //if the updated device/friendship has already and entry in the log then delete it, so it can be substituted with the latest one
 function searchLog(data, callback){
+ console.log("666666666666");
+
  var log_updates = log.read();
  var log_length = log_updates.length;  //the length after the last committed change
- var int i = 0;
+ var  i = 0;
 
    for ( ; i < log_length; i++ ){
+ console.log("77777777777777777");
 
      switch (data.key) {
      case constants.Device:
      case 'd_device':
-          if( log_updates[i].device == data.device {
-          //*splice the array
+          if( log_updates[i].device == data.device) {
+          log_updates.splice(i, 1);
           callback(null, true);
           }
      break;
 
      case constants.Friendship:
      case 'd_friendship':
-          if( log_updates[i].id == data.id) {
-          //* splice the array
+          if( log_updates[i].id == data.id ){
+          log_updates.splice(i, 1);
           callback(null, true);
           }
      break;
@@ -105,6 +112,8 @@ function searchLog(data, callback){
    }
  if(i == log_length)
  {
+  console.log("888888888888888888");
+
  callback(null, true);
  }
 }
