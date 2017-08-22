@@ -39,7 +39,7 @@ DeviceAssignments.prototype.save = function (callback) {
                             price: tmpDevice.price,
                             key: constants.Device
                         }, function (err, res) {
-                                      if (callback) callback(null, true);
+                                      if (callback) callback(null, device);
                                      });
                     }
                 });
@@ -60,7 +60,7 @@ DeviceAssignments.prototype.save = function (callback) {
                                 price: tmpDevice.price,
                                 key: constants.Device
                             }, function (err, res) {
-                                          if (callback) callback(null, true);
+                                          if (callback) callback(null, device);
                                          });
                         }
                     });
