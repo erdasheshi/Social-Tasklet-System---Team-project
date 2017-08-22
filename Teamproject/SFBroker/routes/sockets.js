@@ -25,9 +25,7 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        console.log("the request comes");
         coinTransaction.findByApproval({approval: 'false'}, function (e, data) {
-            console.log("the results are sent");
             io.sockets.emit('Requested_Coins', data);
         });
     });
@@ -71,7 +69,7 @@ socket_c.on('SFInformation', function (data) {
         if (data) {
             var username = data.username;
 
-            console.log("Received tasklet request: " + username + " Username " + taskletid + " taskletid " + broker + " broker");
+            console.log("Received tasklet request from user:  " + username + " with tasklet_id: " + taskletid + " and broker: " + broker);
 
             // Check if the user has enough money in his account
             user.findByUser({username: username}, function (e, user_data) {
@@ -170,7 +168,6 @@ socket_c.on('TaskletCyclesReturn', function (data) {
 
             // fixing the balance of the consumer, based on the calculated taskelt's cost
             logic.updateBalance(difference, consumer);
-            console.log("the total cost is " + total);
             console.log('Tasklet ' + res[0].taskletid + ' confirmed!');
         });
 
@@ -181,10 +178,8 @@ socket_c.on('TaskletCyclesReturn', function (data) {
 //Activate device when received the first heartbeat
 socket_c.on('ActivateDevice', function (data) {
     if (data.status == constants.DeviceStatusActive) {
-        console.log(data.device + "the id of the activated device ");
         var device = data.device;
         deviceAssignment.findByID({device: device}, function (e, data) {
-            console.log("it found the id " + data.device);
             var new_device = deviceAssignment.get({
                 device: data.device,
                 username: data.username,
@@ -199,13 +194,13 @@ socket_c.on('ActivateDevice', function (data) {
     }
 });
 
-//send the global update to the broker              *** needs to be changed the structure of this file so it accepts socket calls via functions
+//send the global update to the broker
 function send_global_updates(broker, updates) {
     socket_c.emit('GlobalUpdate', {broker: broker, updates: updates});
 }
 
 module.exports = {
-    send_global_updates: function (server) {
-        return send_global_updates(data);
+    send_global_updates: function(broker, updates) {
+        return send_global_updates(broker, updates);
     }
 }
