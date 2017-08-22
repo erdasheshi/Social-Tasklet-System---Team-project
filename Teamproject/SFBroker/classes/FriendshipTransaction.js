@@ -23,15 +23,15 @@ friendshipTransaction.prototype.save = function (callback) {
     var user_1 = this.user_1;
     var user_2 = this.user_2;
     var status = this.status;
-    var id     = this.id;
-    Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, udata) {
-    //if no entry was not found, then search again with the other combination of user_2, user_1
+    var id = this.id;
+    Friendship.findOne({'user_1': user_1, 'user_2': user_2}).exec(function (e, udata) {
+        //if no entry was not found, then search again with the other combination of user_2, user_1
         if (udata == null) {
-            Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, data) {
-            //if no entry was not found with neither of the combination, then create its
+            Friendship.findOne({'user_1': user_2, 'user_2': user_1}).exec(function (e, data) {
+                //if no entry was not found with neither of the combination, then create its
                 if (data == null) {
                     var transaction = new Friendship({ //You're entering a new transaction here
-                        id : id,
+                        id: id,
                         user_1: user_1,
                         user_2: user_2,
                         status: status
@@ -40,38 +40,39 @@ friendshipTransaction.prototype.save = function (callback) {
                         if (error) {
                             callback(error, false);
                         }
-                        if (callback) {
-                            //Store in the log the confirmed friendships
-                            if (status == constants.AccountingStatusConfirmed) {
-                                replicationManager.CollectUpdates({
-                                    id : id,
-                                    username: user_1,
-                                    user_2: user_2,
-                                    key: constants.Friendship
-                                });
-                            }
-                            callback(null, true);
+                        //Store in the log the confirmed friendships
+                        if (status == constants.AccountingStatusConfirmed) {
+                            replicationManager.CollectUpdates({
+                                id: id,
+                                username: user_1,
+                                user_2: user_2,
+                                key: constants.Friendship
+                            }, function (err, res) {
+                                if (callback) callback(null, true);
+                            });
                         }
+                        else{ callback(null, true);}
                     });
                 }
                 //an entry was found, therefore update it with the new values
                 else {
-                    Friendship.update({ 'user_1': user_2, 'user_2': user_1 }, { 'status': status }, function (e, data) {
+                    Friendship.update({'user_1': user_2, 'user_2': user_1}, {'status': status}, function (e, data) {
                         if (e) {
                             callback(e, false);
                         }
-                        if (callback) {
-                            //Store in the log the confirmed friendships
-                            if (status == constants.AccountingStatusConfirmed) {
-                                replicationManager.CollectUpdates({
-                                    id : id,
-                                    username: user_1,
-                                    user_2: user_2,
-                                    key: constants.Friendship
-                                });
-                            }
-                            callback(null, true);
+                        //Store in the log the confirmed friendships
+                        if (status == constants.AccountingStatusConfirmed) {
+                            replicationManager.CollectUpdates({
+                                id: id,
+                                username: user_1,
+                                user_2: user_2,
+                                key: constants.Friendship
+                            }, function (err, res) {
+                                if (callback) callback(null, true);
+                            });
                         }
+                        else{ callback(null, true);}
+
                     });
                 }
             });
@@ -79,22 +80,24 @@ friendshipTransaction.prototype.save = function (callback) {
         }
         //an entry was found, therefore update it with the new values
         else {
-            Friendship.update({ 'user_1': user_1, 'user_2': user_2 }, { 'status': status }, function (e, data) {
+            Friendship.update({'user_1': user_1, 'user_2': user_2}, {'status': status}, function (e, data) {
                 if (e) {
                     callback(e, false);
                 }
-                if (callback) {
+
                     //Store in the log the confirmed friendships
                     if (status == constants.AccountingStatusConfirmed) {
                         replicationManager.CollectUpdates({
-                            id : id,
+                            id: id,
                             username: user_1,
                             user_2: user_2,
                             key: constants.Friendship
+                        }, function (err, res) {
+                            if (callback) callback(null, true);
                         });
                     }
-                    callback(null, true);
-                }
+                    else{  callback(null, true);}
+
             });
         }
     });
@@ -111,43 +114,43 @@ function findAll(callback) {
 //find all the friendship transactions of a user, independent of the status
 function findNetwork(data, callback) {
     var username = data.username;
-    Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
-       if (e) return next(e, null);
-       callback(null, data);
-});
+    Friendship.find().or([{'user_1': username}, {'user_2': username}]).exec(function (e, data) {
+        if (e) return next(e, null);
+        callback(null, data);
+    });
 }
 
 //find only the friendship transactions with the status set to "Confirmed"
-  function findFriends(data, callback) {
-      var username = data.username;
-      Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, data) {
-          if (e) callback(e, null);
-          callback(null, data);
-      });
-  }
+function findFriends(data, callback) {
+    var username = data.username;
+    Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([{'user_1': username}, {'user_2': username}]).exec(function (e, data) {
+        if (e) callback(e, null);
+        callback(null, data);
+    });
+}
 
 //delete the single entry that matches the given ID
 function deleteByID(data, callback) {
     var id = data.id;
 
-    Friendship.find({ 'id': id }).exec(function (e, data) {
-    var user_1 = data.user_1;
-    var user_2 = data.user_2;
+    Friendship.find({'id': id}).exec(function (e, data) {
+        var user_1 = data.user_1;
+        var user_2 = data.user_2;
 
-    Friendship.remove({ 'id': data.id }, function (err, obj) {
-        if (err){
-        callback(err, null);
-        }
-        else {
-            replicationManager.CollectUpdates({
-                username : data.user_1,
-                user_2 : data.user_2,
-                id: id,
-                key: 'd_friendship'
-            });
-            callback(null, true);
-        }
-    });
+        Friendship.remove({'id': data.id}, function (err, obj) {
+            if (err) {
+                callback(err, null);
+            }
+            else {
+                replicationManager.CollectUpdates({
+                    username: data.user_1,
+                    user_2: data.user_2,
+                    id: id,
+                    key: 'd_friendship'
+                });
+                callback(null, true);
+            }
+        });
     });
 }
 
@@ -156,36 +159,40 @@ function deleteByUsers(data, callback) {
     var user_1 = data.user_1;
     var user_2 = data.user_2;
 
-  Friendship.remove({ $or: [ { 'user_1': data.user_1, 'user_2': user_2 }, { 'user_2': user_1, 'user_1': user_2  } ]
+    Friendship.remove({
+        $or: [{'user_1': data.user_1, 'user_2': user_2}, {'user_2': user_1, 'user_1': user_2}]
     }, function (err, data) {
-       if (err) console.error(err, null);
+        if (err) console.error(err, null);
         else {
-            Friendship.find().or([ { 'user_1': user_1, 'user_2': user_2}, {'user_1': user_2, 'user_2': user_1 } ]).exec(function (e, data) {
-            replicationManager.CollectUpdates({
-                username: user_1,
-                user_2: user_2,
-                id: data.id,
-                key: 'd_friendship'
+            Friendship.find().or([{'user_1': user_1, 'user_2': user_2}, {
+                'user_1': user_2,
+                'user_2': user_1
+            }]).exec(function (e, data) {
+                replicationManager.CollectUpdates({
+                    username: user_1,
+                    user_2: user_2,
+                    id: data.id,
+                    key: 'd_friendship'
+                });
             });
-            });
-             callback(null, true);
-            }
+            callback(null, true);
+        }
     });
 }
 
 //delete the entries that belong to a certain user
 function deleteByUser(data, callback) {
-var user_1 = data.username;
-Friendship.find().or([ { 'user_1': user_1 }, { 'user_2': user_1} ]).exec(function (e, res){
-res.forEach(function (data, index, array) {
-var id = data.id;
-  deleteByID({ id: id }, function (e, data) {
+    var user_1 = data.username;
+    Friendship.find().or([{'user_1': user_1}, {'user_2': user_1}]).exec(function (e, res) {
+        res.forEach(function (data, index, array) {
+            var id = data.id;
+            deleteByID({id: id}, function (e, data) {
+                if (e) callback(e, null);
+            });
+        });
         if (e) callback(e, null);
+        callback(null, true);
     });
-    });
-  if (e) callback(e, null);
-  callback(null, true);
-});
 }
 
 module.exports = {

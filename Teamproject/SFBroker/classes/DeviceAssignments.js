@@ -38,8 +38,9 @@ DeviceAssignments.prototype.save = function (callback) {
                             status: tmpDevice.status,
                             price: tmpDevice.price,
                             key: constants.Device
-                        });
-                        callback(null, tmpDevice);
+                        }, function (err, res) {
+                                      if (callback) callback(null, true);
+                                     });
                     }
                 });
             }
@@ -58,8 +59,9 @@ DeviceAssignments.prototype.save = function (callback) {
                                 status: tmpDevice.status,
                                 price: tmpDevice.price,
                                 key: constants.Device
-                            });
-                            callback(null, tmpDevice);
+                            }, function (err, res) {
+                                          if (callback) callback(null, true);
+                                         });
                         }
                     });
                 });
@@ -80,8 +82,9 @@ DeviceAssignments.prototype.save = function (callback) {
                             status: tmpDevice.status,
                             price: tmpDevice.price,
                             key: constants.Device
-                        });
-                        callback(null, tmpDevice);
+                        }, function (err, res) {
+                                      if (callback) callback(null, true);
+                                     });
                     }
                 });
         }
@@ -125,8 +128,9 @@ function deleteByID(data, callback) {
                 device: device,
                 key: 'd_device',
                 username: username
+            }, function (err, res) {
+             if (callback) callback(null, true);
             });
-            if (callback) callback(null, true);
         }
     });
 }
