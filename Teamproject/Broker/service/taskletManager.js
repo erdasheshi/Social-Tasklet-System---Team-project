@@ -178,13 +178,16 @@ function scheduling(data, callback) {
                 var vms = Math.min(requestedNumber, availableVMs);
                 var newprice;
 
-                if (data[0].ownership == 'friend') {
+                if (data[0].ownership == 'own') {
+                    newprice = 0;
+                }
+                else if (data[0].ownership == 'friend') {
                     newprice = data[0].price * (1 - constants.FriendsDiscount);
                 }
-                if (data[0].ownership == 'network') {
+                else if (data[0].ownership == 'network') {
                     newprice = data[0].price * (1 - constants.FriendsFriendsDiscount);
                 }
-                if (data[0].ownership == 'others') {
+                else if (data[0].ownership == 'others') {
                     newprice = data[0].price;
                 }
                 providerList.decreaseAvailableVMs(data[0].address);
