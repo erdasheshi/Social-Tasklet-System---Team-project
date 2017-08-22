@@ -1,6 +1,7 @@
 var log = require('./../replication/log');
 var broker_log = require('./../replication/broker_log');
 var Brokers = require('../classes/Broker');
+var sockets = require('../routes/sockets')
 
 var constants = require('../constants');
 
@@ -84,31 +85,41 @@ function searchLog(data, callback){
  var log_updates = log.read();
  var log_length = log_updates.length;  //the length after the last committed change
 if (log_length != 0){
-   for ( var  i = 0 ; i < log_length; i++ ){
+var i = 0;
+var existence = false;
+while (i < log_length && existence == false){
+   //for ( var  i = 0 ; i < log_length; i++ ){
       var temp = JSON.parse(log_updates[i]);
 
      switch (data.key) {
-     case constants.Device:
-     case 'd_device':
-          if( temp.device == data.device) {
-          log_updates.splice(i, 1);
-          callback(null, true);
-          }
-          else{ callback(null, true); }
-     break;
+       case constants.Device:
+       case 'd_device':
+            if( temp.device == data.device) {
+            log_updates.splice(i, 1);
+            existence = true ;
+            callback(null, true);
+            }
+            else{ i = i + 1;
+            }
+        break;
 
-     case constants.Friendship:
-     case 'd_friendship':
-          if( temp.id == data.id ){
-          log_updates.splice(i, 1);
-          callback(null, true);
-          }
-          else{ callback(null, true); }
-     break;
+       case constants.Friendship:
+       case 'd_friendship':
+             if( temp.ID == data.id ){
+             log_updates.splice(i, 1);
+             existence = true ;
+             callback(null, true);
+             }
+             else{ i = i + 1 ;
+             }
+       break;
      }
+     //if no matching entry was found in the log
+if(i == log_length)
+{
+    callback(null, true);
+}
    }
-   console.log(" the i " + i );
-   console.log(" the length " + log_length );
    }
    else{
     callback(null, true);
@@ -119,7 +130,7 @@ if (log_length != 0){
 setTimeout(function () {
          globalUpdate( function (e, data) {
                          });
-     }, 1000*60*60*24); // timeout in 24 hours
+     }, 1000*60*60*24); // timeout in 24 hours  *60*60*24
 
    //Sending updates to all brokers. Triggered once per day
    function globalUpdate(callback) {
@@ -133,13 +144,13 @@ setTimeout(function () {
    var updates = updateBroker(broker);
 
    //send updates to brokers via sockets
-   //sockets.send_global_updates(broker, updates);    ***********needs to be changed the structure of the socket file
+   sockets.send_global_updates(broker, updates);
    });
    //empty the log data when updates are sent to all brokers
    log.restart();
    //set the broker_log to empty so the brokers restart from version 0
    broker_log. restart();
-   setTimeout(globalUpdate, 1000*60*60*24);   // timeout in 24 hours
+   setTimeout(globalUpdate, 1000);   // timeout in 24 hours *60*60*24
    });
  }
 
@@ -202,62 +213,3 @@ module.exports = {
             return globalUpdate(broker);
         }
 };
-
-
-/*
-var log = require('./../replication/log');
-var broker_log = require('./../replication/broker_log');
-var Brokers = require('../classes/Broker');
-
-var constants = require('../constants');
-
-//collect the deleted/updated/created friendship and device transactions into an update log
-
-function CollectUpdates(data) {
-    var logData = data;
-    var update;
-
-    if ( logData.key == constants.Device || logData.key == 'd_device'){
-
-    }
-    }
-    //call a function to check if the update is already in the log
-    searchLog({ key: logData.key, }, function(e, data){
-
-    Brokers.findByUser({ username: logData.username }, function (e, data) {
-        if (e) return next(e);
-        switch (logData.key) {
-            case constants.Device:    //keeping track of added device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
-
-                log.add(JSON.parse(JSON.stringify(update)));
-                break;
-
-            case 'd_device':   //keeping track of deleted device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
-                log.add(JSON.parse(JSON.stringify(update)));
-                break;
-
-            case constants.Friendship: //keeping track of added/updated friendship transactions
-                var broker_1 = data.broker;
-                Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
-                    if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
-                        log.add(JSON.parse(JSON.stringify(update)));
-                })
-                break;
-            case 'd_friendship':   //keeping track of deleted friendship transactions
-                var broker_1 = data.broker;
-                       Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
-                    if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
-                        log.add(JSON.stringify(update));
-                    })
-                break;
-            default:
-                ;
-        }
-    });
-    });
-}
-*/
