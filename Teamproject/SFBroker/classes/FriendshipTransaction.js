@@ -48,7 +48,9 @@ friendshipTransaction.prototype.save = function (callback) {
                                     username: user_1,
                                     user_2: user_2,
                                     key: constants.Friendship
-                                });
+                                }, function (err, res) {
+                                              if (callback) callback(null, true);
+                                             });
                             }
                             callback(null, true);
                         }
@@ -68,7 +70,9 @@ friendshipTransaction.prototype.save = function (callback) {
                                     username: user_1,
                                     user_2: user_2,
                                     key: constants.Friendship
-                                });
+                                }, function (err, res) {
+                                              if (callback) callback(null, true);
+                                             });
                             }
                             callback(null, true);
                         }
@@ -91,7 +95,9 @@ friendshipTransaction.prototype.save = function (callback) {
                             username: user_1,
                             user_2: user_2,
                             key: constants.Friendship
-                        });
+                        }, function (err, res) {
+                                      if (callback) callback(null, true);
+                                     });
                     }
                     callback(null, true);
                 }
