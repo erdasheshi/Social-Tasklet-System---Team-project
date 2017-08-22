@@ -50,7 +50,6 @@ function updateProviderList() {
     var time = Math.round(new Date().getTime() / 1000);
 
     provider.forEach(function (current, address) {
-
         if ((time - current.lastHeartbeat) > 10) {
             provider.delete(address);
         }
@@ -84,8 +83,45 @@ function getDeviceID(address) {
     return deviceID;
 }
 
+function getAvailableVMs(address){
+	var infos = provider.get(address);
+    var availableVMs;
+	if (infos) availableVMs = infos.availableVMs;
+
+	return availableVMs;
+}
+
 function getProviderList(){
     return provider;
+}
+
+function getMinBenchmark(){
+	
+	var minimum = 999999;
+	
+	provider.forEach(function (current) {
+
+        if (minimum > current.benchmark) {
+            minimum = minimum;
+        }
+    });
+	
+	return minimum;
+}
+
+function getMaxBenchmark(){
+	
+	var maximum = 0;
+	
+	provider.forEach(function (current) {
+
+        if (maximum < current.benchmark) {
+            maximum = maximum;
+        }
+    });
+	
+	return maximum;
+	
 }
 
 module.exports = {
@@ -113,8 +149,20 @@ module.exports = {
     getDeviceID: function (address) {
         return getDeviceID(address)
     },
+	
+	getAvailableVMs: function (address) {
+        return getAvailableVMs(address)
+    },
 
     getProviderList: function() {
         return getProviderList();
-    }
+    },
+	
+	getMinBenchmark: function(){
+		return getMinBenchmark();
+	},
+	
+	getMaxBenchmark: function(){
+		return getMaxBenchmark();
+	}
 };

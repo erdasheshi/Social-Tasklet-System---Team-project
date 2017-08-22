@@ -4,7 +4,9 @@ let updates = [];
 module.exports = {
 //concatenate the changes into a single string
   add: function (data)
-     {  updates = updates.concat(data);
+     {
+     updates = updates.concat(data);
+
      },
 //will generate the array
   read: () => updates,

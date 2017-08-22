@@ -19,41 +19,43 @@ function user(data) {
         this.lastname = data.lastname,
         this.balance = data.balance
 }
-
-user.prototype.save =  function(callback) {
-    var transaction = new User({ //You're entering a new transaction here
-            username: this.username,
-            password: this.password,
-            email: this.email,
-            firstname: this.firstname,
-            lastname: this.lastname,
-            balance: this.balance
-    });
-    transaction.save(function (error) { //This saves the information you see within that Acounting declaration (lines 4-6).
-        if (error){
-            callback(error, false);
+//creates a new database entry or updates the existing ones
+user.prototype.save = function (callback) {
+    var tmpUser = this;
+    User.findOne({'username': tmpUser.username}, function (e, udata) {
+        //if no entry was not found, then create it
+        if (udata == null) {
+            var element = new User(tmpUser);
+            element.save({}, function (error, data) {
+                if (error) {
+                    console.error(error);
+                }
+                if (callback) {
+                    callback(null, true);
+                }
+            });
         }
-        if (callback) callback(null, true);
+        //an entry was found, therefore update it with the new values
+        else {
+            User.update({'username': tmpUser.username},{
+            password: udata.password,   //to be changed when the user will be allowed to change his registration data in the frontend
+            email: udata.email,         //to be changed when the user will be allowed to change his registration data in the frontend
+            firstname: udata.firstname, //to be changed when the user will be allowed to change his registration data in the frontend
+            lastname: udata.lastname,   //to be changed when the user will be allowed to change his registration data in the frontend
+            balance: tmpUser.balance
+                }, function (error, data) {
+                    if (error) {
+                        callback(error, false);
+                    }
+                    else if (callback) {
+                        callback(null, true);
+                    }
+                });
+        }
     });
 }
 
-user.prototype.update =  function() {
-    var transaction = this;
-
-    User.findOne({ 'username' : this.username }, function (err, doc) {
-        doc.balance   = transaction.balance;
-		doc.firstname = transaction.firstname;
-		doc.lastname  = transaction.lastname;
-		doc.email     = transaction.email;
-        doc.save({}, function (error, data) {
-           if (error) {
-                console.error(error.stack || error.message);
-                return;
-            }
-        }); //not sure about the else...it needs to be tested
-    });
-}
-
+//find all the entries in the database
 function findAll(callback) {
     User.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -61,6 +63,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
 function findByUser(data, callback) {
     User.findOne({ 'username' : data.username }, function (e, data) {
         if (e) callback(e, null);
@@ -68,17 +71,17 @@ function findByUser(data, callback) {
     });
 }
 
+//delete all the database entries that belong to a certain user
+//an exception are the tasklet transactions, which are stored in the database for statistical & safety reasons
 function deleteByUsername(data, callback){
     var username = data.username;
     friendship.deleteByUser({ username : username }, function(e, data){
         if (e) callback(e, null);
         device.deleteByUser({ username : username }, function(e, data) {
-
             if (e) callback(e, null);
             coins.deleteByUser({ username : username }, function(e, data) {
                 if (e) callback(e, null);
                 User.remove({ 'username': username }, function (err, data) {
-
                     if (err) callback(err, null);
                     if (callback) callback(null, true);
                 });

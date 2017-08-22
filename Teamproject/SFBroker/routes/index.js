@@ -13,6 +13,7 @@ var friendshipTransaction = require('../classes/FriendshipTransaction');
 var coinTransaction = require('../classes/CoinTransaction');
 var deviceAssignment = require('../classes/DeviceAssignments');
 var user = require('../classes/User');
+var replicationManager = require('./../replication/replicationManager');
 
 
 /* Auth Service */
@@ -74,21 +75,6 @@ router.get('/user', authService.loggedIn, function (req, res, next) {
     }
 });
 
-/* GET sfbusertransactions.  Not used in the frontend yet???*/          //to be removed....not used and after the refactoring, not working anymore
-router.get('/sfbusertransactions', authService.loggedIn, function (req, res, next) {
-    var username = req.user.username;
-    logic.findAllTransactions({ username: username}, function (e, result) {
-        if (e) return next(e);
-        var fin_result = result;
-        user.findByUser({username: username}), function (e, data) {
-            if (e) return next(e);
-            var response = '{ "username": "' + username + '", "balance": ' + data.balance + ', "transactions": ' + fin_result + '}';
-            res.json(JSON.parse(response.toString()));
-        };
-    });
-});
-
-
 /* GET requestedcoins. */
 router.get('/requestedcoins', authService.loggedIn, function (req, res, next) {
 
@@ -115,9 +101,7 @@ router.get('/device', authService.loggedIn, function (req, res, next) {
     }
 });
 
-//***
-//*** update based on how will be handled a device registration
-//***
+//handled a device registration
 router.get('/download', authService.loggedIn, function (req, res, next) {
     var filePath = "../SFBroker/download/Executable.zip";
     res.download(filePath);
@@ -131,10 +115,9 @@ router.get('/download', authService.loggedIn, function (req, res, next) {
 router.post('/updates', authService.loggedIn, function (req, res, next) {
     var broker = req.body.broker;
 
-    var result = logic.updateBroker(broker);
+    var result = replicationManager.updateBroker(broker);
     res.json(result);
 });
-
 
 /* POST /Accounting Transaction */
 router.post('/acctransaction', authService.loggedIn, function (req, res, next) {
@@ -192,7 +175,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         if (err) return next(err);
 
         if (download) {
-            downloadManager.provideDownload({ id: data.device }, function (err, data) {
+            downloadManager.provideDownload({ id: data.device, username : data.username }, function (err, data) {
                 if (err) return res.status(500).json({err: 'Action not successful!'} );
                 res.download(data.destination);
             });
@@ -233,8 +216,10 @@ router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 
     user.deleteByUsername({username: username}, function (err, data) {
+    console.log("the callbacks worked");
           if (err) return res.status(500).json( {err : 'Deletion not possible!'} );
           res.json('User successfully deleted!');
+
  });
 });
 

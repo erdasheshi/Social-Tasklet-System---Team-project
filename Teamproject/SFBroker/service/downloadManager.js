@@ -1,33 +1,30 @@
-const fse = require('fs-extra');
 var conf = require('../config.json');
 
 var fs = require('fs');
 var archiver = require('archiver');
+var broker = require('./../classes/Broker');
 
-const source = conf.sfbroker.download.source + "config.txt";
 const destination = conf.sfbroker.download.destination + "config.txt";
 
 
 function provideDownload(data, callback) {
     var deviceID = data.id;
-    copyFile(source, destination, function (err, data) {
-        var line = '\nDevice_ID: ' + deviceID;
-        fse.appendFileSync(destination, line);
+
+    var configStream = fs.createWriteStream(destination);
+    broker.findByUser({username: data.username}, function (e, data) {
+        // CONTINUE HERE WITH Broker distribution!
+
+        configStream.write(new Buffer("IP_Responder: " + conf.broker.ip + "\n"));
+        configStream.write(new Buffer("Tasklet_Monitor: " + conf.broker.ip + "\n"));
+        configStream.write(new Buffer("Number_of_TVMs: -1\n"));
+        configStream.write(new Buffer("Timeout: 4\n"));
+        configStream.write(new Buffer("Device_ID: " + deviceID + "\n"));
+
         zipTasklet({}, function (err, data) {
             if (err) callback(err, null);
-            callback(null, {destination: conf.sfbroker.download.source + "/TaskletMiddleware.zip" });
+            callback(null, {destination: conf.sfbroker.download.source + "/TaskletMiddleware.zip"});
         });
     });
-}
-
-
-function copyFile(src, dest, callback) {
-    fse.copy(src, dest, function (err, data) {
-        if (err) {
-            console.error(err);
-        }
-        if (callback) callback(null, destination);
-    })
 }
 
 function zipTasklet(data, callback) {

@@ -20,6 +20,8 @@ const DeviceStatusInactive          = "Inactive";
 
 const CoinReq = 'CoinReq';
 
+const FriendsDiscount = 0.5;
+const FriendsFriendsDiscount = 0.2;
 const Magic	= 12345;
 const Version = 1;
 
@@ -80,7 +82,10 @@ module.exports = {
 
     DeviceStatusActive: DeviceStatusActive,
     DeviceStatusInactive: DeviceStatusInactive,
-
+	
+	FriendsDiscount: FriendsDiscount,
+	FriendsFriendsDiscount : FriendsFriendsDiscount,
+	
     Magic: Magic,
     Version: Version,
     bHeartbeatMessage: bHeartbeatMessage,

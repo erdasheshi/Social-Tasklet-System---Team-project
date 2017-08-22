@@ -3,56 +3,57 @@ var repClient = require('./replicationClient');
 var constants = require('./../constants');
 var devices = require('../classes/DeviceAssignments');
 
-
-
 var io;
 
 function initialize(server) {
     io = require('socket.io').listen(server);
 
     io.sockets.on('connection', function (socket) {
-        var broker_id = 3;    //important in case of distributed - multiple brokers
+        var broker_id = 5;    //important in case of distributed - multiple brokers
 
         socket.on('SFInformation', function (data) {
+            var updates = data.updates;
             var username = data.username;
             var taskletid = data.taskletid;
             var tasklet = require('./tasklet/tasklet');
-            //store the updates before proceeding
-            repClient.setUpdates(data.updates);
+            var further = data.further;
 
-            if (data.further == true) { // Check if the user has enough money
+            repClient.setUpdates({ updates: updates }, function (e, res) {
+                if (e) ;
+                console.error(e);
+                //store the updates before proceeding
+                if (further == true) { // Check if the user has enough money
 
-                tasklet.preScheduling({taskletid: taskletid, username: username}, function (e, data) {
-                    if (e) console.error(e);
-                });
-            }
-            else{
-                // Abort!!! --> Add error handling if user does not have enough coins
-                tasklet.abortScheduling({taskletid: taskletid}, function (e, data) {
-                    if (e) console.error(e);
-				});
-			}
-        });
-
-        // Steps 9 & 10: Receiving notification including the consumed time from Provider's device and sending this to the SFBroker
-        socket.on('TaskletCyclesReturn', function (data) {   // it will capture the information
-            io.sockets.emit('SendTaskletResultToConsumer', data);   //****needs to be removed...consumer send data directly to provider
-            var computation = data.computation;
-            var device = data.device;
-            var taskletid = data.taskletid;
-            //get the price of the provider's device and calculate the computation cost
-            devices.findByID({ device: device }, function (err, data) {
-                var price = data.price;
-                var cost = computation * price;
-                io.sockets.emit('TaskletCyclesReturn', { cost: cost, taskletid: taskletid, device: device });
+                    tasklet.preScheduling({ taskletid: taskletid, username: username }, function (e, data) {
+                        if (e) console.error(e);
+                    });
+                }
+                else {
+                    // Abort!!!
+                    tasklet.abortScheduling({ taskletid: taskletid }, function (e, data) {
+                        if (e) console.error(e);
+                    });
+                }
             });
         });
-        // Step 6: Provider gets Tasklets
-        socket.on('SendingTaskletToProvider', function (data) {
-            io.sockets.emit('SendingTaskletToProvider', data);
-        });
 
+        //get daily updates
+        socket.on('GlobalUpdate', function (data) {
+            var broker_id = data.broker;
+            var updates = data.updates;
+            //store the updates in the database
+            repClient.setUpdates({ updates: updates }, function (e, res) {
+                if (e) console.error(e);
+                callback(null, true);
+            });
+        });
     });
+}
+
+function returnTaskletCycles(taskletid, providers) {
+
+    io.sockets.emit('TaskletCyclesReturn', { taskletid: taskletid, providers: providers });
+
 }
 
 function activateDevice(data) {
@@ -64,7 +65,7 @@ function activateDevice(data) {
 }
 
 function sendSFInformation(deviceID, taskletid, broker_id) {
-console.log(deviceID + "the device id");
+
     io.sockets.emit('SFInformation', {
         device: deviceID,
         taskletid: taskletid,
@@ -83,5 +84,9 @@ module.exports = {
 
     sendSFInformation: function (deviceID, taskletid, broker_id) {
         return sendSFInformation(deviceID, taskletid, broker_id)
+    },
+
+    returnTaskletCycles: function (taskletid, providers) {
+        return returnTaskletCycles(taskletid, providers)
     }
 }

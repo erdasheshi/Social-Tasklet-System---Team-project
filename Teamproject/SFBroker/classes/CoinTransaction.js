@@ -15,10 +15,11 @@ function coinTransaction(data) {
     this.requestedCoins = data.requestedCoins,
     this.approval = data.approval
 }
-
+//creates a new database entry or updates the existing ones
 coinTransaction.prototype.save = function (callback) {
     var tmpCoin = this;
     Coins.findOne({'requestid': tmpCoin.requestid}, function (e, udata) {
+    //if no entry was not found, then create it
         if (udata == null) {
             var coin_req = new Coins(tmpCoin);
             coin_req.save({}, function (error, data) {
@@ -30,6 +31,7 @@ coinTransaction.prototype.save = function (callback) {
                 }
             });
         }
+        //an entry was found, therefore update it with the new values
         else {
             Coins.update({'requestid': tmpCoin.requestid},{
             username: tmpCoin.username,
@@ -48,6 +50,7 @@ coinTransaction.prototype.save = function (callback) {
     });
 }
 
+//find all the entries in the database
 function findAll(callback) {
     Coins.find({}, function (e, data) {
         if (e) callback(e, null);
@@ -55,6 +58,7 @@ function findAll(callback) {
     });
 }
 
+//find the entries that belong to a certain user
 function findByUser(data, callback) {
     Coins.find({ 'username' : data.username }, function (e, data) {
         if (e) callback(e, null);
@@ -62,18 +66,19 @@ function findByUser(data, callback) {
     });
 }
 
+//find coin requests based on the status of the approval
 function findByApproval(data, callback) {
     Coins.find({ 'approval' : data.approval }, function (e, data) {
         if (e) callback(e, null);
         if(callback) callback(null, data);
     });
 }
-
+//delete the entries that belong to a certain user
 function deleteByUser(data, callback) {
     var username = data.username;
     Coins.remove({ 'username': username }, function (err, data) {
         if (err) callback(err, null);
-        if (callback) callback(null, true);
+         callback(null, true);
     });
 }
 
