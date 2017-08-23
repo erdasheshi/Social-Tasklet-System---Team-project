@@ -118,7 +118,7 @@ router.get('/device', authService.loggedIn, function (req, res, next) {
 });
 
 //handled a device registration
-router.get('/download', authService.loggedIn, function (req, res, next) {
+router.get('/download', function (req, res, next) {
     var filePath = conf.sfbroker.download.source + '/TaskletMiddleware' + req.query.device + '.zip';
     res.download(filePath);
 });
@@ -195,7 +195,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
 
                 if (err) return res.status(500).json({ err: 'Action not successful!' });
                 var response = 'http://' + conf.sfbroker.ip  + ':' + conf.sfbroker.port + '/download?device=' + device;
-                
+
                 res.json(response);
             });
         }
