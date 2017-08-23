@@ -97,6 +97,7 @@ function updateBalance(difference, username) {
         });
         userb.save(function (err, post) {
             if (err) return next(err);
+            return true;
         });
     });
 };

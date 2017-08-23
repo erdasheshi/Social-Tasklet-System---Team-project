@@ -117,7 +117,7 @@ function scheduling(data, callback) {
         }
 
         else {
-
+            console.log(data);
             if (data.length == 0) {
                 callback(null, [{number: 0}]);
             }
@@ -171,8 +171,8 @@ function scheduling(data, callback) {
                     }
                 });
             }
-
-            else if (data.length == 1) {
+            console.log(data);
+            if (data.length == 1) {
                 var availableVMs = data[0].availableVMs;
 
                 var vms = Math.min(requestedNumber, availableVMs);
@@ -246,9 +246,10 @@ function scheduling(data, callback) {
                     }
 
                     attempts = attempts + 1;
+                    if( selectedVMs == requestedNumber) callback(null, [{number: selectedProviders}, result]);
                 } while (selectedVMs < requestedNumber && attempts < 100 && data.length > 0);
 
-                callback(null, [{number: selectedProviders}, result]);
+
             }
 
         }

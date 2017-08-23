@@ -122,7 +122,7 @@ socket_c.on('SFInformation', function (data) {
 // Step 11: Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
 
-    if (data != null) {
+    if (data != null && data.providers.length != 0 ) {
         var providers = data.providers;
         var taskletid = data.taskletid;
 
@@ -134,21 +134,22 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             var consumer = res[0].consumer;
             var total = 0;
             var logic = require('./logic');
-
+            var processor = 0;
 //Create a new tasklet transaction for each provider. Tasklet_id is the same for all of them
             providers.forEach(function (provider, index, array) {
                 var cost = provider.cost;
                 var device = provider.device;
-
-
+                var finished;
                 //calculate the total cost of the tasklet
+
+
                 total = total + cost;
 
 //find the owner of the device used as a provider for the tasklet
                 deviceAssignment.findByID({ device: device }, function (e, data) {
                     if (e) console.error(err, null);
                     var device_owner = data.username;
-
+                    finished = false;
                     var accTransaction = accountingTransaction.get({
                         taskletid: taskletid,
                         consumer: consumer,
@@ -162,8 +163,18 @@ socket_c.on('TaskletCyclesReturn', function (data) {
 
                     //transferring money to the provider
 
-                    logic.updateBalance(cost, device_owner);
+                   logic.updateBalance(cost, device_owner);
+
+                    //calculate the amount still to be payed by the user when considering the fixed amount subtracted in step 3
+                    processor = processor + 1;
+                    if ( processor == providers.length ) {
+                        // fixing the balance of the consumer, based on the calculated taskelt's cost
+                        var difference = initial_coins - total;
+                        logic.updateBalance(difference, consumer);
+                    }
+
                 });
+
             });
 
             //delete the transaction entry stored when the tasklet request was received in step 3
@@ -171,16 +182,11 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                 if (e) console.error(err, null);
             });
 
-            //calculate the amount still to be payed by the user when considering the fixed amount subtracted in step 3
-            var difference = initial_coins - total;
-
-            // fixing the balance of the consumer, based on the calculated taskelt's cost
-            logic.updateBalance(difference, consumer);
             console.log('Tasklet ' + res[0].taskletid + ' confirmed!');
         });
 
     }
-    ;
+    else if (data.taskletid) console.log('No provider for Tasklet ' + data.taskletid + ' found!');
 });
 
 //Activate device when received the first heartbeat

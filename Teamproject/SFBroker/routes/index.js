@@ -221,7 +221,7 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
 });
 
 /*DELETE /Device*/
-router.delete('/device', authService.loggedIn, function (req, res, next) {
+router.delete('/device', function (req, res, next) {
     var device = req.query.device;
 
     deviceAssignment.deleteByID({ device: device, username: req.user.username }, function (err, data) {
