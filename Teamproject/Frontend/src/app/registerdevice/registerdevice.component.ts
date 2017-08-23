@@ -49,7 +49,7 @@ export class RegisterdeviceComponent implements OnInit {
           this.downloadURL = res._body;
           this.downloadURL = this.downloadURL.replace("\"", "");
           this.downloadURL = this.downloadURL.replace("\"", "");
-          console.log(this.this.downloadURL);
+          console.log(this.downloadURL);
           window.open(this.downloadURL);
           this.router.navigate(['/devices']);
         }
