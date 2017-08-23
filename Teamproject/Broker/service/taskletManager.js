@@ -229,7 +229,7 @@ function scheduling(data, callback) {
                         if (data[i].ownership == 'friend') {
                             price = data[i].price * (1 - constants.FriendsDiscount);
                         }
-                        if (current.ownership == 'network') {
+                        if (data[i].ownership == 'network') {
                             price = data[i].price * (1 - constants.FriendsFriendsDiscount);
                         }
 
