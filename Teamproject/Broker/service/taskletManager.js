@@ -225,13 +225,20 @@ function scheduling(data, callback) {
 
                     // Calculating the score (0-1)
                     for (var i = 0; i < data.length; i++) {
+                        var price = data[i].price;
+                        if (data[i].ownership == 'friend') {
+                            price = data[i].price * (1 - constants.FriendsDiscount);
+                        }
+                        if (current.ownership == 'network') {
+                            price = data[i].price * (1 - constants.FriendsFriendsDiscount);
+                        }
 
-                        var newscore = (weightCost * ((data[i].price - minPrice) / (maxPrice - minPrice))) + (weightSpeed * ((data[i].benchmark - minBenchmark) / (maxBenchmark - minBenchmark)))
+                        var newscore = (weightCost * ((price - minPrice) / (maxPrice - minPrice))) + (weightSpeed * ((data[i].benchmark - minBenchmark) / (maxBenchmark - minBenchmark)))
                         if (newscore < score) {
                             score = newscore;
                             currentProvider = data[i].address;
                             currentVMs = data[i].availableVMs;
-                            currentPrice = data[i].price;
+                            currentPrice = price;
                             position = i;
                         }
                     }
