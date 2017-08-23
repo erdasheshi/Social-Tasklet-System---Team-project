@@ -47,11 +47,6 @@ export class RegisterdeviceComponent implements OnInit {
       .then(res => {
         if (res.status === 200) {
           this.downloadURL = res._body;
-          this.downloadURL = this.downloadURL.replace("\"", "");
-          this.downloadURL = this.downloadURL.replace("\"", "");
-          console.log(this.downloadURL);
-          window.open(this.downloadURL);
-          this.router.navigate(['/devices']);
         }
       })
       .catch(err => this.handleError(err));
