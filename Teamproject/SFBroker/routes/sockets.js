@@ -25,7 +25,7 @@ io.sockets.on('connection', function (socket) {
 
     //sending the coin requests to the front-end of the administrator
     socket.on('Requested_Coins', function (data) {
-        coinTransaction.findByApproval({approval: 'false'}, function (e, data) {
+        coinTransaction.findByApproval({ approval: 'false' }, function (e, data) {
             io.sockets.emit('Requested_Coins', data);
         });
     });
@@ -55,7 +55,7 @@ io.sockets.on('connection', function (socket) {
 
 // Connect to Broker
 var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
-socket_c.emit('event', {connection: 'I want to connect'});
+socket_c.emit('event', { connection: 'I want to connect' });
 
 // Step 3: Finding and sending friends information for Broker
 socket_c.on('SFInformation', function (data) {
@@ -69,14 +69,14 @@ socket_c.on('SFInformation', function (data) {
     var accountingTransaction = require('../classes/AccountingTransaction');
     var deviceAssignment = require('../classes/DeviceAssignments');
 
-    deviceAssignment.findByID({device: device}, function (error, data) {
+    deviceAssignment.findByID({ device: device }, function (error, data) {
         if (data) {
             var username = data.username;
 
             console.log("Received tasklet request from user:  " + username + " with tasklet_id: " + taskletid + " and broker: " + broker);
 
             // Check if the user has enough money in his account
-            user.findByUser({username: username}, function (e, user_data) {
+            user.findByUser({ username: username }, function (e, user_data) {
                 balance = user_data.balance;
 
 
@@ -126,7 +126,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
         var providers = data.providers;
         var taskletid = data.taskletid;
 
-        accountingTransaction.findByID({taskletid: taskletid}, function (e, res) {
+        accountingTransaction.findByID({ taskletid: taskletid }, function (e, res) {
             if (e) console.error(err, null);
 
             var transaction_id = res[0].transaction_id;
@@ -145,7 +145,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                 total = total + cost;
 
 //find the owner of the device used as a provider for the tasklet
-                deviceAssignment.findByID({device: device}, function (e, data) {
+                deviceAssignment.findByID({ device: device }, function (e, data) {
                     if (e) console.error(err, null);
                     var device_owner = data.username;
 
@@ -167,7 +167,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             });
 
             //delete the transaction entry stored when the tasklet request was received in step 3
-            accountingTransaction.deleteByTransactionID({transaction_id: transaction_id}, function (e, res) {
+            accountingTransaction.deleteByTransactionID({ transaction_id: transaction_id }, function (e, res) {
                 if (e) console.error(err, null);
             });
 
@@ -187,7 +187,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
 socket_c.on('ActivateDevice', function (data) {
     if (data.status == constants.DeviceStatusActive) {
         var device = data.device;
-        deviceAssignment.findByID({device: device}, function (e, data) {
+        deviceAssignment.findByID({ device: device }, function (e, data) {
             var new_device = deviceAssignment.get({
                 device: device,
                 username: data.username,
@@ -204,7 +204,7 @@ socket_c.on('ActivateDevice', function (data) {
 
 //send the global update to the broker
 function send_global_updates(broker, updates) {
-    socket_c.emit('GlobalUpdate', {broker: broker, updates: updates});
+    socket_c.emit('GlobalUpdate', { broker: broker, updates: updates });
 }
 
 module.exports = {

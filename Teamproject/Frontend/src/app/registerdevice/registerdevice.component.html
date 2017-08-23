@@ -7,7 +7,7 @@
       <form (ngSubmit)="onSubmit()" class="searchform">
 
         Device Name
-        <input type="text" [(ngModel)]="deviceNew.name" name="firstname" placeholder="First Name"><br>
+        <input type="text" [(ngModel)]="deviceNew.name" name="firstname" placeholder="Name"><br>
 
         Price
         <input type="number" [(ngModel)]="deviceNew.price" name="price" placeholder="Price"><br>
@@ -15,8 +15,6 @@
         <button type="submit" id="register">Register</button>
 
       </form>
-
-      <button *ngIf="downloadURL" (click)="startDownload()">Download</button>
 
     </div>
   </div>

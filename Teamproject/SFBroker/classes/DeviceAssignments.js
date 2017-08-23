@@ -115,6 +115,7 @@ function findByID(data, callback) {
 function deleteByID(data, callback) {
     var device = data.device;
     var username = data.username;
+    var replicationManager = require('./../replication/replicationManager');
 
     Device.remove({'device': device}, function (err, obj) {
         if (err) console.error(err, null);
