@@ -107,7 +107,7 @@ function scheduling(data, callback) {
 
             if (availableVMs > 0) {
                 var vms = Math.min(requestedNumber, availableVMs);
-                providerList.decreaseAvailableVMs(ip);
+                providerList.decreaseAvailableVMs(ip, vms);
                 callback(null, [{number: 1}, {ip: ip, vms: vms, price: 0}]);
             }
 
@@ -128,7 +128,7 @@ function scheduling(data, callback) {
                 var availableVMs = providerList.getAvailableVMs(ip);
                 if (availableVMs > 0) {
                     var vms = Math.min(requestedNumber, availableVMs);
-                    providerList.decreaseAvailableVMs(ip);
+                    providerList.decreaseAvailableVMs(ip, vms);
                     callback(null, [{number: 1}, {ip: ip, vms: vms, price: 0}]);
                 }
                 else {
@@ -190,7 +190,7 @@ function scheduling(data, callback) {
                 else if (data[0].ownership == 'others') {
                     newprice = data[0].price;
                 }
-                providerList.decreaseAvailableVMs(data[0].address);
+                providerList.decreaseAvailableVMs(data[0].address, vms);
                 callback(null, [{number: 1}, {ip: data[0].address, vms: vms, price: newprice}]);
 
             }
@@ -249,7 +249,7 @@ function scheduling(data, callback) {
                         result = result.concat({ip: currentProvider, vms: selectedVMs, price: currentPrice});
                         selectedProviders = selectedProviders + 1;
                         data.splice(position, 1);
-                        providerList.decreaseAvailableVMs(currentProvider);
+                        providerList.decreaseAvailableVMs(currentProvider, selectedVMs);
                     }
 
                     attempts = attempts + 1;

@@ -53,7 +53,7 @@ var server_vmup = net.createServer(function (socket) {
                 }
 
                 if (messageType == constants.vmDownMessage) {
-                    providerList.decreaseAvailableVMs(address);
+                    providerList.decreaseAvailableVMs(address, 1);
                 }
 
                 else if (messageType != constants.vmUpMessage && messageType != constants.vmDownMessage) {

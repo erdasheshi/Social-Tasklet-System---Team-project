@@ -67,10 +67,9 @@ function increaseAvailableVMs(address) {
     console.log(provider.toObject());
 }
 
-function decreaseAvailableVMs(address) {
+function decreaseAvailableVMs(address, usedVMS) {
     var infos = provider.get(address);
-    if (infos) infos.availableVMs = infos.availableVMs - 1;
-
+    if (infos)infos.availableVMs = infos.availableVMs - usedVMS;
     // Demonstrating purposes
     console.log(provider.toObject());
 }
@@ -142,8 +141,8 @@ module.exports = {
         return increaseAvailableVMs(address)
     },
 
-    decreaseAvailableVMs: function (address) {
-        return decreaseAvailableVMs(address)
+    decreaseAvailableVMs: function (address, usedVMS) {
+        return decreaseAvailableVMs(address, usedVMS)
     },
 
     getDeviceID: function (address) {

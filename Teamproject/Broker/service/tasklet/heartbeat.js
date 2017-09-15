@@ -76,7 +76,7 @@ var server_heartbeat = net.createServer(function (socket) {
 
                     //Replace the default benchmark with the actual one
                     providerList.updateBenchmark(address, benchmark);
-                    providerList.decreaseAvailableVMs(address);
+                    providerList.decreaseAvailableVMs(address, 1);
                 }
 
 
