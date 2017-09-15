@@ -209,6 +209,7 @@ function scheduling(data, callback) {
                 });
 
                 var selectedVMs = 0;
+                var totalVMs = 0;
                 var selectedProviders = 0;
                 var attempts = 0;
                 var total = cost + speed;
@@ -247,14 +248,15 @@ function scheduling(data, callback) {
                         selectedVMs = Math.min(currentVMs, requestedNumber);
 
                         result = result.concat({ip: currentProvider, vms: selectedVMs, price: currentPrice});
-                        selectedProviders = selectedProviders + 1;
+                        selectedProviders += 1;
                         data.splice(position, 1);
                         providerList.decreaseAvailableVMs(currentProvider, selectedVMs);
+                        totalVMs += selectedVMs;
                     }
 
                     attempts = attempts + 1;
-                    if( selectedVMs == requestedNumber) callback(null, [{number: selectedProviders}, result]);
-                } while (selectedVMs < requestedNumber && attempts < 100 && data.length > 0);
+                    if( totalVMs == requestedNumber) callback(null, [{number: selectedProviders}, result]);
+                } while (totalVMs < requestedNumber && attempts < 100 && data.length > 0);
 
 
             }
