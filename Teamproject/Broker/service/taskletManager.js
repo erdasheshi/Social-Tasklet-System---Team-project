@@ -163,7 +163,7 @@ function scheduling(data, callback) {
                     }
                 });
             }
-            console.log(current);
+            
             if (availableUsers.length == 1) {
                 var availableVMs = availableUsers[0].availableVMs;
 
