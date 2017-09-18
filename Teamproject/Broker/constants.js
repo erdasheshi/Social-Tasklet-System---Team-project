@@ -8,6 +8,7 @@ const Broker                    = 'Broker';
 const Updates                    = 'Updates';
 
 const AccountingStatusComputed  = 'Computed';
+const AccountingStatusNotComputed  = 'Not Computed';
 const AccountingStatusBlocked   = 'Blocked';
 const AccountingStatusConfirmed = 'Confirmed';
 
@@ -73,6 +74,7 @@ module.exports = {
     Updates: Updates,
 
     AccountingStatusComputed: AccountingStatusComputed,
+    AccountingStatusNotComputed: AccountingStatusNotComputed,
     AccountingStatusBlocked: AccountingStatusBlocked,
     AccountingStatusConfirmed: AccountingStatusConfirmed,
 

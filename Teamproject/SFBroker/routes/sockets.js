@@ -23,14 +23,14 @@ server.listen(conf.sfbroker_socket.port);
 
 io.sockets.on('connection', function (socket) {
 
-    //sending the coin requests to the front-end of the administrator
+    //sending the pending coin requests to the Administrator
     socket.on('Requested_Coins', function (data) {
         coinTransaction.findByApproval({ approval: 'false' }, function (e, data) {
             io.sockets.emit('Requested_Coins', data);
         });
     });
 
-    //Store the request as approved and updates the balance for the user
+    //Store the approved coin requests and updates the balance for the user - requests approved by the Administrator
     socket.on('CoinsApproval', function (data) {
 
         var username = data.username;
@@ -57,7 +57,7 @@ io.sockets.on('connection', function (socket) {
 var socket_c = require('socket.io-client')('http://' + conf.broker.ip + ':' + conf.broker.port);
 socket_c.emit('event', { connection: 'I want to connect' });
 
-// Step 3: Finding and sending friends information for Broker
+// checking the balance status of the consumer (the user who sent the tasklet request) and sending possible updates to the broker
 socket_c.on('SFInformation', function (data) {
     var balance, further;
     var key = 'Updates';
@@ -69,8 +69,10 @@ socket_c.on('SFInformation', function (data) {
     var accountingTransaction = require('../classes/AccountingTransaction');
     var deviceAssignment = require('../classes/DeviceAssignments');
 
+//retrieve data about the device from where the tasklet request was sent
     deviceAssignment.findByID({ device: device }, function (error, data) {
         if (data) {
+            //find the owner of the device and check its balance
             var username = data.username;
 
             console.log("Received tasklet request from user:  " + username + " with tasklet_id: " + taskletid + " and broker: " + broker);
@@ -82,8 +84,9 @@ socket_c.on('SFInformation', function (data) {
 
                 //if the user has enough money, an accounting transaction will be stored and a fixed amount of money will be blocked from the user
                 if (balance >= min_balance) {
-                    further = true;
-                    // create dummy transaction
+                    further = true;   //notify the broker that the user has enough money and the process can proceed further
+
+                    // create dummy transaction - to keep as a record so we can trace tasklets later during the procees
                     var accTransaction = accountingTransaction.get({
                         consumer: username,
                         coins: min_balance,
@@ -94,16 +97,19 @@ socket_c.on('SFInformation', function (data) {
                     accTransaction.save(function (err, post) {
                         if (err) return next(err);
                     });
+
+                    //block min_balance coins from the consumer
                     var difference = -1 * min_balance;
 
                     var logic = require('./logic');
+
+                    //update the balance of the consumer
                     logic.updateBalance(difference, username);
                 }
-                else {
+                else {  //if the user doesn't have enough money then inform the broker so it can block the process at this point
                     further = false;
                 }
-
-                // var updates = replicationManager.updateBroker({broker: broker}, function (e, updates) {
+                //collect and send the updates for the broker - the one who sent this specific socket call (SFInformation)
                 var replicationManager = require('./../replication/replicationManager');
                 var updates = replicationManager.updateBroker(broker)
                 var updates = updates;
@@ -119,13 +125,14 @@ socket_c.on('SFInformation', function (data) {
     });
 });
 
-// Step 11: Tasklet finished + Tasklet cycles known
+// Tasklet finished + Tasklet cycles known
 socket_c.on('TaskletCyclesReturn', function (data) {
 
-    if (data != null && data.providers.length != 0 ) {
+    if ( data != null ) {
         var providers = data.providers;
         var taskletid = data.taskletid;
 
+        //find the existing tasklet transaction - the one that was created when the tasklet request was received
         accountingTransaction.findByID({ taskletid: taskletid }, function (e, res) {
             if (e) console.error(err, null);
 
@@ -135,7 +142,10 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             var total = 0;
             var logic = require('./logic');
             var processor = 0;
-//Create a new tasklet transaction for each provider. Tasklet_id is the same for all of them
+
+            if( data.providers.length != 0){ //if the tasklet was computed by at least one provider - providers were found
+
+            //Create a new tasklet transaction for each provider. Tasklet_id is the same for all of them
             providers.forEach(function (provider, index, array) {
                 var cost = provider.cost;
                 var device = provider.device;
@@ -145,7 +155,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
 
                 total = total + cost;
 
-//find the owner of the device used as a provider for the tasklet
+                //find the owner of the device used as a provider for the tasklet
                 deviceAssignment.findByID({ device: device }, function (e, data) {
                     if (e) console.error(err, null);
                     var device_owner = data.username;
@@ -172,9 +182,7 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                         var difference = initial_coins - total;
                         logic.updateBalance(difference, consumer);
                     }
-
                 });
-
             });
 
             //delete the transaction entry stored when the tasklet request was received in step 3
@@ -183,16 +191,32 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             });
 
             console.log('Tasklet ' + res[0].taskletid + ' confirmed!');
-        });
+                        }
+            else {    //the tasklet was not computed - no providers were found
 
+            //update the information in the transaction created when the tasklet request was received
+                 var accTransaction = accountingTransaction.get({
+                                    taskletid: taskletid,
+                                    consumer: consumer,
+                                    provider: null,
+                                    coins: 0,
+                                    status: constants.AccountingStatusNotComputed
+                                });
+                 //return back the blocked coin to the consumer
+                 difference = +1 ;
+                 logic.updateBalance(difference, consumer);
+                 console.log('No provider for Tasklet ' + data.taskletid + ' found!')
+            }
+        });
     }
-    else if (data.taskletid) console.log('No provider for Tasklet ' + data.taskletid + ' found!');
 });
 
-//Activate device when received the first heartbeat
+//Activate device when the first heartbeat is received by the broker
 socket_c.on('ActivateDevice', function (data) {
     if (data.status == constants.DeviceStatusActive) {
         var device = data.device;
+
+        //update the status of the device to Active
         deviceAssignment.findByID({ device: device }, function (e, data) {
             var new_device = deviceAssignment.get({
                 device: device,
@@ -208,7 +232,7 @@ socket_c.on('ActivateDevice', function (data) {
     }
 });
 
-//send the global update to the broker
+//send the global update to the broker - update send daily to each of the brokers that were outdated
 function send_global_updates(broker, updates) {
     socket_c.emit('GlobalUpdate', { broker: broker, updates: updates });
 }
