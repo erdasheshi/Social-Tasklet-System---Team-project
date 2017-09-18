@@ -94,33 +94,68 @@ function getProviderList(){
     return provider;
 }
 
-function getMinBenchmark(){
+function getRangeBenchmark(callback){
 	
 	var minimum = 999999;
+	var maximum = 0;
+    var processed = 0;
 	
-	provider.forEach(function (current) {
+	provider.forEach(function (current, index, array) {
 
         if (minimum > current.benchmark) {
-            minimum = minimum;
+            minimum = current.benchmark;
         }
-    });
-	
-	return minimum;
-}
-
-function getMaxBenchmark(){
-	
-	var maximum = 0;
-	
-	provider.forEach(function (current) {
 
         if (maximum < current.benchmark) {
-            maximum = maximum;
+            maximum = current.benchmark;
         }
+
+        processed += 1;
+
+        if(processed == array.length){
+            if(callback) callback(null,{maxBenchmark: maximum, minBenchmark: minimum});
+        }
+
+
     });
-	
-	return maximum;
-	
+}
+
+
+function addDummyData(){
+    insertProvider('111.111.111.111', 1);
+    insertProvider('111.111.111.112', 2);
+    insertProvider('111.111.111.113', 3);
+    insertProvider('111.111.111.114', 4);
+
+    increaseAvailableVMs('111.111.111.111');
+    increaseAvailableVMs('111.111.111.111');
+    increaseAvailableVMs('111.111.111.111');
+    increaseAvailableVMs('111.111.111.111');
+    increaseAvailableVMs('111.111.111.111');
+
+    increaseAvailableVMs('111.111.111.112');
+    increaseAvailableVMs('111.111.111.112');
+    increaseAvailableVMs('111.111.111.112');
+    increaseAvailableVMs('111.111.111.112');
+    increaseAvailableVMs('111.111.111.112');
+
+    increaseAvailableVMs('111.111.111.113');
+    increaseAvailableVMs('111.111.111.113');
+    increaseAvailableVMs('111.111.111.113');
+    increaseAvailableVMs('111.111.111.113');
+    increaseAvailableVMs('111.111.111.113');
+
+    increaseAvailableVMs('111.111.111.114');
+    increaseAvailableVMs('111.111.111.114');
+    increaseAvailableVMs('111.111.111.114');
+    increaseAvailableVMs('111.111.111.114');
+    increaseAvailableVMs('111.111.111.114');
+
+    updateBenchmark('111.111.111.111', 1);
+    updateBenchmark('111.111.111.112', 2);
+    updateBenchmark('111.111.111.113', 3);
+    updateBenchmark('111.111.111.114', 4);
+
 }
 
 module.exports = {
@@ -156,12 +191,12 @@ module.exports = {
     getProviderList: function() {
         return getProviderList();
     },
-	
-	getMinBenchmark: function(){
-		return getMinBenchmark();
-	},
-	
-	getMaxBenchmark: function(){
-		return getMaxBenchmark();
-	}
+
+    getRangeBenchmark: function(callback){
+        return getRangeBenchmark(callback);
+    },
+
+    addDummyData: function(){
+	    return addDummyData();
+    }
 };

@@ -20,31 +20,31 @@ var taskletSockets = new Map();
 var server_request = net.createServer(function (socket) {
 
     taskletSocket = socket;
-	var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
-   
-	socket.on('error', function (exc) {
+    var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+
+    socket.on('error', function (exc) {
         console.log("Ignoring exception: " + exc);
     });
 
     socket.on('data', function (data) {
         console.log(data);
 
-		var taskletRequest = Buffer.alloc(0);
-		var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
-				
+        var taskletRequest = Buffer.alloc(0);
+        var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+
         if (data.length == 40) {
             taskletRequest = data;
-			if (taskletSockets.has(socketIdentifier)) tasklet.delete(socketIdentifier);
+            if (taskletSockets.has(socketIdentifier)) tasklet.delete(socketIdentifier);
         }
         else {
-			if(taskletSockets.has(socketIdentifier)){
-				var tmpData = taskletSockets.get(socketIdentifier)
+            if (taskletSockets.has(socketIdentifier)) {
+                var tmpData = taskletSockets.get(socketIdentifier)
                 var taskletLength = tmpData.data.length + data.length;
-                taskletRequest =  Buffer.concat([ tmpData.data, data ], taskletLength);	
-			}
-			  else {
+                taskletRequest = Buffer.concat([tmpData.data, data], taskletLength);
+            }
+            else {
                 taskletSockets.add({
-                    data : data
+                    data: data
                 }, socketIdentifier);
             }
         }
@@ -103,83 +103,93 @@ var server_request = net.createServer(function (socket) {
 server_request.listen(conf.tasklet.port, conf.tasklet.ip);
 
 function preScheduling(data, callback) {
-    
-	var minBenchmark = providerList.getMinBenchmark();
-	var maxBenchmark = providerList.getMaxBenchmark();
-	var minPrice;
-	var maxPrice;
-	devices.findPriceRange(function(err,data){
-		if(err) console.error(err);
-		minPrice = data.min;
-		maxPrice = data.max;
-	});
-	
-	var username = data.username;
-	var taskletid = data.taskletid;
-    var information = taskletList.getTasklet(taskletid);
-    //Step 4: Finding most suitable provider
-    taskletManager.scheduling({ information: information, username : username, minBenchmark: minBenchmark, maxBenchmark: maxBenchmark, minPrice: minPrice, maxPrice: maxPrice}, function (error, data) {
-        if (error) console.error(error);
-        var schedulingResult = data;
-        var buf;
-        // Step 5: Informing the consumer
-        pH.writeProtocolHeader(constants.bResponseMessage, function (e, data) {
+    var username = data.username;
+    var taskletid = data.taskletid;
+    providerList.getRangeBenchmark(function (err, data) {
+        if (err) console.error(err);
+        var maxBenchmark = data.maxBenchmark;
+        var minBenchmark = data.minBenchmark;
 
-            var buf1 = data;
-            var buf2 = Buffer.alloc(4);
-            buf2.writeInt32LE(schedulingResult[0].number, 0);
-			
-			var providers = [];
-            // If at least one provider was found
-            if (schedulingResult[0].number > 0) {
+        devices.findPriceRange(function (err, data) {
+            if (err) console.error(err);
+            var minPrice = data.min;
+            var maxPrice = data.max;
 
-                var length = schedulingResult[0].number * 8;
-                var buf3 = Buffer.alloc(length);
+            taskletList.getTasklet(taskletid, function (err, data) {
+                //Step 4: Finding most suitable provider
+                var information = data;
+                var taskletManager = require('./../taskletManager');
+                taskletManager.scheduling({
+                    information: information,
+                    username: username,
+                    minBenchmark: minBenchmark,
+                    maxBenchmark: maxBenchmark,
+                    minPrice: minPrice,
+                    maxPrice: maxPrice
+                }, function (error, data) {
+                    if (error) console.error(error);
+                    var schedulingResult = data;
+                    var buf;
+                    // Step 5: Informing the consumer
+                    pH.writeProtocolHeader(constants.bResponseMessage, function (e, data) {
 
-                for (var i = 1; i < schedulingResult[0].number + 1; i++) {
+                        var buf1 = data;
+                        var buf2 = Buffer.alloc(4);
+                        buf2.writeInt32LE(schedulingResult.length, 0);
 
-                    var str = schedulingResult[i].ip.split(".");
-                    console.log("Requested IPs: " + schedulingResult[i].ip);
+                        var providers = [];
+                        // If at least one provider was found
+                        if (schedulingResult.length > 0) {
 
-                    buf3.writeInt32LE(str[0], 0);
-                    buf3.writeInt32LE(str[1], 1);
-                    buf3.writeInt32LE(str[2], 2);
-                    buf3.writeInt32LE(str[3], 3);
+                            var length = schedulingResult.length * 8;
+                            var buf3 = Buffer.alloc(length);
 
-                    buf3.writeInt32LE(schedulingResult[i].vms, 4);
-                }
+                            for (var i = 0; i < schedulingResult.length; i++) {
 
-                var totalLength = buf1.length + buf2.length + buf3.length;
-                buf = Buffer.concat([buf1, buf2, buf3], totalLength);
-				
-				for(var i= 1; i < schedulingResult[0].number + 1; i++){
-				
-					var device = providerList.getDeviceID(schedulingResult[i].ip);
-					var price = schedulingResult[i].price;
-					// default because there is no responds from the provider!
-					var computation = 1;
-					//calculate the computation cost
-					var cost = computation * price;
-					providers = providers.concat({device: device, cost: cost});
-				}
+                                var str = schedulingResult[i].ip.split(".");
+                                console.log("Requested IPs: " + schedulingResult[i].ip);
 
-            }
-            // In case none provider was found
-            else {
+                                buf3.writeInt32LE(str[0], 0);
+                                buf3.writeInt32LE(str[1], 1);
+                                buf3.writeInt32LE(str[2], 2);
+                                buf3.writeInt32LE(str[3], 3);
 
-                var totalLength = buf1.length + buf2.length;
-                buf = Buffer.concat([buf1, buf2], totalLength);
-            }
+                                buf3.writeInt32LE(schedulingResult[i].vms, 4);
+                            }
 
-            taskletSocket.write(buf, function (err) {
-                taskletSocket.end();
-			
+                            var totalLength = buf1.length + buf2.length + buf3.length;
+                            buf = Buffer.concat([buf1, buf2, buf3], totalLength);
+
+                            for (var i = 0; i < schedulingResult.length; i++) {
+
+                                var device = providerList.getDeviceID(schedulingResult[i].ip);
+                                var price = schedulingResult[i].price;
+                                // default because there is no responds from the provider!
+                                var computation = 1;
+                                //calculate the computation cost
+                                var cost = computation * price;
+                                providers = providers.concat({device: device, cost: cost});
+                            }
+
+                        }
+                        // In case none provider was found
+                        else {
+
+                            var totalLength = buf1.length + buf2.length;
+                            buf = Buffer.concat([buf1, buf2], totalLength);
+                        }
+
+                        taskletSocket.write(buf, function (err) {
+                            taskletSocket.end();
+
+                        });
+                        console.log('TaskletID: ' + taskletid);
+                        web.returnTaskletCycles(taskletid, providers);
+
+                        taskletList.deleteTasklet(taskletid);
+                    });
+                });
             });
-            console.log('TaskletID: ' + taskletid);
-			web.returnTaskletCycles(taskletid, providers);
-			
-            taskletList.deleteTasklet(taskletid);
-
         });
     });
 
@@ -187,27 +197,27 @@ function preScheduling(data, callback) {
 
 function abortScheduling(data, callback) {
 
-	var taskletid = data.taskletid;
-	
+    var taskletid = data.taskletid;
+
     // Step 5: Informing the consumer of the unsuccessful request (reason: not enough coins)
-	
-    pH.writeProtocolHeader(constants.bResponseMessage,function(e, data){
 
-	var buf1 = data;
-    var buf2 = Buffer.alloc(4);
-    buf2.writeInt32LE(0, 0);
+    pH.writeProtocolHeader(constants.bResponseMessage, function (e, data) {
 
-    var totalLength = buf1.length + buf2.length;
-    var buf = Buffer.concat([buf1, buf2], totalLength);
+        var buf1 = data;
+        var buf2 = Buffer.alloc(4);
+        buf2.writeInt32LE(0, 0);
 
-    taskletSocket.write(buf, function (err) {
-        taskletSocket.end();
+        var totalLength = buf1.length + buf2.length;
+        var buf = Buffer.concat([buf1, buf2], totalLength);
+
+        taskletSocket.write(buf, function (err) {
+            taskletSocket.end();
+        });
+
+        taskletList.deleteTasklet(taskletid);
+
+        console.error('The requesting user does not have enough money!');
     });
-
-    taskletList.deleteTasklet(taskletid);
-
-    console.error('The requesting user does not have enough money!');
-	});
 }
 
 

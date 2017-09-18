@@ -10,15 +10,15 @@ var Device = mongoose.model("Device", Devices.deviceSchema); //This creates a De
 function DeviceAssignments(data) {
     this.device = data.device;
     this.username = data.username,
-    this.price = data.price,
-    this.status = data.status
+        this.price = data.price,
+        this.status = data.status
 }
 
 //creates a new database entry or updates the existing ones
 DeviceAssignments.prototype.save = function (callback) {
     var tmpDevice = this;
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
-    //if no entry was not found, then create it
+        //if no entry was not found, then create it
         if (udata == null) {
 
             var device = new Device(tmpDevice);
@@ -33,19 +33,20 @@ DeviceAssignments.prototype.save = function (callback) {
         }
         //an entry was found, therefore update it with the new values
         else {
-                  Device.update({'device': tmpDevice.device}, {
-                  name: tmpDevice.name,
-                  username: tmpDevice.username,
-                  price: tmpDevice.price,
-                  status: tmpDevice.status},
+            Device.update({'device': tmpDevice.device}, {
+                    name: tmpDevice.name,
+                    username: tmpDevice.username,
+                    price: tmpDevice.price,
+                    status: tmpDevice.status
+                },
                 function (error, data) {
-                                  if (error) {
-                                      callback(error, false);
-                                  }
-                                  else if (callback) {
-                                      callback(null, true);
-                                  }
-                              });
+                    if (error) {
+                        callback(error, false);
+                    }
+                    else if (callback) {
+                        callback(null, true);
+                    }
+                });
         }
     });
 }
@@ -85,29 +86,38 @@ function findByStatus(data, callback) {
 }
 
 //Find the lowest and highest price of the devices. Information used for normalizing price while scheduling
-function findPriceRange(callback){
-var min = 10000000000000000000000000000000000000000000000;
-var max = 0;
-var price;
-findAll(function (e, data) {
+function findPriceRange(callback) {
+    var min = 10000000000000000000000000000000000000000000000;
+    var max = 0;
+    var price;
+    findAll(function (e, data) {
+        var processed = 0;
+        if (data.length > 0) {
+            data.forEach(function (element, index, array) {
 
-if(data.length > 0){
-data.forEach(function (element, index, array) {
-price = element.price;
-if (price < min)
-{ min = price ;}
+                price = element.price;
+                if (price < min) {
+                    min = price;
+                }
 
-if( price > max)
-{ max = price; }
-});
-callback ( null, {min: min, max: max});
-}
-else{
-max = 0;
-min = 0;
-callback ( null, {min: min, max: max});
-}
-});
+                if (price > max) {
+                    max = price;
+                }
+
+                processed += 1;
+
+                if(processed == array.length){
+                    callback(null, {min: min, max: max});
+                }
+            });
+
+        }
+        else {
+            max = 0;
+            min = 0;
+            callback(null, {min: min, max: max});
+        }
+    });
 }
 
 //delete the single entry that matches the given ID
@@ -139,9 +149,9 @@ module.exports = {
         return findByUser(data, callback);
     },
 
-     findByStatus: function (data, callback) {
-         return findByStatus(data, callback);
-     },
+    findByStatus: function (data, callback) {
+        return findByStatus(data, callback);
+    },
 
     findByID: function (data, callback) {
         return findByID(data, callback);

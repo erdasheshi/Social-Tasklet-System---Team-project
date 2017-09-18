@@ -22,9 +22,9 @@ function deleteTasklet(taskletid){
     tasklet.delete(taskletid);
 }
 
-function getTasklet(taskletid){
+function getTasklet(taskletid, callback){
 	var infos = tasklet.get(taskletid);
-	return infos;
+	if(callback) callback(null, infos);
 }
 
 
@@ -38,8 +38,8 @@ module.exports = {
         return deleteTasklet(taskletid);
     },
 	
-	getTasklet: function(taskletid){
-		return getTasklet(taskletid);
+	getTasklet: function(taskletid, callback){
+		return getTasklet(taskletid, callback);
 	}
 
 };

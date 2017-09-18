@@ -114,5 +114,6 @@ var server_heartbeat = net.createServer(function (socket) {
 
 
 providerList.updateProviderList();
+//providerList.addDummyData();  --> Use this function ONLY for testing purposes!
 
 server_heartbeat.listen(conf.heartbeat.port, conf.heartbeat.ip);

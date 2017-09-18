@@ -101,46 +101,31 @@ function scheduling(data, callback) {
     onlinePotentialProvider({username: username, privacy: privacy}, function (error, data) {
         if (error) callback(error, null);
 
-        if (isRemote == 0) {
+        if (isRemote == 0 || privacy == 0) { //own device
             var ip = requestingIP;
             var availableVMs = providerList.getAvailableVMs(ip);
 
             if (availableVMs > 0) {
                 var vms = Math.min(requestedNumber, availableVMs);
                 providerList.decreaseAvailableVMs(ip, vms);
-                callback(null, [{number: 1}, {ip: ip, vms: vms, price: 0}]);
+                callback(null, [{ip: ip, vms: vms, price: 0}]);
             }
 
             else {
-                callback(null, [{number: 0}]);
+                callback(null, {});
             }
         }
 
         else {
-            console.log(data);
             var availableUsers = [];
             if (data.length == 0) {
-                callback(null, [{number: 0}]);
-            }
-
-            //own
-            if (privacy == 0) {
-                var ip = requestingIP;
-                var availableVMs = providerList.getAvailableVMs(ip);
-                if (availableVMs > 0) {
-                    var vms = Math.min(requestedNumber, availableVMs);
-                    providerList.decreaseAvailableVMs(ip, vms);
-                    callback(null, [{number: 1}, {ip: ip, vms: vms, price: 0}]);
-                }
-                else {
-                    callback(null, [{number: 0}]);
-                }
+                callback(null, {});
             }
 
             //friends
             if (privacy == 1) {
                 data.forEach(function (current, index, array) {
-                    if (current.ownership != 'own' || current.ownership != 'network' || current.ownership != 'others' || current.availableVMs > 0) {
+                    if ((current.ownership != 'own' || current.ownership != 'network' || current.ownership != 'others' ) && current.availableVMs > 0) {
                         availableUsers.push(current);
                     }
                 });
@@ -149,7 +134,7 @@ function scheduling(data, callback) {
             //friendsfriends
             if (privacy == 2) {
                 data.forEach(function (current, index, array) {
-                    if (current.ownership != 'own' || current.ownership != 'others' || current.availableVMs > 0) {
+                    if ((current.ownership != 'own' || current.ownership != 'others' ) && current.availableVMs > 0) {
                         availableUsers.push(current);
                     }
                 });
@@ -158,16 +143,14 @@ function scheduling(data, callback) {
             //all (except own)
             if (privacy == 3) {
                 data.forEach(function (current, index, array) {
-                    if (current.ownership != 'own' || current.availableVMs > 0) {
+                    if (current.ownership != 'own' && current.availableVMs > 0) {
                         availableUsers.push(current);
                     }
                 });
             }
 
-            console.log(availableUsers);
-
             if (availableUsers.length == 0) {
-                callback(null, [{number: 0}]);
+                callback(null, {});
             }
 
             if (availableUsers.length == 1) {
@@ -189,7 +172,7 @@ function scheduling(data, callback) {
                     newprice = availableUsers[0].price;
                 }
                 providerList.decreaseAvailableVMs(availableUsers[0].address, vms);
-                callback(null, [{number: 1}, {ip: availableUsers[0].address, vms: vms, price: newprice}]);
+                callback(null, [{ip: availableUsers[0].address, vms: vms, price: newprice}]);
 
             }
 
@@ -214,6 +197,23 @@ function scheduling(data, callback) {
                 var weightCost = cost / total;
                 var weightSpeed = speed / total;
                 var result = [];
+                console.log('Weight Total: ' + total);
+                console.log('Weight Speed: ' + weightSpeed);
+                console.log('Weight Cost: ' + weightCost);
+
+                for (var i = 0; i < availableUsers.length; i++) {
+                    var price = availableUsers[i].price;
+                    if (availableUsers[i].ownership == 'friend') {
+                        price = availableUsers[i].price * (1 - constants.FriendsDiscount);
+                        if(price < minPrice) minPrice = price;
+                    }
+                    else if (availableUsers[i].ownership == 'network') {
+                        price = availableUsers[i].price * (1 - constants.FriendsFriendsDiscount);
+                        if(price < minPrice) minPrice = price;
+                    }
+                }
+
+                //// POSSIBLE TO-DO: re-arrange price/ benchmark range after first selection
 
                 do {
                     var score = 10;
@@ -225,27 +225,41 @@ function scheduling(data, callback) {
                     // Calculating the score (0-1)
                     for (var i = 0; i < availableUsers.length; i++) {
                         var price = availableUsers[i].price;
-                        if (availableUsers[i].ownership == 'friend') {
-                            price = availableUsers[i].price * (1 - constants.FriendsDiscount);
+
+                        var priceRange = maxPrice - minPrice;
+                        var priceValue;
+                        if(priceRange == 0){
+                            priceValue = 0;
                         }
-                        if (availableUsers[i].ownership == 'network') {
-                            price = availableUsers[i].price * (1 - constants.FriendsFriendsDiscount);
+                        else{
+                            priceValue = (weightCost * ((price - minPrice) / priceRange));
                         }
 
-                        var newscore = (weightCost * ((price - minPrice) / (maxPrice - minPrice))) + (weightSpeed * ((availableUsers[i].benchmark - minBenchmark) / (maxBenchmark - minBenchmark)))
+                        var benchmarkRange = maxPrice - minPrice;
+                        var benchmarkValue;
+                        if(benchmarkRange == 0){
+                            benchmarkValue = 0;
+                        }
+                        else{
+                            benchmarkValue = (weightSpeed * ((availableUsers[i].benchmark - minBenchmark) / benchmarkRange));
+                        }
+
+                        var newscore = priceValue + benchmarkValue;
+                        console.log('Score: '+ newscore);
                         if (newscore < score) {
                             score = newscore;
                             currentProvider = availableUsers[i].address;
                             currentVMs = availableUsers[i].availableVMs;
                             currentPrice = price;
                             position = i;
+
+                            console.log('Provider: '+ currentProvider);
                         }
                     }
 
                     if (score < 10) {
                         selectedVMs = Math.min(currentVMs, requestedNumber);
-
-                        result = result.concat({ip: currentProvider, vms: selectedVMs, price: currentPrice});
+                        result.push({ip: currentProvider, vms: selectedVMs, price: currentPrice});
                         selectedProviders += 1;
                         availableUsers.splice(position, 1);
                         providerList.decreaseAvailableVMs(currentProvider, selectedVMs);
@@ -253,11 +267,17 @@ function scheduling(data, callback) {
                     }
 
                     attempts = attempts + 1;
-                    if( totalVMs == requestedNumber) callback(null, [{number: selectedProviders}, result]);
+                    if( totalVMs == requestedNumber){
+                        if(callback){
+                            callback(null, result);
+                        }
+                    }
                 } while (totalVMs < requestedNumber && attempts < 100 && availableUsers.length > 0);
 
+                if(totalVMs < requestedNumber && attempts == 100 && availableUsers.length > 0){
+                    callback(null, {});
+                }
             }
-
         }
     });
 }
