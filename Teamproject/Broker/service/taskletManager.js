@@ -60,7 +60,6 @@ function onlinePotentialProvider(data, callback) {
         var availableVMs = entry.availableVMs;
         var benchmark = entry.benchmark;
         findRelation({device: deviceID, username: username}, function (error, data) {
-            console.log("Ownership: " + data.ownership);
 
             result = result.concat('{ "address": "' + index + '", "price":' + data.price + ', "deviceID":' + deviceID + ', "availableVMs":' + availableVMs + ', "benchmark": ' + benchmark + ', "ownership": "' + data.ownership + '"}');
 
@@ -125,7 +124,7 @@ function scheduling(data, callback) {
             //friends
             if (privacy == 1) {
                 data.forEach(function (current, index, array) {
-                    if ((current.ownership != 'own' || current.ownership != 'network' || current.ownership != 'others' ) && current.availableVMs > 0) {
+                    if (current.ownership == 'friend' && current.availableVMs > 0) {
                         availableUsers.push(current);
                     }
                 });
@@ -134,7 +133,7 @@ function scheduling(data, callback) {
             //friendsfriends
             if (privacy == 2) {
                 data.forEach(function (current, index, array) {
-                    if ((current.ownership != 'own' || current.ownership != 'others' ) && current.availableVMs > 0) {
+                    if ((current.ownership == 'friend' || current.ownership == 'network') && current.availableVMs > 0) {
                         availableUsers.push(current);
                     }
                 });
@@ -183,9 +182,11 @@ function scheduling(data, callback) {
                 availableUsers.forEach(function (current) {
                     if (current.ownership == 'friend') {
                         current.price = current.price * (1 - constants.FriendsDiscount);
+						if(current.price < minPrice) minPrice = current.price;
                     }
                     if (current.ownership == 'network') {
                         current.price = current.price * (1 - constants.FriendsFriendsDiscount);
+						if(current.price < minPrice) minPrice = current.price;
                     }
                 });
 
@@ -197,21 +198,6 @@ function scheduling(data, callback) {
                 var weightCost = cost / total;
                 var weightSpeed = speed / total;
                 var result = [];
-                console.log('Weight Total: ' + total);
-                console.log('Weight Speed: ' + weightSpeed);
-                console.log('Weight Cost: ' + weightCost);
-
-                for (var i = 0; i < availableUsers.length; i++) {
-                    var price = availableUsers[i].price;
-                    if (availableUsers[i].ownership == 'friend') {
-                        price = availableUsers[i].price * (1 - constants.FriendsDiscount);
-                        if(price < minPrice) minPrice = price;
-                    }
-                    else if (availableUsers[i].ownership == 'network') {
-                        price = availableUsers[i].price * (1 - constants.FriendsFriendsDiscount);
-                        if(price < minPrice) minPrice = price;
-                    }
-                }
 
                 //// POSSIBLE TO-DO: re-arrange price/ benchmark range after first selection
 
@@ -224,8 +210,8 @@ function scheduling(data, callback) {
 
                     // Calculating the score (0-1)
                     for (var i = 0; i < availableUsers.length; i++) {
-                        var price = availableUsers[i].price;
-
+                        
+						var price = availableUsers[i].price;
                         var priceRange = maxPrice - minPrice;
                         var priceValue;
                         if(priceRange == 0){
@@ -235,7 +221,7 @@ function scheduling(data, callback) {
                             priceValue = (weightCost * ((price - minPrice) / priceRange));
                         }
 
-                        var benchmarkRange = maxPrice - minPrice;
+                        var benchmarkRange = maxBenchmark - minBenchmark;
                         var benchmarkValue;
                         if(benchmarkRange == 0){
                             benchmarkValue = 0;
@@ -245,15 +231,13 @@ function scheduling(data, callback) {
                         }
 
                         var newscore = priceValue + benchmarkValue;
-                        console.log('Score: '+ newscore);
+
                         if (newscore < score) {
                             score = newscore;
                             currentProvider = availableUsers[i].address;
                             currentVMs = availableUsers[i].availableVMs;
                             currentPrice = price;
                             position = i;
-
-                            console.log('Provider: '+ currentProvider);
                         }
                     }
 
