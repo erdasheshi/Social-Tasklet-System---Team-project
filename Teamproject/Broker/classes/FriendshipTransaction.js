@@ -77,19 +77,9 @@ function findAll(callback) {
 function findFriends(data, callback){
     var username = data.username;
     var friends_list = [];
-    Friendship.find().where('status', constants.FriendshipStatusConfirmed).or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, res) {
+    Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, res) {
         if (e) callback(e, null);
-
-        //find the username of the friends
-        res.forEach(function ( data, index, array){
-        if(data.user_1 == username) {
-        friends_list = friends_list.concat({ username: data.user_2 });
-        }
-        else{
-        friends_list = friends_list.concat({ username: data.user_1 });
-         }
-         });
-        callback(null, friends_list);
+        callback(null, res);
     });
 }
 
@@ -119,13 +109,13 @@ function findFriendsOfFriends(data, callback) {
     var user_2 = data.user_2;
     var existence = "false";
 
+
     findFriends({ username: user_1 }, function (e, data) {
         if (e) callback(e, null);
         if (JSON.stringify(data) == "[]") callback(null, existence);
         else {
             var processed = 0;
             data.forEach(function (entry, index, array) {
-
                 if (entry.user_1 == user_1) {
                     findExistence({ user_1: entry.user_2, user_2: user_2 }, function (e, result) {
                         if (result == "true") {
@@ -150,7 +140,6 @@ function findFriendsOfFriends(data, callback) {
                         }
                     });
                 }
-
             });
         }
     });
