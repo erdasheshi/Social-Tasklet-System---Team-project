@@ -199,8 +199,6 @@ function scheduling(data, callback) {
                 var weightSpeed = speed / total;
                 var result = [];
 
-                //// POSSIBLE TO-DO: re-arrange price/ benchmark range after first selection
-
                 do {
                     var score = 10;
                     var currentProvider;
@@ -230,7 +228,13 @@ function scheduling(data, callback) {
                             benchmarkValue = (weightSpeed * ((availableUsers[i].benchmark - minBenchmark) / benchmarkRange));
                         }
 
+
                         var newscore = priceValue + benchmarkValue;
+
+                        console.log("User: " + availableUsers[i].ip + " Score: " + newscore);
+                        console.log("Benchmark: " + availableUsers[i].benchmark + "Cost: " + price);
+                        console.log("Cost: " + weightCost + "Benchmark: " + weightSpeed);
+
 
                         if (newscore < score) {
                             score = newscore;
