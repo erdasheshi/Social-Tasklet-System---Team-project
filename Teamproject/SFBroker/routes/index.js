@@ -181,7 +181,6 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
         name: req.body.name,
         device: req.body.device,
         username: req.user.username,
-        status: constants.DeviceStatusInactive,
         price: req.body.price
     });
 

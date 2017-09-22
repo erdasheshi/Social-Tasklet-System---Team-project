@@ -35,7 +35,7 @@ DeviceAssignments.prototype.save = function (callback) {
                         replicationManager.CollectUpdates({
                             username: tmpDevice.username,
                             device: tmpDevice.device,
-                            status: tmpDevice.status,
+                            status: constants.DeviceStatusInactive,
                             price: tmpDevice.price,
                             key: constants.Device
                         }, function (err, res) {
@@ -54,7 +54,7 @@ DeviceAssignments.prototype.save = function (callback) {
                             replicationManager.CollectUpdates({
                                 username: tmpDevice.username,
                                 device: tmpDevice.device,
-                                status: tmpDevice.status,
+                                status: constants.DeviceStatusInactive,
                                 price: tmpDevice.price,
                                 key: constants.Device
                             }, function (err, res) {
@@ -66,8 +66,16 @@ DeviceAssignments.prototype.save = function (callback) {
         }
         //an entry was found, therefore update it with the new values
         else {
+            var deviceStatus = constants.DeviceStatusInactive;
+            if(udata.status == constants.DeviceStatusActive){
+                deviceStatus = constants.DeviceStatusActive;
+                tmpDevice.status = constants.DeviceStatusActive;
+            } 
+            else if(typeof tmpDevice.status !== 'undefined') {
+                deviceStatus = tmpDevice.status;
+            }
             Device.update({'device': tmpDevice.device},
-                {name: tmpDevice.name, username: tmpDevice.username, price: tmpDevice.price, status: tmpDevice.status},
+                {name: tmpDevice.name, username: tmpDevice.username, price: tmpDevice.price, status: deviceStatus},
                 function (error, data) {
                     if (error) {
                         callback(error, false);
