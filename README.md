@@ -1,6 +1,7 @@
 # SocialTasklets
 Repository for the Teamproject Social Distributed Systems (SDS)
-Server IP: 46.101.198.127
+
+Our goal is to provide a social and financial overlay for [TASKLETS](https://becker.bwl.uni-mannheim.de/de/research/tasklets/).
 
 ## Starting the Teamproject with Docker on your local machine
 The Teamproject consists of multiple modules that are contained in docker containers.
@@ -15,8 +16,6 @@ Prerequisite: Installation of docker and docker-compose
 - Database: 27017:27017
 - SFBroker: 8001:8001
 - Broker: 8003:8003
-- Client 1: 8080:8080
-- Client 2: 8081:8081
 - Frontend: 4200:80
 5. Refresh project each time you made changes `docker-compose up -d --build`
 6. Once you are done coding do: `docker-compose down`
