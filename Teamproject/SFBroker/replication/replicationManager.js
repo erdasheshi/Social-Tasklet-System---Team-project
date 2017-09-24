@@ -44,13 +44,13 @@ function buildUpdate(data, callback) {
         if (e) return next(e);
         switch (logData.key) {
             case constants.Device:    //keeping track of added device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
+                update = '{ "broker": "' + data.broker +  '", "version": ' + 0 +', "type": "Device", "username": "' + logData.username + '", "device": "' + logData.device + '", "key": "New", "status": "' + logData.status + '", "price": ' + logData.price + '}';
                 log.add(JSON.parse(JSON.stringify(update)));
                 callback(null, true);
                 break;
 
             case 'd_device':   //keeping track of deleted device transactions
-                update = '{ "broker": "' + data.broker + '", "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
+                update = '{ "broker": "' + data.broker +  '", "version": ' + 0 +', "type": "Device", "device": "' + logData.device + '", "key": "Deleted" }';
                 log.add(JSON.parse(JSON.stringify(update)));
                 callback(null, true);
                 break;
@@ -59,7 +59,7 @@ function buildUpdate(data, callback) {
                 var broker_1 = data.broker;
                 Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "version": ' + 0 + ', "type": "Friendship", "ID": "' + logData.id + '", "user_1": "' + logData.username + '", "user_2": "' + logData.user_2 + '", "key": "New" }';
                         log.add(JSON.parse(JSON.stringify(update)));
                         callback(null, true);
                 })
@@ -68,7 +68,7 @@ function buildUpdate(data, callback) {
                 var broker_1 = data.broker;
                        Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
-                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker + '", "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
+                        update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker  + '", "version": ' + 0 + ', "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
                         log.add(JSON.stringify(update));
                         callback(null, true);
                     })
@@ -79,23 +79,23 @@ function buildUpdate(data, callback) {
     });
 }
 
-//if the updated device/friendship has already and entry in the log then delete it, so it can be substituted with the latest one
+//if the updated device/friendship has already an entry in the log then delete it, so it can be substituted with the latest one
 function searchLog(data, callback){
 
- var log_updates = log.read();
- var log_length = log_updates.length;  //the length after the last committed change
+ var change_log = log.read_updates();
+ var log_length = change_log.length;  //the length after the last committed change
 if (log_length != 0){
 var i = 0;
 var existence = false;
 while (i < log_length && existence == false){
    //for ( var  i = 0 ; i < log_length; i++ ){
-      var temp = JSON.parse(log_updates[i]);
+      var temp = JSON.parse(change_log[i]).changed_entry;
 
      switch (data.key) {
        case constants.Device:
        case 'd_device':
             if( temp.device == data.device) {
-            log_updates.splice(i, 1);
+            change_log.splice(i, 1);
             existence = true ;
             callback(null, true);
             }
@@ -106,7 +106,7 @@ while (i < log_length && existence == false){
        case constants.Friendship:
        case 'd_friendship':
              if( temp.ID == data.id ){
-             log_updates.splice(i, 1);
+             change_log.splice(i, 1);
              existence = true ;
              callback(null, true);
              }
@@ -156,28 +156,31 @@ setTimeout(function () {
 
 //retrieve updates related to a specific broker
 function updateBroker(broker) {
-    var log_updates = log.read();
+    var change_log = log.read_updates();
+    var change_log_version = log.read_version() -1  ;
+
     var broker_updates = [];
-
     var broker_version = readBroker(broker);
-    var log_length = log_updates.length;  //the length after the last committed change
-    var i = log_length;
 
-    while (i > broker_version) {
-        var temp_element = JSON.parse(log_updates[i-1]);
-        if (temp_element.type == 'Friendship') {
-            if (temp_element.broker_1 == broker || temp_element.broker_2 == broker) {
-                broker_updates = broker_updates.concat(JSON.stringify(temp_element));
-            }
-        }
-        else {
-            if (temp_element.broker == broker) {
-                broker_updates = broker_updates.concat(JSON.stringify(temp_element));
-            }
-        }
-        i--;
-    }
-    syncBroker(broker, log_length); //broker's version is equal to the array index of the last update in the log
+    for (var i = 0; i < change_log.length ; i++){
+
+        var change_version = JSON.parse(change_log[i]).version;
+        if ( change_version > broker_version){
+              var log_entry = JSON.parse(change_log[i]).changed_entry;
+
+              if (log_entry.type == 'Friendship') {
+                  if (log_entry.broker_1 == broker || log_entry.broker_2 == broker) {
+                      broker_updates = broker_updates.concat(JSON.stringify(log_entry));
+                  }
+              }
+              else {
+                  if (log_entry.broker == broker) {
+                      broker_updates = broker_updates.concat(JSON.stringify(log_entry));
+                  }
+              }
+              }
+          }
+    syncBroker(broker, change_log_version); //broker's version is equal to the version value of the last updated entry in the log
     return broker_updates;
 }
 

@@ -16,6 +16,7 @@ function DeviceAssignments(data) {
 
 //creates a new database entry or updates the existing ones
 DeviceAssignments.prototype.save = function (callback) {
+
     var tmpDevice = this;
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
         //if no entry was not found, then create it
@@ -23,12 +24,8 @@ DeviceAssignments.prototype.save = function (callback) {
 
             var device = new Device(tmpDevice);
             device.save({}, function (error, data) {
-                if (error) {
-                    console.error(error);
-                }
-                if (callback) {
+                if (error) console.error(error);
                     callback(null, true);
-                }
             });
         }
         //an entry was found, therefore update it with the new values
@@ -40,12 +37,8 @@ DeviceAssignments.prototype.save = function (callback) {
                     status: tmpDevice.status
                 },
                 function (error, data) {
-                    if (error) {
-                        callback(error, false);
-                    }
-                    else if (callback) {
+                    if (error)   callback(error, false);
                         callback(null, true);
-                    }
                 });
         }
     });
@@ -72,7 +65,7 @@ function findByID(data, callback) {
     var device = data.device;
     Device.findOne({'device': device}, function (err, obj) {
         if (err) callback(err, null);
-        if (callback) callback(null, obj);
+       callback(null, obj);
     });
 }
 
@@ -81,7 +74,7 @@ function findByStatus(data, callback) {
     var status = data.status;
     Device.find({'status': status}, function (err, obj) {
         if (err) callback(err, null);
-        if (callback) callback(null, obj);
+         callback(null, obj);
     });
 }
 
@@ -125,7 +118,7 @@ function deleteByID(data, callback) {
     var device = data.device;
     Device.remove({'device': device}, function (err, obj) {
         if (err) callback(err, null);
-        if (callback) callback(null, true);
+        callback(null, true);
     });
 }
 
@@ -134,7 +127,7 @@ function deleteByUser(data, callback) {
     var username = data.username;
     Device.remove({'username': username}, function (err, obj) {
         if (err) callback(err, null);
-        else if (callback) callback(null, true);
+        callback(null, true);
     });
 }
 

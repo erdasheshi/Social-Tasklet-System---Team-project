@@ -112,7 +112,6 @@ socket_c.on('SFInformation', function (data) {
                 //collect and send the updates for the broker - the one who sent this specific socket call (SFInformation)
                 var replicationManager = require('./../replication/replicationManager');
                 var updates = replicationManager.updateBroker(broker)
-                var updates = updates;
                 socket_c.emit('SFInformation', {
                     further: further,
                     username: username,

@@ -20,6 +20,7 @@ module.exports = {
            else{
                  sync[i].version = data.version;    //broker exists, therefor update the existing entry with the updated version
            }
+
            },
 
 //will return the current version of a broker or 0 if the broker doesn't have an entry

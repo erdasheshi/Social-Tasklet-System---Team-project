@@ -22,6 +22,8 @@ function setUpdates(data, callback) {
             {
             callback(null, true);
             }
+
+
             });
   }
 }
@@ -75,6 +77,7 @@ var update = data.update;
 
 //stores all the device related updates
 function setUpdate_Device(data, callback){
+
 var update = data.update;
           var username = update.username;
                 if (update.key == "New") {       //create new transaction
