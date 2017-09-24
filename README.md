@@ -1,7 +1,7 @@
 # SocialTasklets
 Repository for the Teamproject Social Distributed Systems (SDS)
 
-Our goal is to provide a social and financial overlay for [TASKLETS](https://becker.bwl.uni-mannheim.de/de/research/tasklets/), which enables every device owner to contribute computational resources and benefit from available computational resources in the tasklet world.
+We provide a social and financial overlay for [TASKLETS](https://becker.bwl.uni-mannheim.de/de/research/tasklets/) and therby enable device owner around the world to contribute computational resources and benefit from available computational resources in the tasklet world.
 
 ## Starting the Teamproject with Docker on your local machine
 The Teamproject consists of multiple modules that are contained in docker containers.
