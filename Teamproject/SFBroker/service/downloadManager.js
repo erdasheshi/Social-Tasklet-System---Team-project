@@ -33,7 +33,6 @@ function zipTasklet(data, callback) {
         zlib: {level: 9} // Sets the compression level.
     });
 
-
 // listen for all archive data to be written
     output.on('close', function () {
         if (callback) callback(null, null);

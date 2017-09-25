@@ -5,7 +5,7 @@ passportLocalMongoose = require('passport-local-mongoose');
 Schema = mongoose.Schema;
 
 var userSchema = new Schema({ //This is where accountingSchema is defined.
-    username: String,
+    username: String,         //its unique for each entrys
     password: String,
     email: String,
     firstname: String,

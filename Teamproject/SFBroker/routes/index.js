@@ -32,7 +32,7 @@ router.post('/logout', authService.loggedIn, function (req, res) {
 });
 
 
-/* GET Acc transactions. */
+/* GET Acc transactions. */              //get from the database all the tasklet transactions of the current user
 router.get('/acctransaction', authService.loggedIn, function (req, res, next) {
 
     if (req.query.all == 'X') {
@@ -48,7 +48,7 @@ router.get('/acctransaction', authService.loggedIn, function (req, res, next) {
     }
 });
 
-/* GET friend transactions. */
+/* GET friend transactions. */              //get from the database all the friendship relations of the current user
 router.get('/friendship', authService.loggedIn, function (req, res, next) {
     if (req.query.all == 'X') {
         friendshipTransaction.findAll(function (e, data) {
@@ -64,7 +64,7 @@ router.get('/friendship', authService.loggedIn, function (req, res, next) {
     }
 });
 
-/* GET users. */
+/* GET users. */                    //get user's information
 router.get('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
     if (req.query.all == 'X') {
@@ -92,7 +92,7 @@ router.get('/user', authService.loggedIn, function (req, res, next) {
     }
 });
 
-/* GET requestedcoins. */
+/* GET requestedcoins. */                   //get from the database all the coin requests of the current user
 router.get('/requestedcoins', authService.loggedIn, function (req, res, next) {
 
     coinTransaction.findByUser({ username: req.user.username }, function (e, data) {
@@ -101,7 +101,7 @@ router.get('/requestedcoins', authService.loggedIn, function (req, res, next) {
     });
 });
 
-/* GET device. */
+/* GET device. */                       //get from the database all the devices of the current user
 router.get('/device', authService.loggedIn, function (req, res, next) {
     if (req.query.all == 'X') {
         deviceAssignment.findAll(function (e, data) {
@@ -135,7 +135,7 @@ router.post('/updates', authService.loggedIn, function (req, res, next) {
     res.json(result);
 });
 
-/* POST /Accounting Transaction */
+/* POST /Accounting Transaction */          //create a tasklet transaction or update existing one
 router.post('/acctransaction', authService.loggedIn, function (req, res, next) {
     var accTransaction = accountingTransaction.get(req.body);
 
@@ -145,7 +145,7 @@ router.post('/acctransaction', authService.loggedIn, function (req, res, next) {
     });
 });
 
-/*POST /Friendship*/      //making the check, if it's an update or a new transaction in the backend, is unnecessarily expensive... create two different api for each - ???
+/*POST /Friendship*/      ////create a new friendship or update existing one
 router.post('/friendship', authService.loggedIn, function (req, res, next) {
 
     var friendship = friendshipTransaction.get({
@@ -160,7 +160,7 @@ router.post('/friendship', authService.loggedIn, function (req, res, next) {
     });
 });
 
-/*POST /CoinRequest*/
+/*POST /CoinRequest*/                   //create a new coin request
 router.post('/coinrequest', authService.loggedIn, function (req, res, next) {
 
     var coin_Transaction = coinTransaction.get({
@@ -174,7 +174,7 @@ router.post('/coinrequest', authService.loggedIn, function (req, res, next) {
     });
 });
 
-/*POST /Device*/
+/*POST /Device*/                       //create a new device or update existing one
 router.post('/device', authService.loggedIn, function (req, res, next) {
 
     var device = deviceAssignment.get({
@@ -189,6 +189,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
     device.save(function (err, data) {
         if (err) return next(err);
         var device = data.device;
+        //If download was defined then provide the user with a download
         if (download) {
             downloadManager.provideDownload({ id: data.device, username: data.username }, function (err, data) {
 
@@ -208,7 +209,7 @@ router.post('/device', authService.loggedIn, function (req, res, next) {
  Delete
  *****************************************************************************************************************************************************/
 
-/*DELETE /Friendship*/
+/*DELETE /Friendship*/                //delete a friendship relation from the database
 router.delete('/friendship', authService.loggedIn, function (req, res, next) {
     var user_1 = req.user.username;
     var user_2 = req.query.user;
@@ -219,7 +220,7 @@ router.delete('/friendship', authService.loggedIn, function (req, res, next) {
     });
 });
 
-/*DELETE /Device*/
+/*DELETE /Device*/                 //delete a device from the database
 router.delete('/device', function (req, res, next) {
     var device = req.query.device;
 
@@ -229,7 +230,7 @@ router.delete('/device', function (req, res, next) {
     });
 });
 
-/*DELETE /user*/
+/*DELETE /user*/            //delete all entries related to this user (considering friendships, devices, coin requests, relations with brokers)
 router.delete('/user', authService.loggedIn, function (req, res, next) {
     var username = req.user.username;
 

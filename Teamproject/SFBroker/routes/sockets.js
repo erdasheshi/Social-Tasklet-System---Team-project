@@ -151,7 +151,6 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                 var finished;
                 //calculate the total cost of the tasklet
 
-
                 total = total + cost;
 
                 //find the owner of the device used as a provider for the tasklet
@@ -171,7 +170,6 @@ socket_c.on('TaskletCyclesReturn', function (data) {
                     });
 
                     //transferring money to the provider
-
                    logic.updateBalance(cost, device_owner);
 
                     //calculate the amount still to be payed by the user when considering the fixed amount subtracted in step 3
@@ -188,7 +186,6 @@ socket_c.on('TaskletCyclesReturn', function (data) {
             accountingTransaction.deleteByTransactionID({ transaction_id: transaction_id }, function (e, res) {
                 if (e) console.error(err, null);
             });
-
             console.log('Tasklet ' + res[0].taskletid + ' confirmed!');
                         }
             else {    //the tasklet was not computed - no providers were found

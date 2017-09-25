@@ -2,6 +2,7 @@ $(document).ready(function(){
     // WebSocket
     var socket = io.connect();
 
+//coin requests are shown in the frontend
 	socket.on('ShowCoinRequest', function (data) {
         var zeit = new Date(data.zeit);
         var buttonid = data.requestid +"_send";
@@ -28,7 +29,8 @@ $(document).ready(function(){
         $('body').scrollTop($('body')[0].scrollHeight);
 
     });
-	
+
+	//send approval information to the server when the button "approve" is pressed by the Admin
 	function sendCoinsApproval(user){
         var zeit = new Date();
         $(this).prop("disabled",true);
@@ -49,7 +51,7 @@ $(document).ready(function(){
     };
 	
 	function send(){
-		
+		//Request server for all the requested coins
 		socket.emit('GetRequests', {requests: 'Send it'});
 	};
 	

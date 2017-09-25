@@ -26,11 +26,16 @@ app.get('/', function (req, res) {
 
 // Websocket
 io.sockets.on('connection', function (socket) {
-
+     //triggered from a frontend button pushed by the Admin
 	socket.on('SendCoinsApproval', function (data){
+
+	//send approval to the SF-Broker
 		socket_sf.emit('CoinsApproval', {requestid: data.requestid, username: data.username, requestedCoins: data.requestedcoins, approval: data.approval});
 	});
+	//triggered from the frond-end - button "Get Requests"
 	socket.on('GetRequests', function (data) {
+
+	    //send request to the SF-Broker
     	socket_sf.emit('Requested_Coins', {username: ''});
     });
 });
@@ -38,6 +43,7 @@ io.sockets.on('connection', function (socket) {
 // Receiving coin request from SFBroker
 socket_sf.on('Requested_Coins', function (data){
 		for(var i= 0; i < data.length; i++){
+		//showing the recieved coins request in the front-end of the Admin
 		io.sockets.emit('ShowCoinRequest', {zeit: new Date(), requestid: data[i].requestid, username: data[i].username, requestedcoins: data[i].requestedCoins});
 		}
 });

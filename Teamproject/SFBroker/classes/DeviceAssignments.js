@@ -25,6 +25,7 @@ DeviceAssignments.prototype.save = function (callback) {
     Device.findOne({'device': tmpDevice.device}, function (e, udata) {
         //if there was no entry found then create it
         var replicationManager = require('./../replication/replicationManager');
+        //if the value of device specified
         if (udata == null) {
             if (tmpDevice.device) {
                 var device = new Device(tmpDevice);
@@ -44,6 +45,7 @@ DeviceAssignments.prototype.save = function (callback) {
                 });
             }
             else {
+                //if no value for "device" is defined then generate a new, unique value for it
                 generateDeviceID({}, function (e, data) {
                     tmpDevice.device = data;
                     var device = new Device(tmpDevice);

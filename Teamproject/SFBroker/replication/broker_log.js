@@ -31,10 +31,10 @@ module.exports = {
                 }
             if (i == sync.length)
             {
-             return 0;
+             return 0;   //no entry was found yet for that broker
             }
             else{
-             return sync[i].version ;
+             return sync[i].version ;   //an entry was found
             }
             },
 //will return the array

@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var brokerSchema = new Schema({ //This is where accountingSchema is defined.
+var brokerSchema = new Schema({
     username: String,
     broker: String
 });

@@ -13,11 +13,13 @@ function loggedIn(req, res, next) {
     }
 }
 
+//authenticate users credentials and connect to user'S account
 function login(req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err) {
             return next(err);
         }
+        //if no user was found with the given credentials
         if (!user) {
             return res.status(401).json({
                 err: 'Wrong Combination!'
@@ -29,6 +31,7 @@ function login(req, res, next) {
                     err: 'Could not log in user'
                 });
             }
+            //if credential data were correctly given
             res.status(200).json({
                 status: 'Login successful!'
             });
@@ -36,6 +39,7 @@ function login(req, res, next) {
     })(req, res, next);
 }
 
+//perform the user logout
 function logout(req, res) {
     req.logout();
     if (req.method != 'DELETE'){
@@ -45,6 +49,7 @@ function logout(req, res) {
     }
 }
 
+//register a new user and authenticate that its credentials are valid. Make sure that no other user ahs the same username
 function register(req, res, next) {
     User.register(new User({
             username: req.body.username,
@@ -60,6 +65,7 @@ function register(req, res, next) {
                 err: 'Registration failed!You are either using an existing username, or not providing information for mandatory input fields.'
                 });
             }
+            //register this user to a specific broker ( used to support distributed brokers)
             var broker = brokerTransaction.get({
                 username: req.body.username,
                 broker: 5

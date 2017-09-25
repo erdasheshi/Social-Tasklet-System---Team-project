@@ -1,6 +1,6 @@
 //keeps track of every change that happens in SF_Broker's side
 let updates = [];
-var latest_change = 1 ;
+var latest_change = 1 ; //starts from 1 because the incrementation is preformed after storing the first update in the log
 var temp;
 module.exports = {
 //concatenate the changes into a single string
@@ -16,9 +16,9 @@ module.exports = {
 
   read_version: () => latest_change,
 
-//Set array to empty
+//Set array to empty and latest change to 1.
   restart: function(){
   updates = [] ;
-  update_version = 0;
+  latest_change = 1;
    },
 }

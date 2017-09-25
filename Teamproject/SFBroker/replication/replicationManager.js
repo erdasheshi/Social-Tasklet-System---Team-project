@@ -38,7 +38,7 @@ var data = data;
 function buildUpdate(data, callback) {
     var logData = data.logData ;
     var update;
-
+console.log("it is building an update");
     Brokers.findByUser({ username: logData.username }, function (e, data) {
 
         if (e) return next(e);
@@ -162,9 +162,11 @@ function updateBroker(broker) {
     var broker_updates = [];
     var broker_version = readBroker(broker);
 
+//search through the log for updated entries that haven been sent yet to the broker
     for (var i = 0; i < change_log.length ; i++){
 
         var change_version = JSON.parse(change_log[i]).version;
+        //consider the entry only if it was changed after the last update sent to the broker
         if ( change_version > broker_version){
               var log_entry = JSON.parse(change_log[i]).changed_entry;
 
