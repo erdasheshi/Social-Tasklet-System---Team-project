@@ -140,17 +140,16 @@ function deleteByID(data, callback) {
         var user_2 = data.user_2;
 
         Friendship.remove({'id': data.id}, function (err, obj) {
-            if (err) {
-                callback(err, null);
-            }
+            if (err) console.error(err, null);
             else {
                 replicationManager.CollectUpdates({
                     username: data.user_1,
                     user_2: data.user_2,
                     id: id,
                     key: 'd_friendship'
-                });
-                callback(null, true);
+                }, function (err, res) {
+                if (callback) callback(null, true);
+                 });
             }
         });
     });
@@ -175,9 +174,10 @@ function deleteByUsers(data, callback) {
                     user_2: user_2,
                     id: data.id,
                     key: 'd_friendship'
-                });
+                }, function (err, res) {
+                if (callback) callback(null, true);
+                 });
             });
-            callback(null, true);
         }
     });
 }
