@@ -109,7 +109,7 @@ export class UserService {
   }
 
   deleteUser(username: string): Promise<any> {
-    return this.http.delete(this.apiURLUser + "?username=" + username)
+    return this.http.delete(this.apiURLUser + "?username=" + username, options)
       .toPromise()
       .catch(this.handleError);
   }
@@ -128,13 +128,13 @@ export class UserService {
   }
 
   deleteDevice(addDevice: Device): Promise<any> {
-    return this.http.delete(this.apiURLDevice + "?device=" + addDevice)
+    return this.http.delete(this.apiURLDevice + "?device=" + addDevice, options)
       .toPromise()
       .catch(this.handleError);
   }
 
   deleteFriendship(user: string): Promise<any> {
-    return this.http.delete(this.apiURLAddFriend + "?user=" + user)
+    return this.http.delete(this.apiURLAddFriend + "?user=" + user, options)
       .toPromise()
       .catch(this.handleError);
   }
