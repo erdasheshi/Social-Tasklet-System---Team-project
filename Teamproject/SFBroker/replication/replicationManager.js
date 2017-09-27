@@ -28,7 +28,7 @@ var data = data;
     else{
         buildUpdate({ logData: data}, function (e, data) {
         if (e) return next(e)
-            else{ callback(null, true); }
+        callback(null, true);
         });
         };
     });
@@ -38,7 +38,6 @@ var data = data;
 function buildUpdate(data, callback) {
     var logData = data.logData ;
     var update;
-console.log("it is building an update");
     Brokers.findByUser({ username: logData.username }, function (e, data) {
 
         if (e) return next(e);
@@ -69,7 +68,7 @@ console.log("it is building an update");
                        Brokers.findByUser({ username: logData.user_2}, function (e, data1) {
                     if (e) return next(e);
                         update = '{ "broker_1": "' + broker_1 + '", "broker_2": "' + data1.broker  + '", "version": ' + 0 + ', "type": "Friendship", "ID": "' + logData.id + '", "key": "Deleted" }';
-                        log.add(JSON.stringify(update));
+                        log.add(JSON.parse(JSON.stringify(update)));
                         callback(null, true);
                     })
                 break;
