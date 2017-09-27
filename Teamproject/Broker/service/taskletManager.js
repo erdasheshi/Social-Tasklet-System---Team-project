@@ -179,14 +179,17 @@ function scheduling(data, callback) {
 
 
                 //discount
-                availableUsers.forEach(function (current) {
+                availableUsers.forEach(function (current, index) {
+                    console.log('Ownership: ' + current.ownership);
                     if (current.ownership == 'friend') {
-                        current.price = current.price * (1 - constants.FriendsDiscount);
-						if(current.price < minPrice) minPrice = current.price;
+                        availableUsers[index].price = current.price * (1 - constants.FriendsDiscount);
+						if(availableUsers[index].price < minPrice) minPrice = current.price;
+						console.log('New Price friend: ' + availableUsers[index].price);
                     }
                     if (current.ownership == 'network') {
-                        current.price = current.price * (1 - constants.FriendsFriendsDiscount);
-						if(current.price < minPrice) minPrice = current.price;
+                        availableUsers[index].price = current.price * (1 - constants.FriendsFriendsDiscount);
+						if(availableUsers[index].price < minPrice) minPrice = current.price;
+                        console.log('New Network friend: ' + availableUsers[index].price);
                     }
                 });
 
