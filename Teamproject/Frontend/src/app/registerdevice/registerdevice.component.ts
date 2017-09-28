@@ -38,19 +38,23 @@ export class RegisterdeviceComponent implements OnInit {
       .catch(err => this.handleError(err));
   }
 
+  //Send device details to API and request Download
   onSubmit(device: Device) {
 
     this.deviceNew.username = this.username;
+    //Add the X option in order to trigger download
     this.deviceNew.download = "X";
     this.userService
       .addDevice(this.deviceNew)
       .then(res => {
         if (res.status === 200) {
           this.downloadURL = res._body;
+          //Modify download URL in order to start download automatically
           this.downloadURL = this.downloadURL.replace("\"", "");
           this.downloadURL = this.downloadURL.replace("\"", "");
           console.log(this.downloadURL);
           window.open(this.downloadURL);
+          //Once download is successful navigate to device management screen
           this.router.navigate(['/devices']);
         }
       })

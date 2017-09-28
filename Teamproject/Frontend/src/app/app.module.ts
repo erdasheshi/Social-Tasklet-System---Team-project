@@ -1,3 +1,6 @@
+/* This class the main app controller. All components are registered in this class. Besides that the navigation through the application is defined here
+ */
+
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -23,6 +26,7 @@ import {ToastModule} from "ng2-toastr/ng2-toastr";
 
 @NgModule({
   declarations: [
+    /* Declare all components that should be loaded by the NG Module */
     AppComponent,
     LoginComponent,
     TransactionsComponent,
@@ -35,11 +39,13 @@ import {ToastModule} from "ng2-toastr/ng2-toastr";
     ChangedeviceComponent
   ],
   imports: [
+    /* Import Global Dependencies */
     BrowserModule,
     BrowserAnimationsModule,
     ToastModule.forRoot(),
     FormsModule,
     HttpModule,
+    /* Router Configuration */
     RouterModule.forRoot([
       {
         'path': '',
@@ -80,7 +86,7 @@ import {ToastModule} from "ng2-toastr/ng2-toastr";
         'component': CoinsComponent,
         'pathMatch': 'full'
       }
-
+    /* Use Hash Navigation in order to prevent conflicts with URL parameters and updating of screens */
     ], {useHash: true})
   ],
   providers: [UserService],

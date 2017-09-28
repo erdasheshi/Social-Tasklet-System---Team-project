@@ -48,6 +48,7 @@ export class CoinsComponent implements OnInit {
 
   }
 
+  //Send requested coins to API
   onSubmit(user: coinsRequest) {
     this.userService
       .requestCoins(this.coinsReq)

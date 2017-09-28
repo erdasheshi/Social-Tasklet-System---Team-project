@@ -40,6 +40,7 @@ export class NetworkComponent implements OnInit {
       .catch(err => this.handleError(err));
   }
 
+  //Filter only Pending Friends
   getPendingFriends(): Friendship[] {
     if (this.friendships) {
       return this.friendships.filter(friendship => friendship.status === 'Pending');
@@ -49,18 +50,21 @@ export class NetworkComponent implements OnInit {
     }
   }
 
+  //Filter only Requested Friends
   getRequestedFriends(): Friendship[] {
     if (this.friendships) {
       return this.friendships.filter(friendship => friendship.status === 'Requested');
     }
   }
 
+  //Get all Friends a user
   getFriends(): Friendship[] {
     if (this.friendships) {
       return this.friendships.filter(friendship => friendship.status === 'Confirmed');
     }
   }
 
+  //Get all users in the system
   getNetwork(): NetworkUser[] {
     if (this.networkUsers && this.friendships) {
       for (var i = 0; i < this.friendships.length; i++) {
@@ -74,6 +78,7 @@ export class NetworkComponent implements OnInit {
     return this.networkUsers;
   }
 
+  //Method used to update a friendship object
   private updateFriendship(friendships: Friendship[], user, status): Friendship[] {
     return friendships.map(friendship => {
       if (friendship.name === user) friendship.status = status;
@@ -81,6 +86,7 @@ export class NetworkComponent implements OnInit {
     });
   }
 
+  //confirm a friendship if successful and write it to the notification bar
   confirmFriend(user) {
     var tmp = {user: user, status: "Confirmed"};
     var newFriendship = new Friendship(tmp);
@@ -97,6 +103,7 @@ export class NetworkComponent implements OnInit {
     this.friendships = this.updateFriendship(this.friendships, user, 'Confirmed');
   }
 
+  //add friend --> change status to requested
   addFriend(user) {
     const friend = {
       user: user,
@@ -117,6 +124,7 @@ export class NetworkComponent implements OnInit {
       .catch(err => this.handleError(err));
   }
 
+  //Delete a friendship object
   deleteFriend(user) {
     this.userService
       .deleteFriendship(user)

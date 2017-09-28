@@ -25,8 +25,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
+  //user object gets updated according to form in .html
   user = new User("", "", "", "", 0, "");
 
+  //if user is logged in successfully navigate to the main screen
   onSubmit(user: User) {
     this.userService
       .loginUser(this.user)

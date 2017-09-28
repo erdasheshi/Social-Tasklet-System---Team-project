@@ -32,6 +32,7 @@ export class ChangedeviceComponent implements OnInit {
     this.deviceNew = this.changeDevice.device;
   }
 
+  //Create a new device according to form and update existing device if available
   onSubmit(device: Device) {
     this.deviceNew.download = "";
     this.userService

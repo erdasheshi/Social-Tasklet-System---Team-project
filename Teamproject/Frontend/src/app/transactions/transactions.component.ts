@@ -26,7 +26,7 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {
 
-    //get all transactions
+    //get all transactions and return them to the local transaction object
     this.userService
       .getTransactions()
       .then(result => {
@@ -34,7 +34,7 @@ export class TransactionsComponent implements OnInit {
       })
       .catch(err => this.handleError(err));
 
-    //get balance
+    //get balance and return balance to local balance object
     this.userService
       .getUser()
       .then(result => {
