@@ -63,6 +63,11 @@ var server_heartbeat = net.createServer(function (socket) {
                         var buf1 = data;
                        
 						var addressArray = address.split('.');
+						console.log('Ip ' + addressArray);
+                        console.log('Ip0 ' + addressArray[0]);
+                        console.log('Ip1 ' + addressArray[1]);
+                        console.log('Ip2 ' + addressArray[2]);
+
 						var buf2 = Buffer.alloc(4);
 						buf2.writeIntLE(addressArray[0],0, 1);
 						buf2.writeIntLE(addressArray[1],1, 1);
