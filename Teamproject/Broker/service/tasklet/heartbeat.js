@@ -58,8 +58,13 @@ var server_heartbeat = net.createServer(function (socket) {
 
                     pH.writeProtocolHeader(constants.bIPMessage, function (e, data) {
                         var buf1 = data;
-                        var buf2 = Buffer.alloc(4);
-                        buf2.writeInt32LE(address, 0);
+                       
+						var addressArray = address.split('.');
+						var buf2 = Buffer.alloc(4);
+						buf2.writeIntLE(addressArray[0],0, 1);
+						buf2.writeIntLE(addressArray[1],1, 1);
+						buf2.writeIntLE(addressArray[2],2, 1);
+						buf2.writeIntLE(addressArray[3],3, 1);
 
                         var totalLength = buf1.length + buf2.length;
                         var buf = Buffer.concat([ buf1, buf2 ], totalLength);
@@ -114,6 +119,6 @@ var server_heartbeat = net.createServer(function (socket) {
 
 
 providerList.updateProviderList();
-//providerList.addDummyData();  --> Use this function ONLY for testing purposes!
+//providerList.addDummyData();  //--> Use this function ONLY for testing purposes!
 
 server_heartbeat.listen(conf.heartbeat.port, conf.heartbeat.ip);
