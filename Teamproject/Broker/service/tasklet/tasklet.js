@@ -32,10 +32,12 @@ var server_request = net.createServer(function (socket) {
         var taskletRequest = Buffer.alloc(0);
         var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
 
+        // Check for sufficient length of data
         if (data.length == 40) {
             taskletRequest = data;
             if (taskletSockets.has(socketIdentifier)) tasklet.delete(socketIdentifier);
         }
+        // Glue data to existing data and check, if it is now long enough.
         else {
             if (taskletSockets.has(socketIdentifier)) {
                 var tmpData = taskletSockets.get(socketIdentifier)
@@ -49,6 +51,7 @@ var server_request = net.createServer(function (socket) {
             }
         }
 
+        // interpret tasklet Request
         if (taskletRequest.length == 40) {
 
             pH.readProtocolHeader(taskletRequest, function (err, data) {
@@ -90,6 +93,7 @@ var server_request = net.createServer(function (socket) {
                 taskletRequest = Buffer.alloc(0);
             });
         }
+        // received too much data --> something went wrong.
         else if (taskletRequest.length > 40) {
         }
 
@@ -101,7 +105,7 @@ var server_request = net.createServer(function (socket) {
 });
 
 server_request.listen(conf.tasklet.port, conf.tasklet.ip);
-
+// collect data for scheduling, call scheduling and return result to SFBroker & Tasklet Middleware.
 function preScheduling(data, callback) {
     var username = data.username;
     var taskletid = data.taskletid;

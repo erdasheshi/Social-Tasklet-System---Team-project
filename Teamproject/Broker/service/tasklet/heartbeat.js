@@ -16,16 +16,18 @@ var server_heartbeat = net.createServer(function (socket) {
     socket.on('error', function (exc) {
         console.log("Ignoring exception: " + exc);
     });
-
+    // receive heartbeat from Tasklet Middleware
     socket.on('data', function (data) {
         console.log(data);
         var heartbeat = Buffer.alloc(0);
 
         var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
+        // Check for sufficient length of data
         if (data.length == 16) {
             heartbeat = data;
             if (heartbeatSockets.has(socketIdentifier)) heartbeatSockets.delete(socketIdentifier);
         }
+        // Glue data to existing data and check, if it is now long enough.
         else {
             if (heartbeatSockets.has(socketIdentifier)) {
                 var tmpData = heartbeatSockets.get(socketIdentifier)
@@ -39,6 +41,7 @@ var server_heartbeat = net.createServer(function (socket) {
             }
         }
 
+        // interpret heartbeat
         if (heartbeat.length == 16) {
             pH.readProtocolHeader(heartbeat, function (e, data) {
                 var messageType = data;
@@ -85,6 +88,7 @@ var server_heartbeat = net.createServer(function (socket) {
                 }
             });
         }
+        // received too much data --> something went wrong.
         else if (heartbeat.length > 16) {
             pH.writeProtocolHeader(constants.bIPMessage, function (e, data) {
                 var address = socket.remoteAddress;

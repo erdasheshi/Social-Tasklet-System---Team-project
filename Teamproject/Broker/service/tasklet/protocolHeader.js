@@ -1,6 +1,6 @@
 
 var constants = require('./../../constants');
-
+// read received ProtocolHeader from tasklet middleware
 function readProtocolHeader(header, callback){
 
 	var magic = header.readInt32LE(0);
@@ -14,7 +14,7 @@ function readProtocolHeader(header, callback){
 	else
     if(callback) callback(-1, null);
 };
-
+// write ProtocolHeader for tasklet middleware
 function writeProtocolHeader(messageType, callback){
 	
 	var buf1 = Buffer.alloc(4);

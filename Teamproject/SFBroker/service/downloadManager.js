@@ -6,7 +6,7 @@ var broker = require('./../classes/Broker');
 
 const destination = conf.sfbroker.download.destination + "config.txt";
 
-
+// create config file and trigger zip creation
 function provideDownload(data, callback) {
     var deviceID = data.id;
 
@@ -26,7 +26,7 @@ function provideDownload(data, callback) {
         });
     });
 }
-
+// create zipped Tasklet Middleware download
 function zipTasklet(data, callback) {
     var output = fs.createWriteStream(conf.sfbroker.download.source + '/TaskletMiddleware' + data.device + '.zip');
     var archive = archiver('zip', {
