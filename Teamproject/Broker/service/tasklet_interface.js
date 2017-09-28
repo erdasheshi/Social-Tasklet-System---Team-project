@@ -1,5 +1,5 @@
 /**
- * Created by alexb on 7/7/2017.
+ * Central point for tasklet middleware interface
  */
 
 var tasklet = require('./tasklet/tasklet.js');

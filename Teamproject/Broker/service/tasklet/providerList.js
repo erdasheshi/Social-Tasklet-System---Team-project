@@ -3,7 +3,7 @@ var device = require('./../../classes/DeviceAssignments');
 var constants = require('./../../constants');
 var websockets = require('./../websockets');
 
-var provider = new Map();
+var provider = new Map(); // holds a list of all available devices with a deviceID, the lastHeartbeat, the availableVMs and a speed benchmark.
 
 function insertProvider(address, deviceID) {
     var lastHeartbeat = Math.round(new Date().getTime() / 1000);
@@ -120,7 +120,7 @@ function getRangeBenchmark(callback){
     });
 }
 
-
+// Create online Users --> USE THIS METHOD ONLY FOR TESTING PURPOSES.
 function addDummyData(){
     insertProvider('111.111.111.111', 1);
     insertProvider('111.111.111.112', 2);

@@ -47,6 +47,7 @@ function findRelation(data, callback) {
     });
 }
 
+// filters based on privacy all available users.
 function onlinePotentialProvider(data, callback) {
     var providerList = require('./tasklet/providerList');
     var username = data.username;
@@ -147,17 +148,17 @@ function scheduling(data, callback) {
                     }
                 });
             }
-
+            // No Tasklet Middleware is available anymore
             if (availableUsers.length == 0) {
                 callback(null, {});
             }
-
+            // Only one Tasklet Middleware is still available
             if (availableUsers.length == 1) {
                 var availableVMs = availableUsers[0].availableVMs;
 
                 var vms = Math.min(requestedNumber, availableVMs);
                 var newprice;
-
+                // calculate price
                 if (availableUsers[0].ownership == 'own') {
                     newprice = 0;
                 }
@@ -231,12 +232,8 @@ function scheduling(data, callback) {
                             benchmarkValue = (weightSpeed * ((availableUsers[i].benchmark - minBenchmark) / benchmarkRange));
                         }
 
-
+                        // determine price per tasklet middleware
                         var newscore = priceValue + benchmarkValue;
-
-                        console.log("User: " + availableUsers[i].ip + " Score: " + newscore);
-                        console.log("Benchmark: " + availableUsers[i].benchmark + "Cost: " + price);
-                        console.log("Cost: " + weightCost + "Benchmark: " + weightSpeed);
 
 
                         if (newscore < score) {

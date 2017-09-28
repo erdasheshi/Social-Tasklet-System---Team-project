@@ -1,7 +1,7 @@
 var Map = require("collections/map");
 var constants = require('./../../constants');
 
-var tasklet = new Map();
+var tasklet = new Map(); // holds a list of all requested tasklets for which no response was sent yet.
 
 function insertTasklet(taskletid, broker_id, deviceID, isRemote, requestedNumber, requestedInstances, speed, requestingIP, cost, privacy){
   

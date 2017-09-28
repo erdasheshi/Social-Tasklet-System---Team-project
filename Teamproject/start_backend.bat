@@ -8,6 +8,10 @@ cd ../SFBroker
 echo Prepare SFBroker
 call npm install
 
+cd ../Frontend
+echo Prepare Frontend
+call npm install
+
 cd ..
 echo Start MongoDB
 start MongoDB/Server/3.4/bin/mongod --dbpath SFBroker/data --port 27017
@@ -20,5 +24,12 @@ start MongoDB/Server/3.4/bin/mongod --dbpath Broker/data --port 27018
 
 echo Start SFBroker
 start node SFBroker/app.js
+
 echo Start Broker
 start node Broker/server.js
+
+echo Start Frontend
+cd Frontend
+start npm start
+
+cd ..

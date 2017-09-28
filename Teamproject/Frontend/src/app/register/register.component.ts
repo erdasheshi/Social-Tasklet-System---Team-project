@@ -24,8 +24,10 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
   }
 
+  //Initiate User Object. This user object is linked to the form and gets updated accordingly
   user = new User("", "", "", "", 0, "");
 
+  //add new user object. On success from the API navigate to the transaction screen
   onSubmit(user: User) {
     this.userService
       .registerUser(this.user)

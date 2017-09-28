@@ -1,27 +1,6 @@
 /*-----------------------------------*\
 
-  $TOAST-GRID
-
-  An insane grid.
-  You'd be mad to use it.
-
-  Usage
-  =====
-
-  Assuming default values:
-
-  <div class="grid">
-    <div class="grid__col grid__col--1-of-2">
-      A half-width column.
-    </div>
-    <div class="grid__col grid__col--1-of-4 grid__col--pull-1-of-4">
-      A quarter, pulled left by its own width. You get this, right?
-    </div>
-  </div>
-
-
-  Customisation
-  =============
+  Global Grid
 
   $toast-grid-namespace and $toast-grid-column-namespace
   adjusts the class names for the grid. With
@@ -35,8 +14,6 @@
 
   $toast-gutter-width is—you guessed it—the gutter
   width. Accepts any unit.
-
-  That's it. Have fun.
 
 \*-----------------------------------*/
 .grid {

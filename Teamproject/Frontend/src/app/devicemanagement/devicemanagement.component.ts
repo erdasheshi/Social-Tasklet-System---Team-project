@@ -35,6 +35,7 @@ export class DevicemanagementComponent implements OnInit {
       .catch(err => this.handleError(err));
   }
 
+  //get all registered devices
   getregisteredDevices(): Device[] {
     if (this.registeredDevices) {
       return this.registeredDevices;
@@ -44,6 +45,7 @@ export class DevicemanagementComponent implements OnInit {
     }
   }
 
+  //remove a device
   removeDevice(name) {
     this.userService
       .deleteDevice(name.device)
@@ -51,6 +53,7 @@ export class DevicemanagementComponent implements OnInit {
     window.location.reload();
   }
 
+  //change device with ID
   changeDeviceNav(name) {
     this.changeDevice.device = name;
     this.router.navigate(['/changeDevice', name.device]);

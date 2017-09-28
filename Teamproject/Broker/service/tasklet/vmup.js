@@ -20,11 +20,12 @@ var server_vmup = net.createServer(function (socket) {
 
 		var vmup = Buffer.alloc(0);
 		var socketIdentifier = socket.remoteAddress + ":" + socket.remotePort;
-		 
+        // Check for sufficient length of data
         if (data.length == 16) {
             vmup = data;
 			if (vmupSockets.has(socketIdentifier)) vmupSockets.delete(socketIdentifier);
         }
+        // Glue data to existing data and check, if it is now long enough.
         else {
 			if(vmupSockets.has(socketIdentifier)){
 				var tmpData = vmupSockets.get(socketIdentifier)
@@ -37,7 +38,7 @@ var server_vmup = net.createServer(function (socket) {
                 }, socketIdentifier);
             }
         }
-
+    // interpret vm up message
         if (vmup.length == 16) {
 
             pH.readProtocolHeader(vmup, function (e, data) {

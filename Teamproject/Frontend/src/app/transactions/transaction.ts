@@ -1,3 +1,5 @@
+/*
+* Class which defines the transaction object */
 export class Transaction {
     constructor(
         public consumer: string,
