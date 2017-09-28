@@ -63,12 +63,16 @@ var server_heartbeat = net.createServer(function (socket) {
                         var buf1 = data;
                        
 						var addressArray = address.split('.');
+						var adressDigit0 = parseInt(addressArray[0]);
+						var adressDigit1 = parseInt(addressArray[1]);
+						var adressDigit2 = parseInt(addressArray[2]);
+						var adressDigit3 = parseInt(addressArray[3]);
 
 						var buf2 = Buffer.alloc(4);
-						buf2.writeIntLE(parseInt(addressArray[0]),0, 1);
-						buf2.writeIntLE(parseInt(addressArray[1]),1, 1);
-						buf2.writeIntLE(parseInt(addressArray[2]),2, 1);
-						buf2.writeIntLE(parseInt(addressArray[3]),3, 1);
+						buf2.writeIntLE(adressDigit0 ,0, 1);
+						buf2.writeIntLE(adressDigit1 ,1, 1);
+						buf2.writeIntLE(adressDigit2 ,2, 1);
+						buf2.writeIntLE(adressDigit3 ,3, 1);
 
                         var totalLength = buf1.length + buf2.length;
                         var buf = Buffer.concat([ buf1, buf2 ], totalLength);
