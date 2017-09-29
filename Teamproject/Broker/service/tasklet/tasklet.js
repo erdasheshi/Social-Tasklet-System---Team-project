@@ -165,7 +165,8 @@ function preScheduling(data, callback) {
                                 */
                                 console.log(buf3);
 
-                                buf3.writeIntLE(schedulingResult[i].vms, 4, 4, true);
+                                //buf3.writeIntLE(schedulingResult[i].vms, 4, 4, true);
+                                buf3.writeInt32LE(schedulingResult[i].vms, 4);
                             }
 
                             var totalLength = buf1.length + buf2.length + buf3.length;
