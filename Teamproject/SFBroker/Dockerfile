@@ -8,9 +8,9 @@ RUN npm install
 COPY . /usr/src/app
 COPY ./config.json /usr/src
 
-EXPOSE 8001
-EXPOSE 8002
-EXPOSE 8003
-EXPOSE 8004
+EXPOSE 18001
+EXPOSE 18002
+EXPOSE 18003
+EXPOSE 18004
 
 CMD ["node","app.js"]

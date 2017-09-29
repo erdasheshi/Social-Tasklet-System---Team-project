@@ -11,7 +11,7 @@ services:
   sf-broker:
     build: SFBroker/
     ports:
-      - "8001:8001"
+      - "18001:18001"
       - "8002:8002"
     depends_on:
       - mongodb-sfbroker
@@ -19,8 +19,8 @@ services:
   broker:
     build: Broker/
     ports:
-      - "8003:8003"
-      - "8004:8004"
+      - "18003:18003"
+      - "18004:18004"
       - "34123:34123"
       - "63667:63667"
       - "49129:49129"
@@ -30,7 +30,7 @@ services:
   admin:
     build: Admin/
     ports:
-      - "8009:8009"
+      - "18009:18009"
     command: node server.js
     depends_on:
       - sf-broker
