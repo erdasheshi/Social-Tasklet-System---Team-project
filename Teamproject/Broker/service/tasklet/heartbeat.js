@@ -65,10 +65,15 @@ var server_heartbeat = net.createServer(function (socket) {
 						var addressArray = address.split('.');
 
 						var buf2 = Buffer.alloc(4);
-						buf2.writeIntLE(addressArray[0] ,0, 1);
-						buf2.writeIntLE(addressArray[1] ,1, 1);
-						buf2.writeIntLE(addressArray[2] ,2, 1);
-						buf2.writeIntLE(addressArray[3] ,3, 1);
+						buf2.writeIntLE(addressArray[0] ,0, 1, true);
+						buf2.writeIntLE(addressArray[1] ,1, 1, true);
+						buf2.writeIntLE(addressArray[2] ,2, 1, true);
+						buf2.writeIntLE(addressArray[3] ,3, 1, true);
+
+						console.log('Buffer: ' + buf2.readIntLE(0));
+						console.log('Buffer: ' + buf2.readIntLE(1));
+						console.log('Buffer: ' + buf2.readIntLE(2));
+						console.log('Buffer: ' + buf2.readIntLE(3));
 
                         var totalLength = buf1.length + buf2.length;
                         var buf = Buffer.concat([ buf1, buf2 ], totalLength);
