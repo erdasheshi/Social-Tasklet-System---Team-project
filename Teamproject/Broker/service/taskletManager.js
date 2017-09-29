@@ -32,6 +32,7 @@ function findRelation(data, callback) {
                         user_2: proprietary
                     }, function (err, existence) {
                         if (err) callback(err, null);
+                        console.log("Existence FriendsOfFriends: " + existence);
                         if (existence == "true") {
                             ownership = "network";
                             callback(null, {device: device, ownership: ownership, price: price});

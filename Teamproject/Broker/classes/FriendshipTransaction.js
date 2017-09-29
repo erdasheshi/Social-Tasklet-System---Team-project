@@ -79,6 +79,7 @@ function findFriends(data, callback){
     var friends_list = [];
     Friendship.find().or([ { 'user_1': username }, { 'user_2': username } ]).exec(function (e, res) {
         if (e) callback(e, null);
+        console.log("Result Friends: " + res.toString());
         callback(null, res);
     });
 }
@@ -92,11 +93,13 @@ function findExistence(data, callback) {
     Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, res) {
         if (res != null) {
             existence = "true";
+            console.log("Result1: " + res);
         }
         else {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, res) {
                 if (res != null) {
                     existence = "true";
+                    console.log("Result2: " + res);
                 }
             });
         }
@@ -118,6 +121,7 @@ function findFriendsOfFriends(data, callback) {
             data.forEach(function (entry, index, array) {
                 if (entry.user_1 == user_1) {
                     findExistence({ user_1: entry.user_2, user_2: user_2 }, function (e, result) {
+                        console.log("Result FriendsOfFriends1: " + result);
                         if (result == "true") {
                             existence = "true";
                             callback(null, existence);
@@ -130,6 +134,7 @@ function findFriendsOfFriends(data, callback) {
                 }
                 else {
                     findExistence({ user_1: entry.user_1, user_2: user_2 }, function (e, result) {
+                        console.log("Result FriendsOfFriends2: " + result);
                         if (result == "true") {
                             existence = "true";
                             callback(null, existence);
