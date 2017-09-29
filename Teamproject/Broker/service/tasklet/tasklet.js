@@ -152,17 +152,17 @@ function preScheduling(data, callback) {
 
                                 var str = schedulingResult[i].ip.split(".");
                                 console.log("Requested IPs: " + schedulingResult[i].ip);
-                                /*
+
                                 buf3.writeInt32LE(str[0], 0);
                                 buf3.writeInt32LE(str[1], 1);
                                 buf3.writeInt32LE(str[2], 2);
                                 buf3.writeInt32LE(str[3], 3);
-                                */
+                                /*
                                 buf3.writeIntLE(str[0] ,0, 1, true);
                                 buf3.writeIntLE(str[1] ,1, 1, true);
                                 buf3.writeIntLE(str[2] ,2, 1, true);
                                 buf3.writeIntLE(str[3] ,3, 1, true);
-
+                                */
                                 console.log(buf3);
 
                                 buf3.writeIntLE(schedulingResult[i].vms, 4, 4, true);
