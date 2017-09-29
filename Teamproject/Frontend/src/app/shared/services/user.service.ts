@@ -17,7 +17,7 @@ import {Headers} from '@angular/http';
 var conf = require('../../../../config.json');
 
 //For local testing use localhost, for testing against a specific server the corresponding server IP
-//var serverURL = 'http://localhost';
+//var serverURL = 'http://127.0.0.1';
 var serverURL = 'http://34.212.187.85'; // AWS
 // var serverURL = 'http://46.101.198.127'; // DigitalOcean
 
@@ -28,17 +28,17 @@ let options = new RequestOptions({headers: headers, withCredentials: true});
 export class UserService {
 
   //API Path definitions
-  private apiURLRegister = serverURL + ':8001/register/';
-  private apiURLLogin = serverURL + ':8001/login/';
-  private apiURLLogout = serverURL + ':8001/logout/';
-  private apiURLNetwork = serverURL + ':8001/user/?all=X';
+  private apiURLRegister = serverURL + ':18001/register/';
+  private apiURLLogin = serverURL + ':18001/login/';
+  private apiURLLogout = serverURL + ':18001/logout/';
+  private apiURLNetwork = serverURL + ':18001/user/?all=X';
   // private apiURLFriendships =  serverURL + ':8001/sfbuserinfo/';
-  private apiURLAddFriend = serverURL + ':8001/friendship/';
-  private apiURLTransaction = serverURL + ':8001/acctransaction';
-  private apiURLUser = serverURL + ':8001/user';
-  private apiURLAddCoins = serverURL + ':8001/coinrequest/';
-  private apiURLRequestedCoins = serverURL + ':8001/requestedcoins/';
-  private apiURLDevice = serverURL + ':8001/device/';
+  private apiURLAddFriend = serverURL + ':18001/friendship/';
+  private apiURLTransaction = serverURL + ':18001/acctransaction';
+  private apiURLUser = serverURL + ':18001/user';
+  private apiURLAddCoins = serverURL + ':18001/coinrequest/';
+  private apiURLRequestedCoins = serverURL + ':18001/requestedcoins/';
+  private apiURLDevice = serverURL + ':18001/device/';
 
   constructor(private http: Http) {
   }
