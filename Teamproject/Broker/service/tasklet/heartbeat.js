@@ -70,6 +70,8 @@ var server_heartbeat = net.createServer(function (socket) {
 						buf2.writeIntLE(addressArray[2] ,2, 1, true);
 						buf2.writeIntLE(addressArray[3] ,3, 1, true);
 
+                        console.log(buf2);
+
                         var totalLength = buf1.length + buf2.length;
                         var buf = Buffer.concat([ buf1, buf2 ], totalLength);
 
