@@ -65,10 +65,10 @@ var server_heartbeat = net.createServer(function (socket) {
 						var addressArray = address.split('.');
 
 						var buf2 = Buffer.alloc(4);
-						buf2.writeIntLE(addressArray[0] ,0, 1, true);
-						buf2.writeIntLE(addressArray[1] ,1, 1, true);
-						buf2.writeIntLE(addressArray[2] ,2, 1, true);
-						buf2.writeIntLE(addressArray[3] ,3, 1, true);
+						buf2.writeUIntLE(addressArray[0] ,0, 1, true);
+						buf2.writeUIntLE(addressArray[1] ,1, 1, true);
+						buf2.writeUIntLE(addressArray[2] ,2, 1, true);
+						buf2.writeUIntLE(addressArray[3] ,3, 1, true);
 
                         console.log(buf2);
 
