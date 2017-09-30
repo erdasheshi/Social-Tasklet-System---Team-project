@@ -9,6 +9,7 @@ COPY . /usr/src/app
 COPY ./config.json /usr/src
 
 EXPOSE 18002
+EXPOSE 18003
 EXPOSE 18009
 
 

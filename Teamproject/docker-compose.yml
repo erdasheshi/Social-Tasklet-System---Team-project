@@ -12,7 +12,7 @@ services:
     build: SFBroker/
     ports:
       - "18001:18001"
-      - "8002:8002"
+      - "18002:18002"
     depends_on:
       - mongodb-sfbroker
 
