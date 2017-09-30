@@ -3,7 +3,7 @@ Repository for the Teamproject Social Distributed Systems (SDS)
 
 We provide a social and financial overlay for [TASKLETS](https://becker.bwl.uni-mannheim.de/de/research/tasklets/) and therby enable device owners around the world to contribute computational resources and benefit from available computational resources in the tasklet world.
 
-You have no idea, what we are talking about? Check our application recordings:
+You have no idea, what we are talking about? Check our demo videos:
 1. [Friendship Creation](https://github.com/Alex0815/SocialTasklets/blob/master/Recording/1%20Process%20-%20Friendship.mp4)
 2. [Tasklet Request](https://github.com/Alex0815/SocialTasklets/blob/master/Recording/2%20Process%20-%20Tasklet%20Request.mp4)
 3. [Tasklet Computation](https://github.com/Alex0815/SocialTasklets/blob/master/Recording/3%20Process%20-%20Tasklet%20Computation.mp4)
