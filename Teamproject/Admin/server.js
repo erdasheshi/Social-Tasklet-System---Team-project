@@ -35,6 +35,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('GetRequests', function (data) {
 
 	    //send request to the SF-Broker
+		console.log('Get Requests SF-Broker');
     	socket_sf.emit('Requested_Coins', {username: ''});
     });
 });
