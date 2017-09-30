@@ -5,7 +5,7 @@ var express = require('express')
 ,   conf = require('./config.json')
 , 	constants = require('./constants');
  
-var port = 8009;
+var port = conf.admin.port;
 console.log('Port: ' + port);
 
 // Webserver
@@ -13,7 +13,6 @@ server.listen(port);
 
 // Connect to SFbroker
 var socket_sf = require('socket.io-client')('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
-console.log('http://' + conf.sfbroker_socket.ip + ':' + conf.sfbroker_socket.port);
 
 // static files
 app.use(express.static(__dirname + '/public'));
@@ -48,4 +47,4 @@ socket_sf.on('Requested_Coins', function (data){
 		}
 });
 
-console.log('Admin runs on http://127.0.0.1:' + port + '/');
+console.log('Admin runs on http://' + conf.admin.ip + ':' + conf.admin.port);

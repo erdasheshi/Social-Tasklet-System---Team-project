@@ -124,7 +124,7 @@ function findFriendsOfFriends(data, callback) {
             data.forEach(function (entry, index, array) {
                 if (entry.user_1 == user_1) {
                     findExistence({ user_1: entry.user_2, user_2: user_2 }, function (e, result) {
-                        console.log("Result FriendsOfFriends1: " + result);
+
                         if (result == "true") {
                             existence = "true";
                             callback(null, existence);
@@ -137,7 +137,7 @@ function findFriendsOfFriends(data, callback) {
                 }
                 else {
                     findExistence({ user_1: entry.user_1, user_2: user_2 }, function (e, result) {
-                        console.log("Result FriendsOfFriends2: " + result);
+
                         if (result == "true") {
                             existence = "true";
                             callback(null, existence);
