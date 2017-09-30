@@ -25,9 +25,8 @@ io.sockets.on('connection', function (socket) {
 
     //sending the pending coin requests to the Administrator
     socket.on('Requested_Coins', function (data) {
-        console.log('Received Request from the other side');
+        console.log('Received Request from the Admin');
         coinTransaction.findByApproval({ approval: 'false' }, function (e, data) {
-            console.log('CoinRequests: ' + data);
             io.sockets.emit('Requested_Coins', data);
         });
     });
@@ -38,7 +37,6 @@ io.sockets.on('connection', function (socket) {
         var username = data.username;
         var coins = parseInt(data.requestedCoins);
         var logic = require('./logic');
-        console.log('Received Approval from the other side');
         var coinTr = coinTransaction.get({
             requestid: data.requestid,
             approval: data.approval,
