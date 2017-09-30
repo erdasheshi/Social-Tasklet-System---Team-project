@@ -93,17 +93,20 @@ function findExistence(data, callback) {
     Friendship.findOne({ 'user_1': user_1, 'user_2': user_2 }).exec(function (e, res) {
         if (res != null) {
             existence = "true";
-            console.log("Result1: " + res);
+            callback(null, existence);
         }
         else {
             Friendship.findOne({ 'user_1': user_2, 'user_2': user_1 }).exec(function (e, res) {
                 if (res != null) {
                     existence = "true";
-                    console.log("Result2: " + res);
+                    callback(null, existence);
+                }
+                else{
+                    callback(null, existence);
                 }
             });
         }
-        callback(null, existence);
+
     });
 }
 

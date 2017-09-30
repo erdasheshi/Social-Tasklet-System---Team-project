@@ -22,6 +22,7 @@ function findRelation(data, callback) {
         else {
 
             friendships.findExistence({user_1: username, user_2: proprietary}, function (err, existence) {
+                console.log("Existence: " + existence);
                 if (existence == "true") {
                     ownership = "friend";
                     callback(null, {device: device, ownership: ownership, price: price});
